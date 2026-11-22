@@ -309,7 +309,8 @@
         "warning_intake_20261122",
         "warning_operations_20261122",
         "date_identity_profile_20261122",
-        "date_matching_block_20261122"
+        "date_matching_block_20261122",
+        "date_chat_meeting_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -380,7 +381,8 @@
         "warning_operations_20261122",
         "warning_domain_20261122",
         "date_identity_profile_20261122",
-        "date_matching_block_20261122"
+        "date_matching_block_20261122",
+        "date_chat_meeting_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -2364,9 +2366,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "122bde1ec2f797b020712306e1a9e4735ee7e90f0602c94073ab224f380023f6",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_chat_meeting_20261122"
+      ],
+      "reviewedSha256": "51b405ea026a70c59ee783aea96e6ff1a16538a9e741e212742fdd013bcf8791"
     },
     {
       "path": "docs/domains/10-calendar.html",
@@ -3745,9 +3750,9 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "date_matching_block_20261122"
+        "date_chat_meeting_20261122"
       ],
-      "reviewedSha256": "b054610149c5db4d8706df00c1b8380201eb064e58936fa6f67da6553608afd7"
+      "reviewedSha256": "6ec4fcf5981e9c236547b0ea1cfa30462e7d57cbbb34a14066895d3687da90ab"
     },
     {
       "path": "docs/features/F09-05.html",
@@ -3755,9 +3760,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "dbe8548b5a4ad21264d4a2bc26dc6511a34660309d8b43cb71d8ed6308d5b529",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_chat_meeting_20261122"
+      ],
+      "reviewedSha256": "438e4e9f884e212e5456e5e7acf24a7573e2f312f84827ab6bd385cd9a036da9"
     },
     {
       "path": "docs/features/F09-06.html",
@@ -3765,9 +3773,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "0d56a08974f44892d2d56ed971a42c20143235124ad408e3456c5979769690a5",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_chat_meeting_20261122"
+      ],
+      "reviewedSha256": "379cebded72a242655607e7aee943400e45833663bbd6a3f6e1519bee5b9c9ae"
     },
     {
       "path": "docs/features/F09-07.html",
@@ -5213,7 +5224,8 @@
         "warning_intake_20261122",
         "warning_operations_20261122",
         "date_identity_profile_20261122",
-        "date_matching_block_20261122"
+        "date_matching_block_20261122",
+        "date_chat_meeting_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5317,7 +5329,8 @@
         "warning_intake_20261122",
         "warning_operations_20261122",
         "date_identity_profile_20261122",
-        "date_matching_block_20261122"
+        "date_matching_block_20261122",
+        "date_chat_meeting_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5445,7 +5458,8 @@
         "warning_intake_20261122",
         "warning_operations_20261122",
         "date_identity_profile_20261122",
-        "date_matching_block_20261122"
+        "date_matching_block_20261122",
+        "date_chat_meeting_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5658,10 +5672,12 @@
       "kind": "domain_prd",
       "document": true,
       "baselineSha256": "789cdd5f57f7d6550f85ff62c9602c859b36527af81034dded9798e7cde91d58",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_chat_meeting_20261122"
+      ],
+      "reviewedSha256": "39959e319afdad8a3e5175f48212322e73f99b42e4615a25d55224b4ab0fe93c"
     },
     {
       "path": "prd/01_domain_prds/10_캘린더_prd.md",
@@ -7046,9 +7062,9 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "date_matching_block_20261122"
+        "date_chat_meeting_20261122"
       ],
-      "reviewedSha256": "1740d4e4d57c1c34ad94b1c8a64d9c49c49e4021713273dbf9a9f3d7c4352536"
+      "reviewedSha256": "514374f5efe7b995e333447d79ee5d09c3e74845ee9a60e08a6eac9b75c2da56"
     },
     {
       "path": "prd/02_feature_prds/09_private_date/F09-05_chat_prd.md",
@@ -7056,10 +7072,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "cbaa2695b49eec077e9face7f38126cd5cea0efc09298d34194701b0e16d3e2b",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_chat_meeting_20261122"
+      ],
+      "reviewedSha256": "68b12332e2bfd32316c03ed01ddeed1682f6f15cfb101fb118b01259a31c70dc"
     },
     {
       "path": "prd/02_feature_prds/09_private_date/F09-06_meeting_proposal_prd.md",
@@ -7067,10 +7085,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "42ee73e4a68c462ebd0f8824f8b20a6c12ead7ad7765f52a7122b2a78ac3e4f7",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_chat_meeting_20261122"
+      ],
+      "reviewedSha256": "02bacfc8673723699c49380ed0d989eafa7048e1455a942859945ed41def7479"
     },
     {
       "path": "prd/02_feature_prds/09_private_date/F09-07_block_prd.md",
@@ -8359,7 +8379,8 @@
         "warning_intake_20261122",
         "warning_operations_20261122",
         "date_identity_profile_20261122",
-        "date_matching_block_20261122"
+        "date_matching_block_20261122",
+        "date_chat_meeting_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8615,7 +8636,8 @@
         "warning_intake_20261122",
         "warning_operations_20261122",
         "date_identity_profile_20261122",
-        "date_matching_block_20261122"
+        "date_matching_block_20261122",
+        "date_chat_meeting_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -12942,9 +12964,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "ff7d3c753a04d327490defcf69daff47749d34d80ce5667620d8547492b87c60",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_chat_meeting_20261122"
+      ],
+      "reviewedSha256": "27d067d3eec6134dcf2973141d338c9c335d09d2c2ed3cfa57f0ace8c55cd097"
     },
     {
       "path": "units/09_private_date/F09-01_verification/backend.md",
@@ -13111,9 +13136,9 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "date_matching_block_20261122"
+        "date_chat_meeting_20261122"
       ],
-      "reviewedSha256": "7613648c874ebacb40389729189364e27cb4503a2d837939547acfd2bce34980"
+      "reviewedSha256": "ebb3f4a1b5d129ae4254f498a95d1cfdd5353a64f39dfab62127b75338d91b8f"
     },
     {
       "path": "units/09_private_date/F09-04_match_list/diagrams.md",
@@ -13124,9 +13149,9 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "date_matching_block_20261122"
+        "date_chat_meeting_20261122"
       ],
-      "reviewedSha256": "9ce2c0047363747784f430db55b36adca57b8c1db6e9e1de663076335ad88932"
+      "reviewedSha256": "99748d365abf23955f586a492e025d79a05d81ede64d7354fe16e78be6803406"
     },
     {
       "path": "units/09_private_date/F09-04_match_list/frontend.md",
@@ -13137,9 +13162,9 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "date_matching_block_20261122"
+        "date_chat_meeting_20261122"
       ],
-      "reviewedSha256": "a61e0bdffe06113476f6df445641473bfda2b104a6cf0d391ad9e7e8b15551d0"
+      "reviewedSha256": "44ce06bd5ab42bb2e5292aa7c63860b491e774065355e17f8c638611e433c48a"
     },
     {
       "path": "units/09_private_date/F09-04_match_list/scenarios.md",
@@ -13150,9 +13175,9 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "date_matching_block_20261122"
+        "date_chat_meeting_20261122"
       ],
-      "reviewedSha256": "93b9f66c86bad2a729dc2ff15be04213667a060328485aadb06954a9780a79b6"
+      "reviewedSha256": "69018be4ae6b7ec940be3ca072aefa75a855aa69b3fbe3765345fd13b7f29c32"
     },
     {
       "path": "units/09_private_date/F09-05_chat/backend.md",
@@ -13160,9 +13185,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "0e8746e5e2575945657fbfd256ae576f21f0c6109c87e6df1ebbf7a3f4aed6c5",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_chat_meeting_20261122"
+      ],
+      "reviewedSha256": "5bed3a992a4ecd08b43873ca8af21fc05ee0b76001441be802bbc3a2ef596f80"
     },
     {
       "path": "units/09_private_date/F09-05_chat/diagrams.md",
@@ -13170,9 +13198,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "43b557b8b305714c6f3512726f90a0d0e01f4448206d56e9257acb556d555b2c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_chat_meeting_20261122"
+      ],
+      "reviewedSha256": "190a6ea73fa11c9b0f91c09a4ea3bf48470b8f9d90ff5e29fd8c9b4d7ecaa451"
     },
     {
       "path": "units/09_private_date/F09-05_chat/frontend.md",
@@ -13180,9 +13211,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "a44161e829851dbef8975e99179910f6b61f5be7cc27590a615f9ea5590fbae8",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_chat_meeting_20261122"
+      ],
+      "reviewedSha256": "ce214c869c2ac796bab3a3b3ec9a64da7b423c8a4cc9a0eadfc3c8bb43a517ea"
     },
     {
       "path": "units/09_private_date/F09-05_chat/scenarios.md",
@@ -13190,9 +13224,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "0737725d98f65a8b54b60f011276551d40c2e18a8f8d04445e21462b31c2bee7",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_chat_meeting_20261122"
+      ],
+      "reviewedSha256": "77bd1f7c31740f22eb7ff83ce299696b417d992b61393293dcd6b26bd3d9e656"
     },
     {
       "path": "units/09_private_date/F09-06_meeting_proposal/backend.md",
@@ -13200,9 +13237,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "be3b02b0535ef09178207ee30a246ba2ea45141d3c5df01e4bd2535891071cb4",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_chat_meeting_20261122"
+      ],
+      "reviewedSha256": "c18b4c2c579a27a4ba012175097efa4d21a867a1fbd1016cae7b1c2296035809"
     },
     {
       "path": "units/09_private_date/F09-06_meeting_proposal/diagrams.md",
@@ -13210,9 +13250,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "427d78cc40a5a3396764f947b0019e50089ba973cea2bc276d9134fa97bbb2dc",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_chat_meeting_20261122"
+      ],
+      "reviewedSha256": "0e20111c2a92e50291371fa39a31a953ef7a6226cb45d000f53aee0e4f86c5c7"
     },
     {
       "path": "units/09_private_date/F09-06_meeting_proposal/frontend.md",
@@ -13220,9 +13263,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "2e492525caa45ab8f5253ce73ed03d8c795faffdf6db33781ba5317f0f718df3",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_chat_meeting_20261122"
+      ],
+      "reviewedSha256": "d52ca1d90b393251626ea6233c3d16a9400f5e3b9367e6acc2f11ca272edb1a4"
     },
     {
       "path": "units/09_private_date/F09-06_meeting_proposal/scenarios.md",
@@ -13230,9 +13276,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "c96e601b10a8996b164df5751daa8e6e681c148238ae66af7c7d8dd4d4c50e13",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_chat_meeting_20261122"
+      ],
+      "reviewedSha256": "6d7a19751dde25a2de4b2dd5920e4087256af6dc1752ff604a62c23b2af6e82f"
     },
     {
       "path": "units/09_private_date/F09-07_block/backend.md",
@@ -36950,10 +36999,6 @@
           "sha256": "186a8636af6ddf3fc71836490b89f0108f1af592b93fa08fce4effe26d248f62"
         },
         {
-          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-04_match_list_prd.md",
-          "sha256": "1740d4e4d57c1c34ad94b1c8a64d9c49c49e4021713273dbf9a9f3d7c4352536"
-        },
-        {
           "path": "business_logic/prd/02_feature_prds/09_private_date/F09-07_block_prd.md",
           "sha256": "c7024ade9bf17c4a9415dc17e5276a91766a460472056d11c34f3b3e0b8ac891"
         }
@@ -36983,7 +37028,7 @@
         "후보 조건과 직접 선택의 신원/활성/결격/제재 및 PENDING/기존 상태/기한 검사 차이",
         "옵트인 가중치 재정규화와 100 초과 가능한 점수·응답 시점 노출 계수",
         "목록 무정렬·첫 페이지만 소비·새매칭/대화중 같은 요청",
-        "목록 roomId 없는 채팅 이동과 user2Id 고정 차단",
+        "목록은 등록된 /dating/chat으로 이동: 라우트 누락 판정은 date_chat_meeting_20261122에서 정정. user2Id 고정 차단 대상 문제는 유지",
         "서버 미리보기 보강에 방 활성/양방향 차단 추가 검사 없음",
         "만료 스케줄의 DATING 중단과 30일 무활동 방 INACTIVE",
         "차단의 MATCH/PRIVATE_MEETING 방 종료·선택 신고/보류·종결 처리시각부터1년 증빙 정리",
@@ -37001,6 +37046,353 @@
       "observedSourceVersions": {
         "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
         "community_app": "3aa21da1e1c60194f0d1352e2718dc452f69862a"
+      },
+      "supersededCanonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-04_match_list_prd.md",
+          "sha256": "1740d4e4d57c1c34ad94b1c8a64d9c49c49e4021713273dbf9a9f3d7c4352536",
+          "reason": "/dating/chat은 등록된 방 목록임을 확인하여 미완성 입구 판정을 정정함",
+          "supersededBy": "date_chat_meeting_20261122"
+        }
+      ],
+      "corrections": [
+        {
+          "by": "date_chat_meeting_20261122",
+          "detail": "F09-04 방 목록 경로 해석을 정정했으며 최신 정본/파생 문서 검증은 해당 근거 묶음에서 수행한다."
+        }
+      ]
+    },
+    "date_chat_meeting_20261122": {
+      "kind": "source_review",
+      "scope": "F09-05/06 채팅·만남·피드백의 API/서비스/권한/앱/실시간 중계 소스 대조 및 F09-04의 유효한 방 목록 경로를 누락으로 해석한 문서 정정. F09 전체 도메인 정리. 실제 제품 실행 아님.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateChatController.java",
+          "sha256": "9973a6ce288177fe13de1bec552505beea2b406beb4e7b8e800c10da25665e43",
+          "reviewScope": "전체 공개 경로/메서드/요청 및 응답 List/Page/access/since/읽음"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateMeetingController.java",
+          "sha256": "896ddb9469a57b87951ba3a2bf3cbd7399a32a5ed8f6adc0bdc8444cda3d8757",
+          "reviewScope": "제안/상태 PATCH/매치별 목록과 공개 범위"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateMeetingFeedbackController.java",
+          "sha256": "9664d5f341e20083b982f0caf67a9b0fae7034b1a7ceeb05da84f996c9890121",
+          "reviewScope": "본인 피드백 제출/조회와 응답 상태"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/service/DateMeetingService.java",
+          "sha256": "7d5935e30867917aafefe6c8b47e506fbbec72d80d207b2196d3f89a118b408f",
+          "reviewScope": "전체 제안 입력 범위/매치 잠금·방 조건·전이·목록·알림 outbox·actions"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/service/DateMeetingFeedbackService.java",
+          "sha256": "beaf8d229dc7f9fde909f96a9a95459932427e47eaedc611604ab292bb516283",
+          "reviewScope": "전체 제출/본인 조회의 다른 상태/차단 조건·중복·필드 검증"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/repository/query/DateChatRoomQueryRepository.java",
+          "sha256": "049b8201351f19c59149f7ceaa6dd403ce345c9af56c810e5e63e0d2bcd85d20",
+          "reviewScope": "전체 MATCH/PRIVATE_MEETING 당사자 ACTIVE 합집합·무정렬·방 공유 잠금"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/repository/query/DateChatMessageQueryRepository.java",
+          "sha256": "cc6d9bcf1ffcf641fc2a87ca4a66d2244d59da3728e1f254908cc16098d91e39",
+          "reviewScope": "상대 미읽음 전체 변경과 방 안 id ASC 증분"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/param/DateChatSearchParam.java",
+          "sha256": "5791991199927a92a83516079e54591350cb7b2da05e39ec13feb839b17f3c1b",
+          "reviewScope": "기본 페이지 크기50"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/param/ChatMessageParam.java",
+          "sha256": "8cedbbc2f2711c28e5ad93fbbcd42c2eeb78c36569ecfdda154a1bdbe60ce153",
+          "reviewScope": "messageType/content/clientMessageId 필드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/param/DateMeetingAddParam.java",
+          "sha256": "be75f335a6d0e2f7d673827e426fc495d16047e3499b725b141059abda6eabfa",
+          "reviewScope": "매치/일시/장소/메모 필드와 요청 검증 어노테이션 부재"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/param/DateMeetingModParam.java",
+          "sha256": "534d1f23c081fc4e678c236d2b83ca58439c352d1b0f97107c78deb82ce868c7",
+          "reviewScope": "상태 문자열"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/param/DateMeetingFeedbackParam.java",
+          "sha256": "7f2235ea119fcf753092c73d9cd0d137170c35d908fcf23c8526d27769f32c7a",
+          "reviewScope": "nullable Boolean 선택과 Integer 만족도"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/vo/ChatRoomVo.java",
+          "sha256": "f828ac8558aef942f62bfb181a2264d6406369646a81e3eab55be7d8c18abefc",
+          "reviewScope": "방 유형·nullable matchId·상대 표시·사진·미리보기·actions"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/vo/ChatMessageVo.java",
+          "sha256": "b063b4fad7a9a40c8fa9ed9cff297a6e27800fefffd508d46ff57439df0c08e7",
+          "reviewScope": "메시지 응답 필드와 읽음 boolean"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/vo/ChatAccessVo.java",
+          "sha256": "3345a2ee9c4ab491a60bdd02b0eadbdfc45843019093ed0510145a64c22c4b69",
+          "reviewScope": "접근 허용/상대/미읽음과 거절 false/null/0"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/vo/ChatMessagesSinceVo.java",
+          "sha256": "c4e9b800f56964d34351570b251dd0fe760e072dd6d5f609ae864c5496fa2728",
+          "reviewScope": "messages와hasMore"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/vo/DateMeetingVo.java",
+          "sha256": "269ee556eda7035883930cbfb969a7342ed3909a232b001ea7f86930682b4982",
+          "reviewScope": "일시/장소/상태/작성시각과 accept/cancel/complete"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/vo/DateMeetingFeedbackVo.java",
+          "sha256": "9814f88a2c06e7bf371e8ac35050c53752c601998e843ddcc1f02c6538d522e1",
+          "reviewScope": "본인 응답 필드 및 submitted"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/model/DateChatMessage.java",
+          "sha256": "50cc3ad8676f77ddfc3ebd657a2ee555c985babb9a9ceebb7484effd6abb7877",
+          "reviewScope": "메시지 엔티티·선택 멱등 키·암호문 저장"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/model/DateMeeting.java",
+          "sha256": "8436116d4399ee17d6566176d548058d0bb17c7e7bcc68db418904bad9e17e7d",
+          "reviewScope": "날짜/시간 필수·선택 장소/메모·상태 열"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/model/DateMeetingFeedback.java",
+          "sha256": "5ac58d2d42072b2bca2f70ce3945937c596c328d8fb5f9f5cb4609877c153a42",
+          "reviewScope": "본인 응답 엔티티"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/realtime/DateChatRealtimeEventListener.java",
+          "sha256": "d512ec0b821bb84778c5e53b394de066e84330f4ba0e3aff0ffcef86e77671ff",
+          "reviewScope": "메시지/읽음 AFTER_COMMIT 발행·발행 예외 기록"
+        },
+        {
+          "path": "community_app/lib/data/api/date_chat_api.dart",
+          "sha256": "ebe69d6ad8df366e973681e01475dabf7fa966b2935e7717f959d465f6d59b23",
+          "reviewScope": "목록/페이지/since/송신/읽음 REST 연결과 읽음 응답 폐기"
+        },
+        {
+          "path": "community_app/lib/data/repositories/date_chat_repository.dart",
+          "sha256": "64544e649032491db30343eeebb5dfd0c27cf03c1aecb8a9a3f7b967b8025637",
+          "reviewScope": "REST 계약과 Result 변환"
+        },
+        {
+          "path": "community_app/lib/data/api/date_meeting_api.dart",
+          "sha256": "3dcbde30744ef3fd8f06cf03b67f34f3552b73a90aba1bc6d29d5ac38e5380de",
+          "reviewScope": "5개 만남/피드백 REST 연결"
+        },
+        {
+          "path": "community_app/lib/data/repositories/date_meeting_repository.dart",
+          "sha256": "89226ca819d1398bc3d119e9227431622654c221525ddce8a8c48386493fd0bd",
+          "reviewScope": "Result 반환과 상태 변경 요청"
+        },
+        {
+          "path": "community_app/lib/domain/providers/date/date_chat_provider.dart",
+          "sha256": "d4b7e5307a15f0b8887e9349e4f5f6e69b3798f191fc5e96d4e24a93c3829dc9",
+          "reviewScope": "방 목록/차단 구독 최신 diff; 방 초기50건/대기 복원; 입장 복구; 송신/REST폴백·미확정·재시도·삭제·읽음·이전 기록/계정 세대 범위"
+        },
+        {
+          "path": "community_app/lib/domain/providers/date/date_meeting_provider.dart",
+          "sha256": "6d1c73b067e5b6e54517f6e5f20b1bde3defa3d76cddbef48b2a74fbf9c769c6",
+          "reviewScope": "전체 만남·피드백 조회/명령/성공 갱신/conflict 분기; 최신 차단 구독 diff 포함"
+        },
+        {
+          "path": "community_app/lib/data/socket/date_chat_reconciler.dart",
+          "sha256": "6c658863c7758605ef12c252498d2704aba982ad7350fffc3a86c9d452a1378b",
+          "reviewScope": "전체 since100건·종료·5회 일반 오류·429대기·실행 세대"
+        },
+        {
+          "path": "community_app/lib/data/models/date/chat_message_vo.dart",
+          "sha256": "b1b40f9e970cd698671178538dde2958d430f7b9ab23b8dd2a8d9992d2384a10",
+          "reviewScope": "REST read → isRead 매핑"
+        },
+        {
+          "path": "community_app/lib/presentation/date/screens/chat_room_list_screen.dart",
+          "sha256": "db3b06c213a27582c2e6a4b3834ab9c79fe0c21a72dde680821dfa2294ae84a1",
+          "reviewScope": "22–85 방 목록 상태/갱신/roomId 이동; 146–190 이름/미리보기/미읽음"
+        },
+        {
+          "path": "community_app/lib/presentation/date/screens/chat_screen.dart",
+          "sha256": "b69181d3bed06a718041ad586cd4726ced10c0ed5731b61a6bdaf9d20145d927",
+          "reviewScope": "194–280 연결 알림·최신방 actions·사진/만남 입구; 342–397 복구/닫힘; 427–600 composer/미확정/실패·재시도/초안 소비"
+        },
+        {
+          "path": "community_app/lib/presentation/date/screens/meeting_proposal_screen.dart",
+          "sha256": "62dd82d11534e8b548547447f2d844b0acf7f1ca32e88cae14dc256882d9beb0",
+          "reviewScope": "현재 입구/방 표지·최근 활성/완료 선택·입력·제안/전이/복귀·피드백·정적문구; 최신색표현 diff는 동작 변경 없음"
+        },
+        {
+          "path": "community_app/lib/presentation/date/widgets/date_meeting_feedback_sheet.dart",
+          "sha256": "97b4b6be936ce1973599dbb7396871e84f0dae9de614db60a9a05cd2af758491",
+          "reviewScope": "23–141 필수 선택·선택 만족도·시트가 닫히며 Param 반환"
+        },
+        {
+          "path": "community-realtime/src/main/java/com/endside/communityrealtime/namespace/datechat/service/DateChatMessageService.java",
+          "sha256": "74eacf5faf1df3a1b81b132dfabf9067a7e64466e92c7b2a8e79454036b9702c",
+          "reviewScope": "전체 회원 토큰 기반 공개 API 송신/읽음 중계"
+        },
+        {
+          "path": "community-realtime/src/main/java/com/endside/communityrealtime/namespace/datechat/service/DateChatRoomAuthorizationService.java",
+          "sha256": "d33de5e555990ac0f7097c634c9a14d8b02f013fb45b0552a30de6194d82a7bb",
+          "reviewScope": "전체 access 입장 승인·현재 목록 재확인·오류구분"
+        },
+        {
+          "path": "community-realtime/src/main/java/com/endside/communityrealtime/namespace/datechat/handler/DateChatHandler.java",
+          "sha256": "1ccc2238f0262091fe4b91bb04387d4e47ecd3d3aa1eac67304eb17d90d5ed66",
+          "reviewScope": "215–325 송신/읽음 유효성·회원토큰·공개 API 쓰기 및 ACK; 송신 오류 매핑"
+        },
+        {
+          "path": "community-realtime/src/main/java/com/endside/communityrealtime/namespace/datechat/data/DateChatEventName.java",
+          "sha256": "df924c43a315e7b0eacfb63bbcabbc6a0f794efd550cfacc08d28d2e2994e7d2",
+          "reviewScope": "현재 실시간 이벤트 이름"
+        },
+        {
+          "path": "community-realtime/src/main/java/com/endside/communityrealtime/namespace/datechat/data/ChatMessageVo.java",
+          "sha256": "e993293cb2980bae909b5978590f8dd351d672794e40302dc64e3c20119f0334",
+          "reviewScope": "isRead 직렬화와 read/isRead 입력 별칭"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/service/DateChatService.java",
+          "sha256": "43de1ae3e8f049b97ebfbe0e489dcd2b4913d31e2d48dac75fd0e6407934d8b4",
+          "reviewScope": "98–545 목록·접근·페이지/증분·송신 검증/잠금/멱등·읽음·방 유형·actions·상대 표시; 571–584 메시지 응답"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/policy/DateAbilityPolicy.java",
+          "sha256": "c5cf7b70527d59a8c2a7456b162ba23c8bcc282a90b334434d63bc331155d8ee",
+          "reviewScope": "29–145 liveMatch/전이/제안/채팅 참여·차단·송신 재검사"
+        },
+        {
+          "path": "community_api/domain/src/main/resources/db/migration/V1__init.sql",
+          "sha256": "65cd46eb4295dc2bede2b38643ee2339a9d044c8a1bdfa78a52d7f3eea7fb289",
+          "reviewScope": "2921–2985 데이트 메시지/만남/피드백 DDL와 복합 고유 키만 대조"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/dating_routes.dart",
+          "sha256": "6e1a7ffb1d2e65c192dce54ad3a3db458c41112a5c6888ade20ff39c3722f34f",
+          "reviewScope": "등록된 chat 목록과 chat/:roomId·meeting/:matchId 실제 주소 및 선택 query"
+        },
+        {
+          "path": "community_app/lib/core/router/routes.dart",
+          "sha256": "e17b9d164a2b1fd80778610c0d9c5b49438fc60bcf9a758e852768c04f76fd92",
+          "reviewScope": "418–420 데이트 목록/개별 방/만남 경로 상수"
+        },
+        {
+          "path": "community_app/lib/core/utils/notification_router.dart",
+          "sha256": "b855b662852561c0229007c825d4f5d261eb0f20252ae2ae1316a51362bccc67",
+          "reviewScope": "572–588 CHAT_MESSAGE 방 목록·피드백 resolver,1367–1371 matchId 전용 이동"
+        }
+      ],
+      "reuses": [
+        "creator_stats_20261122",
+        "date_identity_profile_20261122",
+        "date_matching_block_20261122",
+        "settlement_create_20261122",
+        "settlement_status_summary_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-04_match_list_prd.md",
+          "sha256": "514374f5efe7b995e333447d79ee5d09c3e74845ee9a60e08a6eac9b75c2da56"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-05_chat_prd.md",
+          "sha256": "68b12332e2bfd32316c03ed01ddeed1682f6f15cfb101fb118b01259a31c70dc"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-06_meeting_proposal_prd.md",
+          "sha256": "02bacfc8673723699c49380ed0d989eafa7048e1455a942859945ed41def7479"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/09_프라이빗_데이팅_prd.md",
+          "sha256": "39959e319afdad8a3e5175f48212322e73f99b42e4615a25d55224b4ab0fe93c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-01_verification_prd.md",
+          "sha256": "b23553fe1606ec404362cea808a5f91e0aa4ca91a8fe26f4df95bde40a3b44fa"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-02_profile_prd.md",
+          "sha256": "919d199edcb321fe5edb81cabf2731a19f0d0cd3a96bab77350ffda7a40a5538"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-03_candidate_swipe_prd.md",
+          "sha256": "186a8636af6ddf3fc71836490b89f0108f1af592b93fa08fce4effe26d248f62"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-07_block_prd.md",
+          "sha256": "c7024ade9bf17c4a9415dc17e5276a91766a460472056d11c34f3b3e0b8ac891"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-08_profile_views_prd.md",
+          "sha256": "dd8771365f5b69289097ee36aa6f6cf9447b1b1b81dc674bd56f8798236c791b"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F09-04.html": [
+          "sidebar",
+          "launch-strip",
+          "current-1",
+          "current-2",
+          "current-3",
+          "current-4",
+          "current-5",
+          "current-limits",
+          "release-completion"
+        ],
+        "docs/features/F09-05.html": [
+          "sidebar",
+          "launch-strip",
+          "state-current",
+          "revoked-session",
+          "release-completion"
+        ],
+        "docs/features/F09-06.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/domains/09-dating.html": [
+          "sidebar",
+          "launch-strip"
+        ]
+      },
+      "referenceChanges": [
+        "F09-05 access/since 2개와 F09-06 제안/전이/조회/피드백 5개 등록",
+        "F09-04 /dating/chat은 등록된 방 목록: 과거 미완성 입구 판정 정정"
+      ],
+      "followUpFindings": [
+        "채팅은 MATCH와 PRIVATE_MEETING을 지원하고 공개 송신은 TEXT만; 선택 멱등 키/경쟁 실패 경계",
+        "소켓 우선·특정 오류 REST 재시도·결과 미확인 및 기존 대기 복원·누락/과거 기록 복구",
+        "CHAT_MESSAGE 알림은 방 목록; 만남 피드백 알림은 matchId와 최신 완료 선택",
+        "만남 입력 검사 앱/서비스/DB 차이; 24시간/3일 정적 문구와 제안 멱등 부재",
+        "제안·목록/전이·피드백 제출/조회가 서로 다른 방/차단/상태 조건",
+        "피드백 전송 전 시트 닫힘·조회 실패 숨김·이전 완료 건 미응답 입구",
+        "소스 변경 중 최신 차단 신호 구독 추가를 현재 코드로 대조; 전역 변경 영향 통합은 후속"
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 132개가 실제 소스와 일치합니다.",
+        "groupDigests": "54 source/canonical digests; 19 retained HTML IDs",
+        "derivedDocuments": "21 documents; shared batch verified 21 paths, 76 relative links/anchors and 13 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review only"
+      },
+      "observedSourceVersions": {
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+        "community_app": "7b708bf5e4dbfefa014fe23e734b0720415976a0"
       }
     }
   },
@@ -37018,8 +37410,8 @@
       "observation": "로컬 main; 이전 판 이후 시험 준비 스크립트2개 변경·기존 문서 근거 경로 영향 없음. 원격 재조회 없음"
     },
     "community_app": {
-      "commit": "6c62153ed7ca5138a35668ecdea5b299699c620d",
-      "observation": "로컬 main; 기존 근거12개 영향 파일의 색/팔레트 diff 대조. 신규 색 디자인의 시각 검수나 미검토 기능 완료를 뜻하지 않음. 원격 재조회 없음"
+      "commit": "7b708bf5e4dbfefa014fe23e734b0720415976a0",
+      "observation": "로컬 HEAD 관찰; 채팅/만남 현재 범위 대조. 다른 기존 근거 변경 영향은 pendingSourceAdvances에 명시하며 전체 재대조 완료를 뜻하지 않음. 원격 재조회 없음"
     },
     "community-realtime": {
       "commit": "83b145969779e0fe0236441cdcdd3f15678037b2",
@@ -37713,6 +38105,1308 @@
         ]
       },
       "note": "작업 중 다른 세션의 D21/D22 시트 변경. 현재 F08-01/02 검토 경로에는 영향 없음. 기존 그룹의 판정은 기록된 이전 소스 지문 기준으로 유지하며 다음 변경 대조/최종 통합 전에 영향23경로를 확인한다. 이번에 기능 설명·화면 정상 동작을 재검증한 것 아님."
+    },
+    "community_app_0552ff2_to_7b708bf": {
+      "repository": "community_app",
+      "fromCommit": "0552ff22b84b68aa83bed8a40c6f4c1cea4a40d9",
+      "toCommit": "7b708bf5e4dbfefa014fe23e734b0720415976a0",
+      "status": "pending_review",
+      "changedPaths": [
+        "community_app/CLAUDE.md",
+        "community_app/audit/app_quality/evidence/UIUX-DS-20261121/baseline/assignments.json",
+        "community_app/integration_test/mileage_followup_journey_test.dart",
+        "community_app/integration_test/seed_club_finance_route_test.dart",
+        "community_app/lib/core/router/feature_routes/club_admin_routes.dart",
+        "community_app/lib/core/router/route_guards.dart",
+        "community_app/lib/core/testing/test_ids.dart",
+        "community_app/lib/core/theme/app_colors.dart",
+        "community_app/lib/core/theme/app_theme.dart",
+        "community_app/lib/data/models/common/api_error.dart",
+        "community_app/lib/data/models/date/date_match_vo.dart",
+        "community_app/lib/domain/providers/attendance/waitlist_provider.dart",
+        "community_app/lib/domain/providers/attendance/waitlist_provider.g.dart",
+        "community_app/lib/domain/providers/club/album_comment_provider.dart",
+        "community_app/lib/domain/providers/club/album_comment_provider.g.dart",
+        "community_app/lib/domain/providers/club/club_invitation_provider.dart",
+        "community_app/lib/domain/providers/club/club_invitation_provider.g.dart",
+        "community_app/lib/domain/providers/club/club_member_provider.dart",
+        "community_app/lib/domain/providers/club/club_member_provider.g.dart",
+        "community_app/lib/domain/providers/club/club_ownership_transfer_provider.dart",
+        "community_app/lib/domain/providers/club/club_ownership_transfer_provider.g.dart",
+        "community_app/lib/domain/providers/club/club_permission_provider.dart",
+        "community_app/lib/domain/providers/club/comment_provider.dart",
+        "community_app/lib/domain/providers/club/comment_provider.g.dart",
+        "community_app/lib/domain/providers/club/mention_candidate_provider.dart",
+        "community_app/lib/domain/providers/club/mention_candidate_provider.g.dart",
+        "community_app/lib/domain/providers/club/post_detail_provider.dart",
+        "community_app/lib/domain/providers/club/post_detail_provider.g.dart",
+        "community_app/lib/domain/providers/club/post_list_provider.dart",
+        "community_app/lib/domain/providers/club/post_list_provider.g.dart",
+        "community_app/lib/domain/providers/common/paged_list.dart",
+        "community_app/lib/domain/providers/connectivity/met_people_provider.dart",
+        "community_app/lib/domain/providers/connectivity/met_people_provider.g.dart",
+        "community_app/lib/domain/providers/date/date_block_provider.dart",
+        "community_app/lib/domain/providers/date/date_block_provider.g.dart",
+        "community_app/lib/domain/providers/date/date_chat_provider.dart",
+        "community_app/lib/domain/providers/date/date_chat_provider.g.dart",
+        "community_app/lib/domain/providers/date/date_match_provider.dart",
+        "community_app/lib/domain/providers/date/date_match_provider.g.dart",
+        "community_app/lib/domain/providers/date/date_meeting_provider.dart",
+        "community_app/lib/domain/providers/date/date_meeting_provider.g.dart",
+        "community_app/lib/domain/providers/date/date_profile_provider.dart",
+        "community_app/lib/domain/providers/date/date_profile_provider.g.dart",
+        "community_app/lib/domain/providers/date/profile_view_provider.dart",
+        "community_app/lib/domain/providers/date/profile_view_provider.g.dart",
+        "community_app/lib/domain/providers/event/event_detail_provider.dart",
+        "community_app/lib/domain/providers/event/event_detail_provider.g.dart",
+        "community_app/lib/domain/providers/event/event_list_provider.dart",
+        "community_app/lib/domain/providers/event/event_list_provider.g.dart",
+        "community_app/lib/domain/providers/event/event_message_provider.dart",
+        "community_app/lib/domain/providers/event/event_message_provider.g.dart",
+        "community_app/lib/domain/providers/event/event_share_recipient_provider.dart",
+        "community_app/lib/domain/providers/event/event_share_recipient_provider.g.dart",
+        "community_app/lib/domain/providers/event/transport_coordination_provider.dart",
+        "community_app/lib/domain/providers/event/transport_coordination_provider.g.dart",
+        "community_app/lib/domain/providers/home/home_feed_provider.dart",
+        "community_app/lib/domain/providers/home/home_feed_provider.g.dart",
+        "community_app/lib/domain/providers/home/recommend_events_provider.dart",
+        "community_app/lib/domain/providers/home/recommend_events_provider.g.dart",
+        "community_app/lib/domain/providers/location/attendee_distance_provider.dart",
+        "community_app/lib/domain/providers/location/attendee_distance_provider.g.dart",
+        "community_app/lib/domain/providers/location/event_location_provider.dart",
+        "community_app/lib/domain/providers/location/event_location_provider.g.dart",
+        "community_app/lib/domain/providers/market/creator_provider.dart",
+        "community_app/lib/domain/providers/market/creator_provider.g.dart",
+        "community_app/lib/domain/providers/market/market_item_provider.dart",
+        "community_app/lib/domain/providers/market/market_item_provider.g.dart",
+        "community_app/lib/domain/providers/meeting_settlement/history_provider.dart",
+        "community_app/lib/domain/providers/meeting_settlement/history_provider.g.dart",
+        "community_app/lib/domain/providers/meeting_settlement/settlement_entries_provider.dart",
+        "community_app/lib/domain/providers/meeting_settlement/settlement_entries_provider.g.dart",
+        "community_app/lib/domain/providers/notification/notification_list_provider.dart",
+        "community_app/lib/domain/providers/notification/notification_list_provider.g.dart",
+        "community_app/lib/domain/providers/poll/event_poll_list_provider.dart",
+        "community_app/lib/domain/providers/poll/event_poll_list_provider.g.dart",
+        "community_app/lib/domain/providers/preview/preview_provider.dart",
+        "community_app/lib/domain/providers/preview/preview_provider.g.dart",
+        "community_app/lib/domain/providers/profile/people_data_refresh_provider.dart",
+        "community_app/lib/domain/providers/provider/offering_provider.dart",
+        "community_app/lib/domain/providers/provider/offering_provider.g.dart",
+        "community_app/lib/domain/providers/review/local_report_provider.dart",
+        "community_app/lib/domain/providers/review/local_report_provider.g.dart",
+        "community_app/lib/domain/providers/review/review_list_provider.dart",
+        "community_app/lib/domain/providers/review/review_list_provider.g.dart",
+        "community_app/lib/domain/providers/search/search_provider.dart",
+        "community_app/lib/domain/providers/search/search_provider.g.dart",
+        "community_app/lib/domain/providers/search/search_typed_provider.dart",
+        "community_app/lib/domain/providers/search/search_typed_provider.g.dart",
+        "community_app/lib/domain/providers/stamp/stamp_admin_providers.dart",
+        "community_app/lib/domain/providers/stamp/stamp_admin_providers.g.dart",
+        "community_app/lib/domain/providers/warning/warning_admin_commands.dart",
+        "community_app/lib/presentation/auth/screens/onboarding_interests_screen.dart",
+        "community_app/lib/presentation/auth/screens/onboarding_location_screen.dart",
+        "community_app/lib/presentation/auth/screens/onboarding_profile_screen.dart",
+        "community_app/lib/presentation/auth/screens/onboarding_welcome_screen.dart",
+        "community_app/lib/presentation/auth/screens/reconsent_screen.dart",
+        "community_app/lib/presentation/auth/screens/signup_screen.dart",
+        "community_app/lib/presentation/auth/screens/splash_screen.dart",
+        "community_app/lib/presentation/auth/widgets/social_login_buttons.dart",
+        "community_app/lib/presentation/auth/widgets/social_login_info_sheet.dart",
+        "community_app/lib/presentation/calendar/screens/availability_screen.dart",
+        "community_app/lib/presentation/calendar/screens/calendar_sync_screen.dart",
+        "community_app/lib/presentation/calendar/screens/daily_calendar_screen.dart",
+        "community_app/lib/presentation/calendar/screens/monthly_calendar_screen.dart",
+        "community_app/lib/presentation/calendar/screens/recurring_rule_screen.dart",
+        "community_app/lib/presentation/club/admin/club_outbox_monitoring_screen.dart",
+        "community_app/lib/presentation/club/admin/widgets/outbox_timeline_chart.dart",
+        "community_app/lib/presentation/club/community/screens/announcement_create_screen.dart",
+        "community_app/lib/presentation/club/community/screens/announcement_edit_screen.dart",
+        "community_app/lib/presentation/club/community/screens/announcement_list_screen.dart",
+        "community_app/lib/presentation/club/community/screens/board_list_screen.dart",
+        "community_app/lib/presentation/club/community/screens/club_calendar_screen.dart",
+        "community_app/lib/presentation/club/community/screens/photo_album_detail_screen.dart",
+        "community_app/lib/presentation/club/community/screens/photo_album_list_screen.dart",
+        "community_app/lib/presentation/club/community/screens/photo_upload_screen.dart",
+        "community_app/lib/presentation/club/community/screens/post_create_screen.dart",
+        "community_app/lib/presentation/club/community/screens/post_detail_screen.dart",
+        "community_app/lib/presentation/club/community/screens/post_edit_screen.dart",
+        "community_app/lib/presentation/club/community/screens/post_list_screen.dart",
+        "community_app/lib/presentation/club/community/widgets/album_card.dart",
+        "community_app/lib/presentation/club/community/widgets/album_visibility_selector.dart",
+        "community_app/lib/presentation/club/community/widgets/announcement_card.dart",
+        "community_app/lib/presentation/club/community/widgets/calendar_day_events.dart",
+        "community_app/lib/presentation/club/community/widgets/calendar_month_view.dart",
+        "community_app/lib/presentation/club/community/widgets/calendar_week_agenda.dart",
+        "community_app/lib/presentation/club/community/widgets/calendar_week_strip.dart",
+        "community_app/lib/presentation/club/community/widgets/club_calendar_event_card.dart",
+        "community_app/lib/presentation/club/community/widgets/club_comment_thread.dart",
+        "community_app/lib/presentation/club/community/widgets/comment_input.dart",
+        "community_app/lib/presentation/club/community/widgets/comment_tile.dart",
+        "community_app/lib/presentation/club/community/widgets/mention_text.dart",
+        "community_app/lib/presentation/club/community/widgets/photo_grid.dart",
+        "community_app/lib/presentation/club/community/widgets/photo_selection_bar.dart",
+        "community_app/lib/presentation/club/community/widgets/photo_upload_progress.dart",
+        "community_app/lib/presentation/club/community/widgets/photo_viewer.dart",
+        "community_app/lib/presentation/club/community/widgets/pinned_post_section.dart",
+        "community_app/lib/presentation/club/community/widgets/post_card.dart",
+        "community_app/lib/presentation/club/community/widgets/post_composer_widgets.dart",
+        "community_app/lib/presentation/club/community/widgets/post_image_picker.dart",
+        "community_app/lib/presentation/club/community/widgets/post_more_menu.dart",
+        "community_app/lib/presentation/club/community/widgets/reply_tile.dart",
+        "community_app/lib/presentation/club/community/widgets/schedule_publish_section.dart",
+        "community_app/lib/presentation/club/finance/screens/club_event_list_screen.dart",
+        "community_app/lib/presentation/club/finance/screens/club_fund_screen.dart",
+        "community_app/lib/presentation/club/finance/screens/club_recurring_event_screen.dart",
+        "community_app/lib/presentation/club/finance/screens/donation_list_screen.dart",
+        "community_app/lib/presentation/club/finance/screens/donation_screen.dart",
+        "community_app/lib/presentation/club/finance/screens/subscription_manage_screen.dart",
+        "community_app/lib/presentation/club/finance/screens/subscription_screen.dart",
+        "community_app/lib/presentation/club/finance/screens/withdrawal_screen.dart",
+        "community_app/lib/presentation/club/finance/widgets/attendance_histogram.dart",
+        "community_app/lib/presentation/club/finance/widgets/cancel_subscription_dialog.dart",
+        "community_app/lib/presentation/club/finance/widgets/club_event_card.dart",
+        "community_app/lib/presentation/club/finance/widgets/donation_confirm_dialog.dart",
+        "community_app/lib/presentation/club/finance/widgets/donation_month_header.dart",
+        "community_app/lib/presentation/club/finance/widgets/donation_summary_card.dart",
+        "community_app/lib/presentation/club/finance/widgets/event_stats_overview.dart",
+        "community_app/lib/presentation/club/finance/widgets/event_status_tabs.dart",
+        "community_app/lib/presentation/club/finance/widgets/event_trend_chart.dart",
+        "community_app/lib/presentation/club/finance/widgets/fee_breakdown_card.dart",
+        "community_app/lib/presentation/club/finance/widgets/fund_balance_card.dart",
+        "community_app/lib/presentation/club/finance/widgets/fund_chart.dart",
+        "community_app/lib/presentation/club/finance/widgets/payment_history_list.dart",
+        "community_app/lib/presentation/club/finance/widgets/payout_account_section.dart",
+        "community_app/lib/presentation/club/finance/widgets/popular_events_list.dart",
+        "community_app/lib/presentation/club/finance/widgets/quick_amount_chips.dart",
+        "community_app/lib/presentation/club/finance/widgets/subscription_info_card.dart",
+        "community_app/lib/presentation/club/finance/widgets/subscription_plan_card.dart",
+        "community_app/lib/presentation/club/finance/widgets/subscription_status_badge.dart",
+        "community_app/lib/presentation/club/finance/widgets/transaction_card.dart",
+        "community_app/lib/presentation/club/finance/widgets/weekday_distribution_chart.dart",
+        "community_app/lib/presentation/club/screens/club_detail_screen.dart",
+        "community_app/lib/presentation/club/screens/club_management_screen.dart",
+        "community_app/lib/presentation/club/screens/club_member_list_screen.dart",
+        "community_app/lib/presentation/club/screens/club_member_permission_screen.dart",
+        "community_app/lib/presentation/club/widgets/club_ability_button.dart",
+        "community_app/lib/presentation/club/widgets/club_category_tabs.dart",
+        "community_app/lib/presentation/club/widgets/club_debt_repayment_section.dart",
+        "community_app/lib/presentation/club/widgets/club_detail_header.dart",
+        "community_app/lib/presentation/club/widgets/club_fit_preview_section.dart",
+        "community_app/lib/presentation/club/widgets/club_form.dart",
+        "community_app/lib/presentation/club/widgets/club_grid_card.dart",
+        "community_app/lib/presentation/club/widgets/club_info_section.dart",
+        "community_app/lib/presentation/club/widgets/club_invite_dialog.dart",
+        "community_app/lib/presentation/club/widgets/club_member_preview.dart",
+        "community_app/lib/presentation/club/widgets/club_membership_action_sheet.dart",
+        "community_app/lib/presentation/club/widgets/club_menu.dart",
+        "community_app/lib/presentation/club/widgets/club_pending_invitations_tab.dart",
+        "community_app/lib/presentation/club/widgets/member_card.dart",
+        "community_app/lib/presentation/club/widgets/member_stats_overview.dart",
+        "community_app/lib/presentation/club/widgets/member_top_list.dart",
+        "community_app/lib/presentation/club/widgets/member_trend_chart.dart",
+        "community_app/lib/presentation/club/widgets/role_change_sheet.dart",
+        "community_app/lib/presentation/club/widgets/role_distribution_chart.dart",
+        "community_app/lib/presentation/common/data/demographics_section.dart",
+        "community_app/lib/presentation/common/feedback/app_bottom_sheet.dart",
+        "community_app/lib/presentation/common/inputs/app_text_area.dart",
+        "community_app/lib/presentation/common/inputs/app_text_input.dart",
+        "community_app/lib/presentation/common/layout/app_error_state.dart",
+        "community_app/lib/presentation/common/layout/async_value_widget.dart",
+        "community_app/lib/presentation/common/layout/paged_scroll_listener.dart",
+        "community_app/lib/presentation/community_chat/screens/channel_list_screen.dart",
+        "community_app/lib/presentation/community_chat/screens/channel_screen.dart",
+        "community_app/lib/presentation/community_chat/widgets/shared_event_message.dart",
+        "community_app/lib/presentation/curated/screens/event_assignments_screen.dart",
+        "community_app/lib/presentation/date/screens/candidate_card_screen.dart",
+        "community_app/lib/presentation/date/screens/chat_room_list_screen.dart",
+        "community_app/lib/presentation/date/screens/chat_screen.dart",
+        "community_app/lib/presentation/date/screens/date_blocks_screen.dart",
+        "community_app/lib/presentation/date/screens/date_manual_review_screen.dart",
+        "community_app/lib/presentation/date/screens/date_profile_create_screen.dart",
+        "community_app/lib/presentation/date/screens/date_profile_edit_screen.dart",
+        "community_app/lib/presentation/date/screens/date_profile_screen.dart",
+        "community_app/lib/presentation/date/screens/match_list_screen.dart",
+        "community_app/lib/presentation/date/screens/meeting_proposal_screen.dart",
+        "community_app/lib/presentation/date/screens/profile_viewers_screen.dart",
+        "community_app/lib/presentation/date/screens/verification_screen.dart",
+        "community_app/lib/presentation/date/widgets/community_data_opt_in_toggle.dart",
+        "community_app/lib/presentation/date/widgets/date_block_reason_sheet.dart",
+        "community_app/lib/presentation/date/widgets/date_meeting_feedback_sheet.dart",
+        "community_app/lib/presentation/date/widgets/religion_consent_checkbox.dart",
+        "community_app/lib/presentation/dispute/screens/appeal_form_screen.dart",
+        "community_app/lib/presentation/dispute/screens/dispute_case_create_screen.dart",
+        "community_app/lib/presentation/dispute/screens/dispute_case_detail_screen.dart",
+        "community_app/lib/presentation/dispute/screens/dispute_evidence_screen.dart",
+        "community_app/lib/presentation/dispute/screens/my_dispute_cases_screen.dart",
+        "community_app/lib/presentation/dispute/screens/no_show_refund_screen.dart",
+        "community_app/lib/presentation/dispute/widgets/dispute_conversation_section.dart",
+        "community_app/lib/presentation/dispute/widgets/dispute_design.dart",
+        "community_app/lib/presentation/dispute/widgets/dispute_timeline_tile.dart",
+        "community_app/lib/presentation/dispute/widgets/host_action_bar.dart",
+        "community_app/lib/presentation/dispute/widgets/host_action_summary_card.dart",
+        "community_app/lib/presentation/dispute/widgets/party_action_panel.dart",
+        "community_app/lib/presentation/event/screens/application_list_screen.dart",
+        "community_app/lib/presentation/event/screens/attendee_list_screen.dart",
+        "community_app/lib/presentation/event/screens/capacity_settings_screen.dart",
+        "community_app/lib/presentation/event/screens/event_bank_payment_queue_screen.dart",
+        "community_app/lib/presentation/event/screens/event_bank_payment_screen.dart",
+        "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+        "community_app/lib/presentation/event/screens/event_edit_screen.dart",
+        "community_app/lib/presentation/event/screens/event_list_screen.dart",
+        "community_app/lib/presentation/event/screens/event_message_screen.dart",
+        "community_app/lib/presentation/event/screens/event_party_bank_add_screen.dart",
+        "community_app/lib/presentation/event/screens/event_photos_screen.dart",
+        "community_app/lib/presentation/event/screens/my_reschedule_proposals_screen.dart",
+        "community_app/lib/presentation/event/screens/no_show_adjustment_screen.dart",
+        "community_app/lib/presentation/event/screens/qr_check_in_screen.dart",
+        "community_app/lib/presentation/event/screens/recurring_event_group_screen.dart",
+        "community_app/lib/presentation/event/screens/reschedule_proposal_batch_screen.dart",
+        "community_app/lib/presentation/event/screens/similar_events_screen.dart",
+        "community_app/lib/presentation/event/widgets/album_status_banner.dart",
+        "community_app/lib/presentation/event/widgets/application_card.dart",
+        "community_app/lib/presentation/event/widgets/attendee_card.dart",
+        "community_app/lib/presentation/event/widgets/cancel_attendance_sheet.dart",
+        "community_app/lib/presentation/event/widgets/check_in_short_code_sheet.dart",
+        "community_app/lib/presentation/event/widgets/check_in_stats_card.dart",
+        "community_app/lib/presentation/event/widgets/date_divider.dart",
+        "community_app/lib/presentation/event/widgets/event_apply_confirm_sheet.dart",
+        "community_app/lib/presentation/event/widgets/event_bank_payment_queue_card.dart",
+        "community_app/lib/presentation/event/widgets/event_create_decision_fields.dart",
+        "community_app/lib/presentation/event/widgets/event_create_step3.dart",
+        "community_app/lib/presentation/event/widgets/event_description.dart",
+        "community_app/lib/presentation/event/widgets/event_fit_preview_section.dart",
+        "community_app/lib/presentation/event/widgets/event_hero_image.dart",
+        "community_app/lib/presentation/event/widgets/event_info_section.dart",
+        "community_app/lib/presentation/event/widgets/event_plan_card.dart",
+        "community_app/lib/presentation/event/widgets/manual_check_in_list.dart",
+        "community_app/lib/presentation/event/widgets/my_events_tab_view.dart",
+        "community_app/lib/presentation/event/widgets/no_show_appeal_sheet.dart",
+        "community_app/lib/presentation/event/widgets/no_show_overturn_sheet.dart",
+        "community_app/lib/presentation/event/widgets/party_manage_sheet.dart",
+        "community_app/lib/presentation/event/widgets/photo_action_menu.dart",
+        "community_app/lib/presentation/event/widgets/photo_download_links_sheet.dart",
+        "community_app/lib/presentation/event/widgets/photo_fullscreen_viewer.dart",
+        "community_app/lib/presentation/event/widgets/photo_like_button.dart",
+        "community_app/lib/presentation/event/widgets/photo_report_dialog.dart",
+        "community_app/lib/presentation/event/widgets/photo_thumbnail.dart",
+        "community_app/lib/presentation/event/widgets/photo_upload_sheet.dart",
+        "community_app/lib/presentation/event/widgets/plan_search_sheet.dart",
+        "community_app/lib/presentation/event/widgets/prepayment_type_form.dart",
+        "community_app/lib/presentation/event/widgets/private_applicant_list.dart",
+        "community_app/lib/presentation/event/widgets/private_step_progress.dart",
+        "community_app/lib/presentation/event/widgets/qr_code_view.dart",
+        "community_app/lib/presentation/event/widgets/qr_scanner_view.dart",
+        "community_app/lib/presentation/event/widgets/recurring_event_group_info_widget.dart",
+        "community_app/lib/presentation/event/widgets/recurring_event_setup_widget.dart",
+        "community_app/lib/presentation/event/widgets/refund_policy_section.dart",
+        "community_app/lib/presentation/event/widgets/step_indicator.dart",
+        "community_app/lib/presentation/event/widgets/timeline_node.dart",
+        "community_app/lib/presentation/event/widgets/transport_editor_frame.dart",
+        "community_app/lib/presentation/event/widgets/transport_report_form.dart",
+        "community_app/lib/presentation/event/widgets/waitlist_item.dart",
+        "community_app/lib/presentation/event/widgets/wishlist_heart_button.dart",
+        "community_app/lib/presentation/home/screens/market_plan_detail_screen.dart",
+        "community_app/lib/presentation/home/screens/recommend_detail_screen.dart",
+        "community_app/lib/presentation/home/widgets/location_permission_banner.dart",
+        "community_app/lib/presentation/home/widgets/new_plan_section.dart",
+        "community_app/lib/presentation/home/widgets/recommend_badge.dart",
+        "community_app/lib/presentation/home/widgets/recommend_event_section.dart",
+        "community_app/lib/presentation/home/widgets/recommend_reason_list.dart",
+        "community_app/lib/presentation/home/widgets/section_error.dart",
+        "community_app/lib/presentation/home/widgets/upcoming_event_section.dart",
+        "community_app/lib/presentation/host/screens/host_inbox_screen.dart",
+        "community_app/lib/presentation/location/screens/directions_screen.dart",
+        "community_app/lib/presentation/location/screens/event_location_screen.dart",
+        "community_app/lib/presentation/location/screens/location_privacy_screen.dart",
+        "community_app/lib/presentation/location/widgets/event_map_widget.dart",
+        "community_app/lib/presentation/market/screens/bundle_curator_screen.dart",
+        "community_app/lib/presentation/market/screens/creator_market_items_screen.dart",
+        "community_app/lib/presentation/market/screens/creator_profile_screen.dart",
+        "community_app/lib/presentation/market/screens/creator_stats_screen.dart",
+        "community_app/lib/presentation/market/screens/market_item_create_screen.dart",
+        "community_app/lib/presentation/market/screens/market_item_detail_screen.dart",
+        "community_app/lib/presentation/market/screens/market_item_edit_screen.dart",
+        "community_app/lib/presentation/market/screens/market_main_screen.dart",
+        "community_app/lib/presentation/market/screens/market_search_screen.dart",
+        "community_app/lib/presentation/market/screens/my_collection_screen.dart",
+        "community_app/lib/presentation/market/widgets/market_category_picker.dart",
+        "community_app/lib/presentation/market/widgets/market_item_card.dart",
+        "community_app/lib/presentation/market/widgets/market_review_history_timeline.dart",
+        "community_app/lib/presentation/market/widgets/market_review_write_dialog.dart",
+        "community_app/lib/presentation/market/widgets/price_tag.dart",
+        "community_app/lib/presentation/meeting_settlement/screens/my_settlement_entries_screen.dart",
+        "community_app/lib/presentation/meeting_settlement/screens/refund_rules_screen.dart",
+        "community_app/lib/presentation/meeting_settlement/screens/settlement_appeals_screen.dart",
+        "community_app/lib/presentation/meeting_settlement/screens/settlement_audit_log_screen.dart",
+        "community_app/lib/presentation/meeting_settlement/screens/settlement_calculator_screen.dart",
+        "community_app/lib/presentation/meeting_settlement/screens/settlement_receipt_viewer_screen.dart",
+        "community_app/lib/presentation/meeting_settlement/screens/settlement_status_screen.dart",
+        "community_app/lib/presentation/meeting_settlement/screens/transfer_list_screen.dart",
+        "community_app/lib/presentation/meeting_settlement/widgets/bank_account_verification_sheet.dart",
+        "community_app/lib/presentation/meeting_settlement/widgets/clone_settlement_sheet.dart",
+        "community_app/lib/presentation/meeting_settlement/widgets/custom_split_form_widget.dart",
+        "community_app/lib/presentation/meeting_settlement/widgets/equal_split_form_widget.dart",
+        "community_app/lib/presentation/meeting_settlement/widgets/host_reputation_badge.dart",
+        "community_app/lib/presentation/meeting_settlement/widgets/my_share_row_card.dart",
+        "community_app/lib/presentation/meeting_settlement/widgets/participant_selector_widget.dart",
+        "community_app/lib/presentation/meeting_settlement/widgets/participant_share_card_widget.dart",
+        "community_app/lib/presentation/meeting_settlement/widgets/prepayment_pay_dialog.dart",
+        "community_app/lib/presentation/meeting_settlement/widgets/ratio_split_form_widget.dart",
+        "community_app/lib/presentation/meeting_settlement/widgets/recipient_account_section.dart",
+        "community_app/lib/presentation/meeting_settlement/widgets/settlement_action_bar_widget.dart",
+        "community_app/lib/presentation/meeting_settlement/widgets/settlement_item_card_widget.dart",
+        "community_app/lib/presentation/meeting_settlement/widgets/settlement_item_form_dialog.dart",
+        "community_app/lib/presentation/meeting_settlement/widgets/settlement_receipt_gallery_widget.dart",
+        "community_app/lib/presentation/meeting_settlement/widgets/transfer_card_widget.dart",
+        "community_app/lib/presentation/mileage/admin/screens/mileage_action_screen.dart",
+        "community_app/lib/presentation/mileage/admin/screens/mileage_audit_log_screen.dart",
+        "community_app/lib/presentation/mileage/admin/screens/mileage_console_screen.dart",
+        "community_app/lib/presentation/mileage/admin/screens/mileage_member_detail_screen.dart",
+        "community_app/lib/presentation/mileage/admin/screens/mileage_policy_screen.dart",
+        "community_app/lib/presentation/mileage/admin/screens/mileage_queue_screen.dart",
+        "community_app/lib/presentation/mileage/admin/screens/mileage_repeated_manual_review_screen.dart",
+        "community_app/lib/presentation/mileage/admin/widgets/mileage_bulk_confirm_dialog.dart",
+        "community_app/lib/presentation/mileage/admin/widgets/mileage_config_preview_dialog.dart",
+        "community_app/lib/presentation/mileage/admin/widgets/mileage_console_card.dart",
+        "community_app/lib/presentation/mileage/admin/widgets/mileage_member_picker_sheet.dart",
+        "community_app/lib/presentation/mileage/admin/widgets/mileage_permission_lock.dart",
+        "community_app/lib/presentation/mileage/admin/widgets/mileage_policy_row.dart",
+        "community_app/lib/presentation/mileage/screens/mileage_grade_list_screen.dart",
+        "community_app/lib/presentation/mileage/screens/mileage_host_proposal_screen.dart",
+        "community_app/lib/presentation/mileage/screens/mileage_ledger_screen.dart",
+        "community_app/lib/presentation/mileage/screens/mileage_season_ranking_screen.dart",
+        "community_app/lib/presentation/mileage/screens/mileage_seasons_screen.dart",
+        "community_app/lib/presentation/mileage/widgets/mileage_decoration.dart",
+        "community_app/lib/presentation/mileage/widgets/mileage_grade_card.dart",
+        "community_app/lib/presentation/mileage/widgets/mileage_sealed_feature_notice.dart",
+        "community_app/lib/presentation/notification/screens/club_activity_notification_settings_screen.dart",
+        "community_app/lib/presentation/notification/screens/device_management_screen.dart",
+        "community_app/lib/presentation/notification/screens/notification_list_screen.dart",
+        "community_app/lib/presentation/notification/screens/notification_settings_screen.dart",
+        "community_app/lib/presentation/notification/widgets/fcm_permission_banner.dart",
+        "community_app/lib/presentation/payment/screens/auto_charge_screen.dart",
+        "community_app/lib/presentation/payment/screens/charge_screen.dart",
+        "community_app/lib/presentation/payment/screens/creator_receivable_screen.dart",
+        "community_app/lib/presentation/payment/screens/hosting_ticket_screen.dart",
+        "community_app/lib/presentation/payment/screens/personal_subscription_screen.dart",
+        "community_app/lib/presentation/payment/screens/settlement_detail_screen.dart",
+        "community_app/lib/presentation/payment/screens/settlement_list_screen.dart",
+        "community_app/lib/presentation/payment/screens/transaction_detail_screen.dart",
+        "community_app/lib/presentation/payment/screens/wallet_meeting_settlement_list_screen.dart",
+        "community_app/lib/presentation/payment/screens/wallet_screen.dart",
+        "community_app/lib/presentation/payment/screens/withdrawal_request_screen.dart",
+        "community_app/lib/presentation/payment/widgets/amount_preset_widget.dart",
+        "community_app/lib/presentation/payment/widgets/balance_card_widget.dart",
+        "community_app/lib/presentation/payment/widgets/billing_auth_sim_widget.dart",
+        "community_app/lib/presentation/payment/widgets/charge_success_dialog.dart",
+        "community_app/lib/presentation/payment/widgets/earnings_chart_widget.dart",
+        "community_app/lib/presentation/payment/widgets/earnings_event_list_widget.dart",
+        "community_app/lib/presentation/payment/widgets/earnings_summary_card_widget.dart",
+        "community_app/lib/presentation/payment/widgets/payment_method_card_widget.dart",
+        "community_app/lib/presentation/payment/widgets/payment_method_selector_widget.dart",
+        "community_app/lib/presentation/payment/widgets/period_tab_widget.dart",
+        "community_app/lib/presentation/payment/widgets/pg_webview_widget.dart",
+        "community_app/lib/presentation/payment/widgets/settlement_detail_breakdown_widget.dart",
+        "community_app/lib/presentation/payment/widgets/settlement_item_widget.dart",
+        "community_app/lib/presentation/payment/widgets/shortcut_grid_widget.dart",
+        "community_app/lib/presentation/payment/widgets/temporary_payment_widgets.dart",
+        "community_app/lib/presentation/payment/widgets/transaction_filter_widget.dart",
+        "community_app/lib/presentation/plan/screens/block_editor/block_shell.dart",
+        "community_app/lib/presentation/plan/screens/block_editor/editor_indicators.dart",
+        "community_app/lib/presentation/plan/screens/block_editor/inline_text_block.dart",
+        "community_app/lib/presentation/plan/screens/block_editor_screen.dart",
+        "community_app/lib/presentation/plan/screens/block_reorder_screen.dart",
+        "community_app/lib/presentation/plan/screens/plan_detail_screen.dart",
+        "community_app/lib/presentation/plan/screens/plan_list_screen.dart",
+        "community_app/lib/presentation/plan/screens/plan_preview_screen.dart",
+        "community_app/lib/presentation/plan/screens/plan_publish_screen.dart",
+        "community_app/lib/presentation/plan/screens/scheduled_publish_list_screen.dart",
+        "community_app/lib/presentation/plan/theme/plan_content_tone.dart",
+        "community_app/lib/presentation/plan/theme/plan_inline_color.dart",
+        "community_app/lib/presentation/plan/widgets/block_edit_dialogs/block_edit_sheet.dart",
+        "community_app/lib/presentation/plan/widgets/block_edit_dialogs/callout_block_edit_dialog.dart",
+        "community_app/lib/presentation/plan/widgets/block_renderer.dart",
+        "community_app/lib/presentation/plan/widgets/block_type_sheet.dart",
+        "community_app/lib/presentation/plan/widgets/schedule_publish_sheet.dart",
+        "community_app/lib/presentation/poll/event_poll_close_action.dart",
+        "community_app/lib/presentation/poll/screens/event_poll_list_screen.dart",
+        "community_app/lib/presentation/poll/screens/poll_editor_screen.dart",
+        "community_app/lib/presentation/poll/widgets/decision_decide_sheet.dart",
+        "community_app/lib/presentation/poll/widgets/draft_decision_actions.dart",
+        "community_app/lib/presentation/poll/widgets/poll_attach_section.dart",
+        "community_app/lib/presentation/poll/widgets/poll_draft_summary_card.dart",
+        "community_app/lib/presentation/poll/widgets/poll_option_tile.dart",
+        "community_app/lib/presentation/poll/widgets/poll_voters_sheet.dart",
+        "community_app/lib/presentation/profile/screens/address_form_screen.dart",
+        "community_app/lib/presentation/profile/screens/address_list_screen.dart",
+        "community_app/lib/presentation/profile/screens/connected_accounts_screen.dart",
+        "community_app/lib/presentation/profile/screens/data_privacy_screen.dart",
+        "community_app/lib/presentation/profile/screens/favorite_list_screen.dart",
+        "community_app/lib/presentation/profile/screens/host_application_screen.dart",
+        "community_app/lib/presentation/profile/screens/preference_tag_screen.dart",
+        "community_app/lib/presentation/profile/screens/privacy_settings_screen.dart",
+        "community_app/lib/presentation/profile/screens/profile_edit_screen.dart",
+        "community_app/lib/presentation/profile/screens/trait_assessment_screen.dart",
+        "community_app/lib/presentation/profile/screens/trait_report_screen.dart",
+        "community_app/lib/presentation/profile/widgets/deletion_in_progress_banner.dart",
+        "community_app/lib/presentation/profile/widgets/favorite_add_sheet.dart",
+        "community_app/lib/presentation/provider/screens/offering_edit_screen.dart",
+        "community_app/lib/presentation/provider/screens/provider_center_screen.dart",
+        "community_app/lib/presentation/regular_meeting/screens/regular_meeting_content_edit_screen.dart",
+        "community_app/lib/presentation/regular_meeting/screens/regular_meeting_detail_screen.dart",
+        "community_app/lib/presentation/regular_meeting/screens/regular_meeting_list_screen.dart",
+        "community_app/lib/presentation/regular_meeting/widgets/regular_meeting_design.dart",
+        "community_app/lib/presentation/regular_meeting/widgets/regular_meeting_payment_queue.dart",
+        "community_app/lib/presentation/review/screens/event_feedback_screen.dart",
+        "community_app/lib/presentation/review/screens/local_report_detail_screen.dart",
+        "community_app/lib/presentation/review/screens/local_report_queue_screen.dart",
+        "community_app/lib/presentation/review/screens/report_screen.dart",
+        "community_app/lib/presentation/review/screens/review_write_screen.dart",
+        "community_app/lib/presentation/review/screens/taste_profile_screen.dart",
+        "community_app/lib/presentation/review/screens/trust_score_screen.dart",
+        "community_app/lib/presentation/review/widgets/feedback_candidate_card.dart",
+        "community_app/lib/presentation/review/widgets/rating_summary_widget.dart",
+        "community_app/lib/presentation/review/widgets/review_card.dart",
+        "community_app/lib/presentation/review/widgets/review_hide_sheet.dart",
+        "community_app/lib/presentation/review/widgets/star_rating_widget.dart",
+        "community_app/lib/presentation/search/widgets/active_filter_chip_bar.dart",
+        "community_app/lib/presentation/search/widgets/filter_capacity_stepper.dart",
+        "community_app/lib/presentation/search/widgets/filter_category_chips.dart",
+        "community_app/lib/presentation/search/widgets/filter_date_range_picker.dart",
+        "community_app/lib/presentation/search/widgets/filter_distance_slider.dart",
+        "community_app/lib/presentation/search/widgets/filter_price_range_slider.dart",
+        "community_app/lib/presentation/search/widgets/filter_region_selector.dart",
+        "community_app/lib/presentation/search/widgets/save_search_dialog.dart",
+        "community_app/lib/presentation/search/widgets/saved_search_card.dart",
+        "community_app/lib/presentation/search/widgets/search_app_bar.dart",
+        "community_app/lib/presentation/search/widgets/search_filter_sheet.dart",
+        "community_app/lib/presentation/search/widgets/search_history_item.dart",
+        "community_app/lib/presentation/search/widgets/suggest_dropdown.dart",
+        "community_app/lib/presentation/search/widgets/trending_keyword_chips.dart",
+        "community_app/lib/presentation/stamp/admin/screens/stamp_card_screen.dart",
+        "community_app/lib/presentation/stamp/admin/screens/stamp_console_screen.dart",
+        "community_app/lib/presentation/stamp/admin/screens/stamp_template_admin_screen.dart",
+        "community_app/lib/presentation/stamp/admin/screens/stamp_template_form_screen.dart",
+        "community_app/lib/presentation/stamp/widgets/stamp_artwork.dart",
+        "community_app/lib/presentation/stamp/widgets/stamp_pass_card.dart",
+        "community_app/lib/presentation/stamp/widgets/stamp_pending_command_notice.dart",
+        "community_app/lib/presentation/stamp/widgets/stamp_slot_picker_sheet.dart",
+        "community_app/lib/presentation/support/screens/support_issue_screens.dart",
+        "community_app/lib/presentation/support/screens/user_guide_catalog_screen.dart",
+        "community_app/lib/presentation/support/widgets/user_guide_html_style.dart",
+        "community_app/lib/presentation/warning/admin/warning_appeal_inbox_screen.dart",
+        "community_app/lib/presentation/warning/admin/warning_audit_log_screen.dart",
+        "community_app/lib/presentation/warning/admin/warning_console_screen.dart",
+        "community_app/lib/presentation/warning/admin/warning_member_detail_screen.dart",
+        "community_app/lib/presentation/warning/admin/warning_policy_screen.dart",
+        "community_app/lib/presentation/warning/admin/warning_report_detail_screen.dart",
+        "community_app/lib/presentation/warning/admin/warning_report_inbox_screen.dart",
+        "community_app/lib/presentation/warning/admin/warning_review_targets_screen.dart",
+        "community_app/lib/presentation/warning/admin/widgets/warning_admin_access.dart",
+        "community_app/lib/presentation/warning/admin/widgets/warning_forced_remove_dialog.dart",
+        "community_app/lib/presentation/warning/admin/widgets/warning_reason_dialog.dart",
+        "community_app/lib/presentation/warning/admin/widgets/warning_sanction_action_row.dart",
+        "community_app/lib/presentation/warning/admin/widgets/warning_status_badge.dart",
+        "community_app/lib/presentation/warning/screens/appeal_submit_screen.dart",
+        "community_app/lib/presentation/warning/screens/host_report_list_screen.dart",
+        "community_app/lib/presentation/warning/screens/host_report_submit_screen.dart",
+        "community_app/lib/presentation/warning/screens/my_appeals_screen.dart",
+        "community_app/lib/presentation/warning/screens/my_reports_screen.dart",
+        "community_app/lib/presentation/warning/screens/report_submit_screen.dart",
+        "community_app/lib/presentation/warning/screens/warning_main_screen.dart",
+        "community_app/lib/presentation/warning/widgets/warning_ledger_row.dart",
+        "community_app/lib/presentation/warning/widgets/warning_severity_chip.dart",
+        "community_app/plan/30-app-commons-contracts.md",
+        "community_app/test/audit/entry_paths_mileage_ledger_audit_test.dart",
+        "community_app/test/audit/entry_paths_mileage_preview_test.dart",
+        "community_app/test/audit/entry_paths_mileage_queue_commands_test.dart",
+        "community_app/test/audit/entry_paths_mileage_receipt_reverse_test.dart",
+        "community_app/test/audit/entry_paths_stamp_conditional_test.dart",
+        "community_app/test/audit/entry_paths_stamp_permissions_test.dart",
+        "community_app/test/catalog/goldens/basic-app-text-input-dark.png",
+        "community_app/test/catalog/goldens/basic-app-text-input-large.png",
+        "community_app/test/catalog/goldens/basic-app-text-input-light.png",
+        "community_app/test/catalog/goldens/basic-bottom-sheet-dark.png",
+        "community_app/test/catalog/goldens/basic-bottom-sheet-large.png",
+        "community_app/test/catalog/goldens/basic-bottom-sheet-light.png",
+        "community_app/test/catalog/pages/component_bottom_sheet.dart",
+        "community_app/test/catalog/pages/component_text_input.dart",
+        "community_app/test/core/router/admin_club_scope_refresh_failure_test.dart",
+        "community_app/test/core/router/settlement_read_route_gate_test.dart",
+        "community_app/test/core/utils/notification_router_market_refund_role_test.dart",
+        "community_app/test/domain/providers/date/date_block_people_signal_test.dart",
+        "community_app/test/domain/providers/next_page_access_denial_test.dart",
+        "community_app/test/domain/providers/people_list_load_more_failure_test.dart",
+        "community_app/test/domain/providers/people_permission_refresh_test.dart",
+        "community_app/test/domain/providers/profile/block_rereads_people_lists_test.dart",
+        "community_app/test/domain/providers/review/local_report_forced_remove_signal_test.dart",
+        "community_app/test/domain/providers/warning/warning_admin_commands_test.dart",
+        "community_app/test/helpers/page_script.dart",
+        "community_app/test/meeting_settlement/goldens/calculator-dark-import.png",
+        "community_app/test/meeting_settlement/goldens/calculator-light-import.png",
+        "community_app/test/meeting_settlement/goldens/calculator-small-dark-import.png",
+        "community_app/test/meeting_settlement/goldens/calculator-small-light-import.png",
+        "community_app/test/meeting_settlement/settlement_entries_provider_test.dart",
+        "community_app/test/presentation/async_value_samples/regular_meeting_samples_test.dart",
+        "community_app/test/presentation/calendar/calendar_fixed_color_visual_test.dart",
+        "community_app/test/presentation/calendar/calendar_sync_screen_test.dart",
+        "community_app/test/presentation/calendar/goldens/calendar-fixed-color-availability-dark.png",
+        "community_app/test/presentation/calendar/goldens/calendar-fixed-color-availability-light.png",
+        "community_app/test/presentation/calendar/goldens/calendar-fixed-color-daily-dark.png",
+        "community_app/test/presentation/calendar/goldens/calendar-fixed-color-daily-light.png",
+        "community_app/test/presentation/calendar/goldens/calendar-fixed-color-monthly-dark.png",
+        "community_app/test/presentation/calendar/goldens/calendar-fixed-color-monthly-light.png",
+        "community_app/test/presentation/calendar/goldens/calendar-fixed-color-recurring-dark.png",
+        "community_app/test/presentation/calendar/goldens/calendar-fixed-color-recurring-light.png",
+        "community_app/test/presentation/calendar/goldens/calendar-sync.png",
+        "community_app/test/presentation/club/club_calendar_fixed_color_visual_test.dart",
+        "community_app/test/presentation/club/club_fixed_color_visual_test.dart",
+        "community_app/test/presentation/club/club_recurring_event_screen_test.dart",
+        "community_app/test/presentation/club/goldens/calendar-week-empty-dark.png",
+        "community_app/test/presentation/club/goldens/calendar-week-empty-light.png",
+        "community_app/test/presentation/club/goldens/fixed-color-calendar-month-dark.png",
+        "community_app/test/presentation/club/goldens/fixed-color-calendar-month-light.png",
+        "community_app/test/presentation/club/goldens/fixed-color-calendar-week-dark.png",
+        "community_app/test/presentation/club/goldens/fixed-color-calendar-week-light.png",
+        "community_app/test/presentation/club/goldens/fixed-color-club-detail-dark.png",
+        "community_app/test/presentation/club/goldens/fixed-color-club-detail-light.png",
+        "community_app/test/presentation/club/goldens/fixed-color-photo-album-dark.png",
+        "community_app/test/presentation/club/goldens/fixed-color-photo-album-light.png",
+        "community_app/test/presentation/club/goldens/fixed-color-post-list-dark.png",
+        "community_app/test/presentation/club/goldens/fixed-color-post-list-light.png",
+        "community_app/test/presentation/club/goldens/fixed-color-subscription-manage-dark.png",
+        "community_app/test/presentation/club/goldens/fixed-color-subscription-manage-light.png",
+        "community_app/test/presentation/club/goldens/gathering-dark.png",
+        "community_app/test/presentation/club/goldens/gathering-small-dark.png",
+        "community_app/test/presentation/common/app_bottom_sheet_test.dart",
+        "community_app/test/presentation/common/async_refresh_policy_test.dart",
+        "community_app/test/presentation/common/inputs/app_input_trimmed_count_test.dart",
+        "community_app/test/presentation/common/section_vertical_gap_test.dart",
+        "community_app/test/presentation/curated/event_assignments_access_denial_test.dart",
+        "community_app/test/presentation/date/date_dark_palette_test.dart",
+        "community_app/test/presentation/date/date_dark_visual_test.dart",
+        "community_app/test/presentation/date/goldens/date-profile-off-dark.png",
+        "community_app/test/presentation/date/goldens/date-profile-off-light.png",
+        "community_app/test/presentation/date/goldens/date-verification-failed-dark.png",
+        "community_app/test/presentation/date/goldens/date-verification-failed-light.png",
+        "community_app/test/presentation/design/dark_review_items_test.dart",
+        "community_app/test/presentation/design/event_fixed_color_visual_test.dart",
+        "community_app/test/presentation/design/fixed_color_d75_location_visual_test.dart",
+        "community_app/test/presentation/design/fixed_color_d75_profile_visual_test.dart",
+        "community_app/test/presentation/design/fixed_color_d75_search_visual_test.dart",
+        "community_app/test/presentation/design/goldens/dark-review-poll-option-dark.png",
+        "community_app/test/presentation/design/goldens/dark-review-poll-option-light.png",
+        "community_app/test/presentation/design/goldens/event-fixed-color-album-banner-dark.png",
+        "community_app/test/presentation/design/goldens/event-fixed-color-album-banner-light.png",
+        "community_app/test/presentation/design/goldens/event-fixed-color-cancel-preview-dark.png",
+        "community_app/test/presentation/design/goldens/event-fixed-color-cancel-preview-light.png",
+        "community_app/test/presentation/design/goldens/event-fixed-color-check-in-stats-dark.png",
+        "community_app/test/presentation/design/goldens/event-fixed-color-check-in-stats-light.png",
+        "community_app/test/presentation/design/goldens/event-fixed-color-no-show-dark.png",
+        "community_app/test/presentation/design/goldens/event-fixed-color-no-show-light.png",
+        "community_app/test/presentation/design/goldens/fixed-color-application-dark.png",
+        "community_app/test/presentation/design/goldens/fixed-color-application-light.png",
+        "community_app/test/presentation/design/goldens/fixed-color-d75-directions-dark.png",
+        "community_app/test/presentation/design/goldens/fixed-color-d75-directions-light.png",
+        "community_app/test/presentation/design/goldens/fixed-color-d75-preference-tag-dark.png",
+        "community_app/test/presentation/design/goldens/fixed-color-d75-preference-tag-empty-dark.png",
+        "community_app/test/presentation/design/goldens/fixed-color-d75-preference-tag-empty-light.png",
+        "community_app/test/presentation/design/goldens/fixed-color-d75-preference-tag-light.png",
+        "community_app/test/presentation/design/goldens/fixed-color-d75-recommend-detail-dark.png",
+        "community_app/test/presentation/design/goldens/fixed-color-d75-recommend-detail-light.png",
+        "community_app/test/presentation/design/goldens/fixed-color-d75-saved-search-card-dark.png",
+        "community_app/test/presentation/design/goldens/fixed-color-d75-saved-search-card-light.png",
+        "community_app/test/presentation/design/goldens/fixed-color-d75-signup-dark.png",
+        "community_app/test/presentation/design/goldens/fixed-color-d75-signup-light.png",
+        "community_app/test/presentation/design/goldens/fixed-color-d75-trait-report-dark.png",
+        "community_app/test/presentation/design/goldens/fixed-color-d75-trait-report-light.png",
+        "community_app/test/presentation/design/goldens/fixed-color-waitlist-light.png",
+        "community_app/test/presentation/design/goldens/money-charge-dark.png",
+        "community_app/test/presentation/design/goldens/money-charge-light.png",
+        "community_app/test/presentation/design/goldens/money-dispute-detail-dark.png",
+        "community_app/test/presentation/design/goldens/money-dispute-detail-light.png",
+        "community_app/test/presentation/design/goldens/money-dispute-detail-top-dark.png",
+        "community_app/test/presentation/design/goldens/money-dispute-detail-top-light.png",
+        "community_app/test/presentation/design/goldens/money-settlement-list-dark.png",
+        "community_app/test/presentation/design/goldens/money-settlement-list-light.png",
+        "community_app/test/presentation/design/goldens/money-transaction-detail-dark.png",
+        "community_app/test/presentation/design/goldens/money-transaction-detail-light.png",
+        "community_app/test/presentation/design/goldens/money-transfer-list-dark.png",
+        "community_app/test/presentation/design/goldens/money-transfer-list-light.png",
+        "community_app/test/presentation/design/goldens/money-withdrawal-request-dark.png",
+        "community_app/test/presentation/design/goldens/money-withdrawal-request-light.png",
+        "community_app/test/presentation/design/goldens/notifications-dark.png",
+        "community_app/test/presentation/design/goldens/notifications-light.png",
+        "community_app/test/presentation/design/goldens/post-dark.png",
+        "community_app/test/presentation/design/goldens/stamp-operator-dark.png",
+        "community_app/test/presentation/design/goldens/stamp-operator-light.png",
+        "community_app/test/presentation/design/money_fixed_color_visual_test.dart",
+        "community_app/test/presentation/event/application_card_dark_contrast_test.dart",
+        "community_app/test/presentation/event/goldens/event-preview-club-small-dark.png",
+        "community_app/test/presentation/event/goldens/event-preview-personal-small-dark.png",
+        "community_app/test/presentation/event/recurring_event_group_screen_test.dart",
+        "community_app/test/presentation/event/refund_policy_text_color_test.dart",
+        "community_app/test/presentation/home/location_permission_banner_layout_test.dart",
+        "community_app/test/presentation/market/refund_detail_screen_test.dart",
+        "community_app/test/presentation/market/schedule_publish_test.dart",
+        "community_app/test/presentation/meeting_settlement/clone_settlement_sheet_test.dart",
+        "community_app/test/presentation/meeting_settlement/goldens/settlement-balances-dark.png",
+        "community_app/test/presentation/meeting_settlement/goldens/settlement-item-sheet-dark.png",
+        "community_app/test/presentation/meeting_settlement/goldens/settlement-item-sheet-light.png",
+        "community_app/test/presentation/meeting_settlement/settlement_item_form_tracked_taps_test.dart",
+        "community_app/test/presentation/meeting_settlement/settlement_item_receipt_upload_save_lock_test.dart",
+        "community_app/test/presentation/meeting_settlement/settlement_sheet_frame_test.dart",
+        "community_app/test/presentation/mileage/goldens/mileage-console-badge-dark.png",
+        "community_app/test/presentation/mileage/goldens/mileage-console-badge-light.png",
+        "community_app/test/presentation/mileage/goldens/mileage-console-owner-dark.png",
+        "community_app/test/presentation/mileage/goldens/mileage-console-owner-light.png",
+        "community_app/test/presentation/mileage/goldens/mileage-season-ranking-dark.png",
+        "community_app/test/presentation/mileage/goldens/mileage-season-ranking-light.png",
+        "community_app/test/presentation/mileage/mileage_console_guard_access_denial_test.dart",
+        "community_app/test/presentation/mileage/mileage_dark_palette_test.dart",
+        "community_app/test/presentation/mileage/mileage_dark_visual_test.dart",
+        "community_app/test/presentation/notification/notification_priority_chip_color_test.dart",
+        "community_app/test/presentation/payment/goldens/wallet-dark-guide.png",
+        "community_app/test/presentation/payment/goldens/wallet-dark-menu.png",
+        "community_app/test/presentation/payment/goldens/wallet-dark-transactions.png",
+        "community_app/test/presentation/payment/goldens/wallet-light-guide.png",
+        "community_app/test/presentation/payment/goldens/wallet-light-menu.png",
+        "community_app/test/presentation/payment/goldens/wallet-light-transactions.png",
+        "community_app/test/presentation/payment/goldens/wallet-small-dark-menu.png",
+        "community_app/test/presentation/payment/goldens/wallet-small-dark-transactions.png",
+        "community_app/test/presentation/payment/goldens/wallet-small-light-menu.png",
+        "community_app/test/presentation/payment/goldens/wallet-small-light-transactions.png",
+        "community_app/test/presentation/payment/money_request_unconfirmed_retry_test.dart",
+        "community_app/test/presentation/payment/withdrawal_request_screen_test.dart",
+        "community_app/test/presentation/plan/screens/block_editor_revision_block_test.dart",
+        "community_app/test/presentation/plan/screens/block_pattern_insertion_test.dart",
+        "community_app/test/presentation/plan/screens/goldens/plan-detail-bottom-actions-published-large.png",
+        "community_app/test/presentation/plan/screens/goldens/plan-detail-bottom-actions-published-light.png",
+        "community_app/test/presentation/plan/screens/goldens/plan-fixed-color-list-dark.png",
+        "community_app/test/presentation/plan/screens/goldens/plan-fixed-color-list-light.png",
+        "community_app/test/presentation/plan/screens/goldens/plan-fixed-color-publish-dark.png",
+        "community_app/test/presentation/plan/screens/goldens/plan-fixed-color-publish-light.png",
+        "community_app/test/presentation/plan/screens/goldens/production_wrapper_preview_dark.png",
+        "community_app/test/presentation/plan/screens/goldens/q0_editor_block_picker_light.png",
+        "community_app/test/presentation/plan/screens/goldens/q0_editor_initial_light.png",
+        "community_app/test/presentation/plan/screens/goldens/w15_plan1002_editor_light.png",
+        "community_app/test/presentation/plan/screens/plan_fixed_color_visual_test.dart",
+        "community_app/test/presentation/plan/widgets/block_type_sheet_visual_test.dart",
+        "community_app/test/presentation/profile/data_privacy_guidance_card_test.dart",
+        "community_app/test/presentation/regular_meeting/regular_meeting_content_test.dart",
+        "community_app/test/presentation/review/goldens/fixed-color-report-dark.png",
+        "community_app/test/presentation/review/goldens/fixed-color-report-light.png",
+        "community_app/test/presentation/review/goldens/fixed-color-trust-score-dark.png",
+        "community_app/test/presentation/review/goldens/fixed-color-trust-score-light.png",
+        "community_app/test/presentation/review/local_report_screens_test.dart",
+        "community_app/test/presentation/review/review_fixed_color_visual_test.dart",
+        "community_app/test/presentation/search/filter_chips_dark_contrast_test.dart",
+        "community_app/test/presentation/theme/screen_fixed_light_colors_test.dart",
+        "community_app/test/presentation/warning/goldens/warning-badges-dark.png",
+        "community_app/test/presentation/warning/goldens/warning-badges-light.png",
+        "community_app/test/presentation/warning/goldens/warning-host-reports-dark.png",
+        "community_app/test/presentation/warning/goldens/warning-host-reports-light.png",
+        "community_app/test/presentation/warning/goldens/warning-my-appeals-dark.png",
+        "community_app/test/presentation/warning/goldens/warning-my-appeals-light.png",
+        "community_app/test/presentation/warning/goldens/warning-my-reports-dark.png",
+        "community_app/test/presentation/warning/goldens/warning-my-reports-light.png",
+        "community_app/test/presentation/warning/warning_dark_colors_test.dart",
+        "community_app/test/presentation/warning/warning_dark_visual_test.dart",
+        "community_app/test/presentation/warning/warning_hold_access_denial_test.dart",
+        "community_app/test/presentation/warning/warning_policy_refresh_denial_test.dart",
+        "community_app/test/support/release_scope_test_overrides.dart",
+        "community_app/test/tool/design_tokens_guard_test.dart",
+        "community_app/test/tool/export_navigation_inventory_test.dart",
+        "community_app/test/tool/export_uiux_review_inventory_test.dart",
+        "community_app/test/tool/unsaved_leave_registry.dart",
+        "community_app/test/unit/api_error_access_denial_test.dart",
+        "community_app/test/unit/paged_list_access_denial_test.dart",
+        "community_app/test/widget/assignment_terms_badge_test.dart",
+        "community_app/test/widget/club/announcement_options_test.dart",
+        "community_app/test/widget/club/announcement_recovery_test.dart",
+        "community_app/test/widget/club/club_form_server_length_test.dart",
+        "community_app/test/widget/club/club_sheet_frame_test.dart",
+        "community_app/test/widget/club/goldens/role-change-sheet-dark.png",
+        "community_app/test/widget/club/post_detail_access_denial_test.dart",
+        "community_app/test/widget/club/post_edit_access_denial_test.dart",
+        "community_app/test/widget/club/post_list_access_denial_test.dart",
+        "community_app/test/widget/date/match_list_counterpart_test.dart",
+        "community_app/test/widget/event/event_bank_payment_access_denial_test.dart",
+        "community_app/test/widget/event/event_edit_point_conversion_test.dart",
+        "community_app/test/widget/event/event_plan_link_feedback_test.dart",
+        "community_app/test/widget/event/event_plan_link_session_scope_test.dart",
+        "community_app/test/widget/event/event_plan_override_clear_wire_test.dart",
+        "community_app/test/widget/event/event_plan_override_sheet_test.dart",
+        "community_app/test/widget/event/goldens/event_sheet_apply_confirm_dark.png",
+        "community_app/test/widget/event/goldens/event_sheet_photo_upload_dark.png",
+        "community_app/test/widget/event/photo_download_links_sheet_test.dart",
+        "community_app/test/widget/event/plan_search_sheet_test.dart",
+        "community_app/test/widget/event/transport_coordination_screen_test.dart",
+        "community_app/test/widget/fill_sheet_frame_visual_test.dart",
+        "community_app/test/widget/goldens/fill_sheet_plan_search_dark.png",
+        "community_app/test/widget/goldens/fill_sheet_plan_search_light.png",
+        "community_app/test/widget/goldens/fill_sheet_search_filter_dark.png",
+        "community_app/test/widget/goldens/fill_sheet_search_filter_light.png",
+        "community_app/test/widget/goldens/fill_sheet_stamp_slot_picker_dark.png",
+        "community_app/test/widget/goldens/fill_sheet_stamp_slot_picker_light.png",
+        "community_app/test/widget/location/event_location_block_test.dart",
+        "community_app/test/widget/meeting_settlement/settlement_import_sheet_in_flight_test.dart",
+        "community_app/test/widget/mileage/mileage_audit_log_batch_link_test.dart",
+        "community_app/test/widget/mileage/mileage_member_picker_search_test.dart",
+        "community_app/test/widget/mileage/mileage_queue_auto_revert_test.dart",
+        "community_app/test/widget/mileage/mileage_season_ranking_screen_test.dart",
+        "community_app/test/widget/poll/draft_decision_actions_test.dart",
+        "community_app/test/widget/poll/event_decision_card_label_test.dart",
+        "community_app/test/widget/poll/poll_voters_sheet_test.dart",
+        "community_app/test/widget/regular_meeting/regular_meeting_payment_sheet_wait_test.dart",
+        "community_app/tool/README.md",
+        "community_app/tool/check_design_tokens.dart",
+        "community_app/tool/design_tokens_baseline.txt",
+        "community_app/tool/export_navigation_inventory.dart",
+        "community_app/tool/export_uiux_review_inventory.dart",
+        "community_app/tool/hardcoded_colors_baseline.txt",
+        "community_app/tool/test_text_finders_baseline.txt"
+      ],
+      "affectedEvidenceGroups": {
+        "notification_groups_settings_20261122": [
+          "community_app/lib/domain/providers/notification/notification_list_provider.dart",
+          "community_app/lib/presentation/notification/screens/notification_list_screen.dart",
+          "community_app/lib/presentation/notification/screens/notification_settings_screen.dart"
+        ],
+        "notification_domain_20261122": [
+          "community_app/lib/presentation/notification/screens/device_management_screen.dart"
+        ],
+        "data_export_20261122": [
+          "community_app/lib/presentation/profile/screens/data_privacy_screen.dart"
+        ],
+        "event_detail_lifecycle_20261122": [
+          "community_app/lib/presentation/event/screens/event_detail_screen.dart"
+        ],
+        "event_detail_complete_20261122": [
+          "community_app/lib/domain/providers/event/event_detail_provider.dart",
+          "community_app/lib/presentation/event/widgets/event_description.dart",
+          "community_app/lib/presentation/event/widgets/event_fit_preview_section.dart"
+        ],
+        "email_code_auth_20261122": [
+          "community_app/lib/presentation/auth/screens/signup_screen.dart"
+        ],
+        "session_and_social_unlink_20261122": [
+          "community_app/lib/presentation/profile/screens/connected_accounts_screen.dart"
+        ],
+        "preference_tags_20261122": [
+          "community_app/lib/presentation/auth/screens/onboarding_interests_screen.dart",
+          "community_app/lib/presentation/profile/screens/preference_tag_screen.dart"
+        ],
+        "signup_social_onboarding_20261122": [
+          "community_app/lib/presentation/auth/screens/onboarding_interests_screen.dart",
+          "community_app/lib/presentation/auth/screens/onboarding_location_screen.dart",
+          "community_app/lib/presentation/auth/screens/onboarding_profile_screen.dart",
+          "community_app/lib/presentation/auth/screens/onboarding_welcome_screen.dart",
+          "community_app/lib/presentation/auth/screens/signup_screen.dart",
+          "community_app/lib/presentation/auth/widgets/social_login_info_sheet.dart"
+        ],
+        "account_closure_20261122": [
+          "community_app/lib/presentation/profile/screens/data_privacy_screen.dart",
+          "community_app/lib/presentation/profile/widgets/deletion_in_progress_banner.dart"
+        ],
+        "profile_hub_edit_addresses_20261122": [
+          "community_app/lib/domain/providers/connectivity/met_people_provider.dart",
+          "community_app/lib/domain/providers/profile/people_data_refresh_provider.dart",
+          "community_app/lib/domain/providers/review/review_list_provider.dart",
+          "community_app/lib/presentation/profile/screens/address_form_screen.dart",
+          "community_app/lib/presentation/profile/screens/address_list_screen.dart",
+          "community_app/lib/presentation/profile/screens/profile_edit_screen.dart",
+          "community_app/lib/presentation/profile/screens/trait_assessment_screen.dart",
+          "community_app/lib/presentation/profile/screens/trait_report_screen.dart"
+        ],
+        "privacy_visibility_20261122": [
+          "community_app/lib/domain/providers/profile/people_data_refresh_provider.dart",
+          "community_app/lib/presentation/profile/screens/privacy_settings_screen.dart"
+        ],
+        "favorite_management_calendar_20261122": [
+          "community_app/lib/presentation/calendar/screens/monthly_calendar_screen.dart",
+          "community_app/lib/presentation/profile/screens/favorite_list_screen.dart",
+          "community_app/lib/presentation/profile/widgets/favorite_add_sheet.dart"
+        ],
+        "search_workflows_20261122": [
+          "community_app/lib/domain/providers/search/search_provider.dart",
+          "community_app/lib/domain/providers/search/search_typed_provider.dart",
+          "community_app/lib/presentation/search/widgets/filter_distance_slider.dart",
+          "community_app/lib/presentation/search/widgets/save_search_dialog.dart",
+          "community_app/lib/presentation/search/widgets/saved_search_card.dart",
+          "community_app/lib/presentation/search/widgets/search_filter_sheet.dart"
+        ],
+        "home_search_notification_entry_20261122": [
+          "community_app/lib/domain/providers/home/home_feed_provider.dart",
+          "community_app/lib/domain/providers/notification/notification_list_provider.dart"
+        ],
+        "home_feed_core_20261122": [
+          "community_app/lib/domain/providers/common/paged_list.dart",
+          "community_app/lib/domain/providers/home/home_feed_provider.dart",
+          "community_app/lib/domain/providers/home/recommend_events_provider.dart",
+          "community_app/lib/presentation/common/layout/paged_scroll_listener.dart",
+          "community_app/lib/presentation/home/screens/recommend_detail_screen.dart",
+          "community_app/lib/presentation/home/widgets/location_permission_banner.dart",
+          "community_app/lib/presentation/home/widgets/new_plan_section.dart",
+          "community_app/lib/presentation/home/widgets/recommend_badge.dart",
+          "community_app/lib/presentation/home/widgets/recommend_event_section.dart",
+          "community_app/lib/presentation/home/widgets/recommend_reason_list.dart",
+          "community_app/lib/presentation/home/widgets/upcoming_event_section.dart"
+        ],
+        "wallet_history_earnings_20261122": [
+          "community_app/lib/presentation/payment/screens/transaction_detail_screen.dart",
+          "community_app/lib/presentation/payment/screens/wallet_screen.dart",
+          "community_app/lib/presentation/payment/widgets/balance_card_widget.dart",
+          "community_app/lib/presentation/payment/widgets/earnings_chart_widget.dart",
+          "community_app/lib/presentation/payment/widgets/earnings_event_list_widget.dart",
+          "community_app/lib/presentation/payment/widgets/earnings_summary_card_widget.dart",
+          "community_app/lib/presentation/payment/widgets/shortcut_grid_widget.dart",
+          "community_app/lib/presentation/payment/widgets/transaction_filter_widget.dart"
+        ],
+        "host_settlement_appeal_20261122": [
+          "community_app/lib/presentation/payment/screens/settlement_detail_screen.dart",
+          "community_app/lib/presentation/payment/screens/settlement_list_screen.dart"
+        ],
+        "charge_methods_autocharge_20261122": [
+          "community_app/lib/presentation/payment/screens/auto_charge_screen.dart",
+          "community_app/lib/presentation/payment/screens/charge_screen.dart",
+          "community_app/lib/presentation/payment/widgets/payment_method_card_widget.dart"
+        ],
+        "hosting_ticket_personal_subscription_20261122": [
+          "community_app/lib/data/models/common/api_error.dart",
+          "community_app/lib/presentation/payment/screens/hosting_ticket_screen.dart",
+          "community_app/lib/presentation/payment/screens/personal_subscription_screen.dart",
+          "community_app/lib/presentation/payment/screens/wallet_screen.dart"
+        ],
+        "event_payment_cancel_refund_20261122": [
+          "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "community_app/lib/presentation/event/widgets/cancel_attendance_sheet.dart"
+        ],
+        "event_application_participation_review_20261122": [
+          "community_app/lib/presentation/event/screens/application_list_screen.dart",
+          "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "community_app/lib/presentation/event/widgets/application_card.dart",
+          "community_app/lib/presentation/event/widgets/cancel_attendance_sheet.dart",
+          "community_app/lib/presentation/event/widgets/event_apply_confirm_sheet.dart"
+        ],
+        "event_capacity_waitlist_20261122": [
+          "community_app/lib/domain/providers/attendance/waitlist_provider.dart",
+          "community_app/lib/presentation/event/screens/attendee_list_screen.dart",
+          "community_app/lib/presentation/event/screens/capacity_settings_screen.dart",
+          "community_app/lib/presentation/event/screens/event_detail_screen.dart"
+        ],
+        "event_checkin_20261122": [
+          "community_app/lib/core/router/route_guards.dart",
+          "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "community_app/lib/presentation/event/screens/qr_check_in_screen.dart",
+          "community_app/lib/presentation/event/widgets/check_in_short_code_sheet.dart",
+          "community_app/lib/presentation/event/widgets/check_in_stats_card.dart",
+          "community_app/lib/presentation/event/widgets/manual_check_in_list.dart",
+          "community_app/lib/presentation/event/widgets/qr_code_view.dart",
+          "community_app/lib/presentation/event/widgets/qr_scanner_view.dart"
+        ],
+        "event_photos_20261122": [
+          "community_app/lib/core/router/route_guards.dart",
+          "community_app/lib/presentation/common/inputs/app_text_area.dart",
+          "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "community_app/lib/presentation/event/screens/event_photos_screen.dart",
+          "community_app/lib/presentation/event/widgets/album_status_banner.dart",
+          "community_app/lib/presentation/event/widgets/photo_action_menu.dart",
+          "community_app/lib/presentation/event/widgets/photo_download_links_sheet.dart",
+          "community_app/lib/presentation/event/widgets/photo_fullscreen_viewer.dart",
+          "community_app/lib/presentation/event/widgets/photo_report_dialog.dart",
+          "community_app/lib/presentation/event/widgets/photo_upload_sheet.dart"
+        ],
+        "wishlist_my_events_20261122": [
+          "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "community_app/lib/presentation/event/widgets/my_events_tab_view.dart",
+          "community_app/lib/presentation/event/widgets/wishlist_heart_button.dart"
+        ],
+        "event_plan_link_20261122": [
+          "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "community_app/lib/presentation/event/widgets/event_plan_card.dart",
+          "community_app/lib/presentation/event/widgets/plan_search_sheet.dart"
+        ],
+        "demographics_20261122": [
+          "community_app/lib/domain/providers/event/event_detail_provider.dart",
+          "community_app/lib/presentation/club/screens/club_detail_screen.dart",
+          "community_app/lib/presentation/common/data/demographics_section.dart",
+          "community_app/lib/presentation/event/screens/event_detail_screen.dart"
+        ],
+        "transport_policy_20261122": [
+          "community_app/lib/core/router/route_guards.dart",
+          "community_app/lib/domain/providers/event/transport_coordination_provider.dart",
+          "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "community_app/lib/presentation/event/widgets/transport_editor_frame.dart",
+          "community_app/test/widget/event/transport_coordination_screen_test.dart"
+        ],
+        "carpool_20261122": [
+          "community_app/lib/domain/providers/event/transport_coordination_provider.dart",
+          "community_app/lib/presentation/event/widgets/transport_editor_frame.dart"
+        ],
+        "bus_allocation_20261122": [
+          "community_app/lib/domain/providers/event/transport_coordination_provider.dart",
+          "community_app/test/widget/event/transport_coordination_screen_test.dart"
+        ],
+        "reschedule_20261122": [
+          "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "community_app/lib/presentation/event/screens/event_edit_screen.dart",
+          "community_app/lib/presentation/event/screens/my_reschedule_proposals_screen.dart",
+          "community_app/lib/presentation/event/screens/reschedule_proposal_batch_screen.dart"
+        ],
+        "no_show_20261122": [
+          "community_app/lib/presentation/dispute/screens/dispute_case_detail_screen.dart",
+          "community_app/lib/presentation/dispute/screens/no_show_refund_screen.dart",
+          "community_app/lib/presentation/event/screens/attendee_list_screen.dart",
+          "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "community_app/lib/presentation/event/screens/no_show_adjustment_screen.dart",
+          "community_app/lib/presentation/event/widgets/no_show_appeal_sheet.dart"
+        ],
+        "event_discovery_20261122": [
+          "community_app/lib/domain/providers/common/paged_list.dart",
+          "community_app/lib/domain/providers/event/event_detail_provider.dart",
+          "community_app/lib/domain/providers/event/event_list_provider.dart",
+          "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "community_app/lib/presentation/event/screens/event_list_screen.dart",
+          "community_app/lib/presentation/event/screens/similar_events_screen.dart"
+        ],
+        "event_creation_20261122": [
+          "community_app/lib/core/router/route_guards.dart",
+          "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "community_app/lib/presentation/event/screens/recurring_event_group_screen.dart",
+          "community_app/lib/presentation/event/widgets/event_create_step3.dart"
+        ],
+        "event_lifecycle_20261122": [
+          "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "community_app/lib/presentation/event/screens/event_edit_screen.dart",
+          "community_app/lib/presentation/event/screens/recurring_event_group_screen.dart",
+          "community_app/lib/presentation/location/screens/location_privacy_screen.dart"
+        ],
+        "event_prepayment_20261122": [
+          "community_app/lib/presentation/event/screens/event_bank_payment_queue_screen.dart",
+          "community_app/lib/presentation/event/screens/event_bank_payment_screen.dart",
+          "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "community_app/lib/presentation/event/screens/event_edit_screen.dart",
+          "community_app/lib/presentation/event/widgets/event_bank_payment_queue_card.dart"
+        ],
+        "club_discovery_20261122": [
+          "community_app/lib/domain/providers/common/paged_list.dart",
+          "community_app/lib/presentation/club/widgets/club_category_tabs.dart",
+          "community_app/lib/presentation/club/widgets/club_grid_card.dart"
+        ],
+        "club_detail_20261122": [
+          "community_app/lib/domain/providers/club/club_permission_provider.dart",
+          "community_app/lib/presentation/club/screens/club_detail_screen.dart",
+          "community_app/lib/presentation/club/widgets/club_fit_preview_section.dart"
+        ],
+        "club_lifecycle_20261122": [
+          "community_app/lib/domain/providers/club/club_ownership_transfer_provider.dart",
+          "community_app/lib/presentation/club/screens/club_management_screen.dart"
+        ],
+        "club_members_20261122": [
+          "community_app/lib/domain/providers/club/club_member_provider.dart",
+          "community_app/lib/presentation/club/screens/club_management_screen.dart",
+          "community_app/lib/presentation/club/screens/club_member_list_screen.dart",
+          "community_app/lib/presentation/club/screens/club_member_permission_screen.dart",
+          "community_app/lib/presentation/club/widgets/club_membership_action_sheet.dart",
+          "community_app/lib/presentation/club/widgets/member_card.dart",
+          "community_app/lib/presentation/club/widgets/role_change_sheet.dart"
+        ],
+        "club_invitation_20261122": [
+          "community_app/lib/core/router/feature_routes/club_admin_routes.dart",
+          "community_app/lib/domain/providers/club/club_invitation_provider.dart",
+          "community_app/lib/domain/providers/club/club_member_provider.dart",
+          "community_app/lib/presentation/club/screens/club_detail_screen.dart",
+          "community_app/lib/presentation/club/screens/club_management_screen.dart",
+          "community_app/lib/presentation/club/screens/club_member_list_screen.dart",
+          "community_app/lib/presentation/club/widgets/club_invite_dialog.dart",
+          "community_app/lib/presentation/club/widgets/club_pending_invitations_tab.dart"
+        ],
+        "club_stats_20261122": [
+          "community_app/lib/presentation/club/screens/club_management_screen.dart",
+          "community_app/lib/presentation/club/widgets/member_stats_overview.dart",
+          "community_app/lib/presentation/club/widgets/member_top_list.dart",
+          "community_app/lib/presentation/club/widgets/role_distribution_chart.dart"
+        ],
+        "club_announcements_20261122": [
+          "community_app/lib/presentation/club/community/screens/announcement_create_screen.dart",
+          "community_app/lib/presentation/club/community/screens/announcement_edit_screen.dart",
+          "community_app/lib/presentation/club/community/screens/announcement_list_screen.dart",
+          "community_app/test/widget/club/announcement_options_test.dart",
+          "community_app/test/widget/club/announcement_recovery_test.dart"
+        ],
+        "club_comments_20261122": [
+          "community_app/lib/domain/providers/club/comment_provider.dart",
+          "community_app/lib/domain/providers/club/mention_candidate_provider.dart",
+          "community_app/lib/presentation/club/community/screens/post_detail_screen.dart",
+          "community_app/lib/presentation/club/community/widgets/club_comment_thread.dart",
+          "community_app/lib/presentation/club/community/widgets/mention_text.dart"
+        ],
+        "club_posts_20261122": [
+          "community_app/lib/domain/providers/club/post_detail_provider.dart",
+          "community_app/lib/domain/providers/club/post_list_provider.dart",
+          "community_app/lib/presentation/club/community/screens/board_list_screen.dart",
+          "community_app/lib/presentation/club/community/screens/post_create_screen.dart",
+          "community_app/lib/presentation/club/community/screens/post_detail_screen.dart",
+          "community_app/lib/presentation/club/community/screens/post_edit_screen.dart",
+          "community_app/lib/presentation/club/community/screens/post_list_screen.dart"
+        ],
+        "club_calendar_20261122": [
+          "community_app/lib/presentation/club/community/screens/club_calendar_screen.dart",
+          "community_app/lib/presentation/club/finance/screens/club_event_list_screen.dart",
+          "community_app/lib/presentation/club/finance/screens/club_recurring_event_screen.dart",
+          "community_app/lib/presentation/club/screens/club_management_screen.dart"
+        ],
+        "club_album_20261122": [
+          "community_app/lib/domain/providers/club/album_comment_provider.dart",
+          "community_app/lib/presentation/club/community/screens/photo_album_detail_screen.dart",
+          "community_app/lib/presentation/club/community/screens/photo_album_list_screen.dart",
+          "community_app/lib/presentation/club/community/screens/photo_upload_screen.dart",
+          "community_app/lib/presentation/club/community/widgets/album_visibility_selector.dart",
+          "community_app/lib/presentation/club/community/widgets/club_comment_thread.dart",
+          "community_app/lib/presentation/club/screens/club_detail_screen.dart"
+        ],
+        "club_finance_20261122": [
+          "community_app/lib/presentation/club/finance/screens/club_fund_screen.dart",
+          "community_app/lib/presentation/club/finance/screens/donation_list_screen.dart",
+          "community_app/lib/presentation/club/finance/screens/donation_screen.dart",
+          "community_app/lib/presentation/club/finance/screens/withdrawal_screen.dart",
+          "community_app/lib/presentation/club/finance/widgets/fund_balance_card.dart",
+          "community_app/lib/presentation/club/widgets/club_debt_repayment_section.dart"
+        ],
+        "club_reputation_20261122": [
+          "community_app/lib/core/router/feature_routes/club_admin_routes.dart",
+          "community_app/lib/presentation/mileage/admin/screens/mileage_member_detail_screen.dart"
+        ],
+        "club_subscription_20261122": [
+          "community_app/lib/core/router/route_guards.dart",
+          "community_app/lib/presentation/club/finance/screens/subscription_manage_screen.dart",
+          "community_app/lib/presentation/club/finance/screens/subscription_screen.dart",
+          "community_app/lib/presentation/club/screens/club_management_screen.dart"
+        ],
+        "settlement_create_20261122": [
+          "community_app/lib/core/router/route_guards.dart",
+          "community_app/lib/presentation/meeting_settlement/screens/settlement_calculator_screen.dart",
+          "community_app/lib/presentation/meeting_settlement/screens/settlement_status_screen.dart",
+          "community_app/lib/presentation/meeting_settlement/widgets/clone_settlement_sheet.dart",
+          "community_app/test/presentation/meeting_settlement/clone_settlement_sheet_test.dart"
+        ],
+        "settlement_items_20261122": [
+          "community_app/lib/core/router/route_guards.dart",
+          "community_app/lib/presentation/meeting_settlement/widgets/settlement_item_card_widget.dart",
+          "community_app/lib/presentation/meeting_settlement/widgets/settlement_item_form_dialog.dart",
+          "community_app/test/presentation/meeting_settlement/settlement_item_receipt_upload_save_lock_test.dart"
+        ],
+        "settlement_activate_cancel_20261122": [
+          "community_app/lib/presentation/meeting_settlement/screens/settlement_status_screen.dart",
+          "community_app/lib/presentation/meeting_settlement/widgets/settlement_action_bar_widget.dart"
+        ],
+        "settlement_status_summary_20261122": [
+          "community_app/lib/core/router/route_guards.dart",
+          "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "community_app/lib/presentation/meeting_settlement/screens/my_settlement_entries_screen.dart",
+          "community_app/lib/presentation/meeting_settlement/screens/settlement_receipt_viewer_screen.dart",
+          "community_app/lib/presentation/meeting_settlement/screens/settlement_status_screen.dart",
+          "community_app/lib/presentation/meeting_settlement/widgets/settlement_receipt_gallery_widget.dart",
+          "community_app/test/core/router/settlement_read_route_gate_test.dart"
+        ],
+        "settlement_pay_20261122": [
+          "community_app/lib/presentation/meeting_settlement/screens/settlement_status_screen.dart",
+          "community_app/lib/presentation/meeting_settlement/screens/transfer_list_screen.dart",
+          "community_app/lib/presentation/meeting_settlement/widgets/my_share_row_card.dart",
+          "community_app/lib/presentation/meeting_settlement/widgets/recipient_account_section.dart"
+        ],
+        "settlement_confirm_20261122": [
+          "community_app/lib/presentation/meeting_settlement/screens/transfer_list_screen.dart"
+        ],
+        "settlement_remind_20261122": [
+          "community_app/lib/presentation/meeting_settlement/screens/settlement_status_screen.dart",
+          "community_app/lib/presentation/meeting_settlement/screens/transfer_list_screen.dart"
+        ],
+        "app_filter_sheet_source_advance_20261122": [
+          "community_app/lib/presentation/event/screens/event_list_screen.dart"
+        ],
+        "app_label_layout_source_advance_20261122": [
+          "community_app/lib/data/models/common/api_error.dart",
+          "community_app/lib/presentation/club/community/screens/announcement_create_screen.dart",
+          "community_app/lib/presentation/club/screens/club_management_screen.dart",
+          "community_app/lib/presentation/club/widgets/club_fit_preview_section.dart",
+          "community_app/lib/presentation/dispute/screens/dispute_case_detail_screen.dart",
+          "community_app/lib/presentation/dispute/screens/no_show_refund_screen.dart",
+          "community_app/lib/presentation/event/screens/event_edit_screen.dart",
+          "community_app/lib/presentation/event/widgets/event_fit_preview_section.dart",
+          "community_app/lib/presentation/event/widgets/event_plan_card.dart",
+          "community_app/lib/presentation/notification/screens/notification_list_screen.dart",
+          "community_app/test/widget/club/announcement_recovery_test.dart"
+        ],
+        "people_block_source_advance_20261122": [
+          "community_app/lib/domain/providers/club/club_member_provider.dart",
+          "community_app/lib/domain/providers/connectivity/met_people_provider.dart",
+          "community_app/lib/domain/providers/profile/people_data_refresh_provider.dart",
+          "community_app/lib/domain/providers/search/search_typed_provider.dart"
+        ],
+        "settlement_appeal_20261122": [
+          "community_app/lib/presentation/meeting_settlement/screens/settlement_appeals_screen.dart",
+          "community_app/lib/presentation/meeting_settlement/screens/settlement_audit_log_screen.dart",
+          "community_app/lib/presentation/meeting_settlement/screens/settlement_status_screen.dart",
+          "community_app/lib/presentation/meeting_settlement/screens/transfer_list_screen.dart"
+        ],
+        "settlement_prepayment_20261122": [
+          "community_app/lib/presentation/event/screens/event_detail_screen.dart"
+        ],
+        "app_semantic_color_source_advance_20261122": [
+          "community_app/lib/presentation/club/community/screens/club_calendar_screen.dart",
+          "community_app/lib/presentation/club/finance/screens/club_event_list_screen.dart",
+          "community_app/lib/presentation/club/finance/screens/club_fund_screen.dart",
+          "community_app/lib/presentation/club/screens/club_member_list_screen.dart",
+          "community_app/lib/presentation/event/screens/attendee_list_screen.dart",
+          "community_app/lib/presentation/event/widgets/application_card.dart",
+          "community_app/lib/presentation/notification/screens/notification_list_screen.dart",
+          "community_app/lib/presentation/profile/screens/profile_edit_screen.dart"
+        ],
+        "settlement_account_20261122": [
+          "community_app/lib/domain/providers/meeting_settlement/settlement_entries_provider.dart",
+          "community_app/lib/presentation/meeting_settlement/screens/my_settlement_entries_screen.dart",
+          "community_app/lib/presentation/meeting_settlement/widgets/bank_account_verification_sheet.dart",
+          "community_app/lib/presentation/meeting_settlement/widgets/host_reputation_badge.dart",
+          "community_app/lib/presentation/payment/screens/wallet_meeting_settlement_list_screen.dart",
+          "community_app/lib/presentation/payment/screens/wallet_screen.dart",
+          "community_app/test/meeting_settlement/settlement_entries_provider_test.dart"
+        ],
+        "plan_list_20261122": [
+          "community_app/lib/presentation/plan/screens/plan_list_screen.dart"
+        ],
+        "plan_detail_20261122": [
+          "community_app/lib/presentation/plan/screens/plan_detail_screen.dart",
+          "community_app/lib/presentation/plan/screens/plan_preview_screen.dart"
+        ],
+        "plan_reorder_20261122": [
+          "community_app/lib/presentation/plan/screens/block_editor_screen.dart",
+          "community_app/lib/presentation/plan/screens/block_reorder_screen.dart"
+        ],
+        "plan_publish_20261122": [
+          "community_app/lib/presentation/plan/screens/block_editor_screen.dart",
+          "community_app/lib/presentation/plan/screens/plan_detail_screen.dart",
+          "community_app/lib/presentation/plan/screens/plan_list_screen.dart",
+          "community_app/lib/presentation/plan/screens/plan_publish_screen.dart",
+          "community_app/lib/presentation/plan/screens/scheduled_publish_list_screen.dart",
+          "community_app/lib/presentation/plan/widgets/schedule_publish_sheet.dart"
+        ],
+        "market_management_20261122": [
+          "community_app/lib/domain/providers/market/market_item_provider.dart",
+          "community_app/lib/presentation/market/screens/creator_market_items_screen.dart",
+          "community_app/lib/presentation/market/screens/market_item_create_screen.dart",
+          "community_app/lib/presentation/market/screens/market_item_detail_screen.dart",
+          "community_app/lib/presentation/market/screens/market_item_edit_screen.dart",
+          "community_app/lib/presentation/plan/widgets/schedule_publish_sheet.dart"
+        ],
+        "creator_stats_20261122": [
+          "community_app/lib/domain/providers/market/creator_provider.dart",
+          "community_app/lib/presentation/market/screens/creator_profile_screen.dart",
+          "community_app/lib/presentation/market/screens/creator_stats_screen.dart",
+          "community_app/lib/presentation/market/screens/market_item_detail_screen.dart"
+        ],
+        "market_browse_20261122": [
+          "community_app/lib/presentation/market/screens/market_main_screen.dart"
+        ],
+        "market_search_20261122": [
+          "community_app/lib/domain/providers/common/paged_list.dart",
+          "community_app/lib/presentation/market/screens/market_main_screen.dart",
+          "community_app/lib/presentation/market/screens/market_search_screen.dart"
+        ],
+        "market_detail_20261122": [
+          "community_app/lib/domain/providers/common/paged_list.dart",
+          "community_app/lib/domain/providers/market/market_item_provider.dart",
+          "community_app/lib/presentation/market/screens/market_item_detail_screen.dart"
+        ],
+        "market_purchase_20261122": [
+          "community_app/lib/domain/providers/market/market_item_provider.dart",
+          "community_app/lib/presentation/home/screens/market_plan_detail_screen.dart",
+          "community_app/lib/presentation/market/screens/market_item_detail_screen.dart",
+          "community_app/lib/presentation/plan/screens/plan_preview_screen.dart"
+        ],
+        "my_collection_20261122": [
+          "community_app/lib/presentation/market/screens/market_main_screen.dart",
+          "community_app/lib/presentation/market/screens/my_collection_screen.dart"
+        ],
+        "plan_event_review_20261122": [
+          "community_app/lib/domain/providers/market/market_item_provider.dart",
+          "community_app/lib/presentation/market/screens/market_item_detail_screen.dart",
+          "community_app/lib/presentation/market/widgets/market_review_write_dialog.dart",
+          "community_app/lib/presentation/plan/screens/plan_detail_screen.dart"
+        ],
+        "block_editor_20261122": [
+          "community_app/lib/presentation/plan/screens/block_editor/inline_text_block.dart",
+          "community_app/lib/presentation/plan/screens/block_editor_screen.dart"
+        ],
+        "calendar_features_20261122": [
+          "community_app/lib/presentation/calendar/screens/availability_screen.dart",
+          "community_app/lib/presentation/calendar/screens/daily_calendar_screen.dart",
+          "community_app/lib/presentation/calendar/screens/monthly_calendar_screen.dart",
+          "community_app/lib/presentation/calendar/screens/recurring_rule_screen.dart"
+        ],
+        "review_core_20261122": [
+          "community_app/lib/presentation/review/screens/review_write_screen.dart",
+          "community_app/lib/presentation/review/widgets/review_card.dart",
+          "community_app/lib/presentation/review/widgets/review_hide_sheet.dart"
+        ],
+        "feedback_taste_20261122": [
+          "community_app/lib/presentation/review/screens/event_feedback_screen.dart",
+          "community_app/lib/presentation/review/screens/review_write_screen.dart",
+          "community_app/lib/presentation/review/screens/taste_profile_screen.dart"
+        ],
+        "trust_score_20261122": [
+          "community_app/lib/presentation/review/screens/trust_score_screen.dart"
+        ],
+        "report_intake_20261122": [
+          "community_app/lib/presentation/review/screens/report_screen.dart"
+        ],
+        "location_features_20261122": [
+          "community_app/lib/presentation/event/widgets/event_info_section.dart",
+          "community_app/lib/presentation/location/screens/directions_screen.dart",
+          "community_app/lib/presentation/location/screens/event_location_screen.dart",
+          "community_app/lib/presentation/location/screens/location_privacy_screen.dart"
+        ],
+        "warning_intake_20261122": [
+          "community_app/lib/domain/providers/warning/warning_admin_commands.dart",
+          "community_app/lib/presentation/warning/admin/warning_appeal_inbox_screen.dart",
+          "community_app/lib/presentation/warning/admin/warning_report_detail_screen.dart",
+          "community_app/lib/presentation/warning/screens/appeal_submit_screen.dart",
+          "community_app/lib/presentation/warning/screens/host_report_submit_screen.dart",
+          "community_app/lib/presentation/warning/screens/my_appeals_screen.dart",
+          "community_app/lib/presentation/warning/screens/my_reports_screen.dart",
+          "community_app/lib/presentation/warning/screens/report_submit_screen.dart",
+          "community_app/lib/presentation/warning/screens/warning_main_screen.dart"
+        ],
+        "warning_operations_20261122": [
+          "community_app/lib/domain/providers/warning/warning_admin_commands.dart",
+          "community_app/lib/presentation/warning/admin/warning_member_detail_screen.dart",
+          "community_app/lib/presentation/warning/admin/warning_policy_screen.dart",
+          "community_app/lib/presentation/warning/admin/widgets/warning_admin_access.dart"
+        ],
+        "date_identity_profile_20261122": [
+          "community_app/lib/domain/providers/date/date_profile_provider.dart",
+          "community_app/lib/domain/providers/date/profile_view_provider.dart",
+          "community_app/lib/presentation/date/screens/date_manual_review_screen.dart",
+          "community_app/lib/presentation/date/screens/date_profile_create_screen.dart",
+          "community_app/lib/presentation/date/screens/date_profile_edit_screen.dart",
+          "community_app/lib/presentation/date/screens/date_profile_screen.dart",
+          "community_app/lib/presentation/date/screens/profile_viewers_screen.dart",
+          "community_app/lib/presentation/date/screens/verification_screen.dart"
+        ],
+        "date_matching_block_20261122": [
+          "community_app/lib/domain/providers/date/date_block_provider.dart",
+          "community_app/lib/domain/providers/date/date_match_provider.dart",
+          "community_app/lib/domain/providers/date/date_profile_provider.dart",
+          "community_app/lib/presentation/date/screens/candidate_card_screen.dart",
+          "community_app/lib/presentation/date/screens/chat_screen.dart",
+          "community_app/lib/presentation/date/screens/date_blocks_screen.dart",
+          "community_app/lib/presentation/date/screens/match_list_screen.dart",
+          "community_app/lib/presentation/date/widgets/date_block_reason_sheet.dart"
+        ]
+      },
+      "reviewEvidenceGroup": "date_chat_meeting_20261122",
+      "disposition": "채팅/만남의 현재 검토 범위는 새 근거에 반영. 이전 근거 중 실제 지문이 달라진 범위만 최종 변경 영향 대조 대상으로 남김."
     }
   }
 }

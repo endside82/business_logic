@@ -316,8 +316,8 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F09-02 | 프라이빗 데이팅 | [F09-02_profile_prd.md](02_feature_prds/09_private_date/F09-02_profile_prd.md) | `F09-02_profile` | 실사 기반 전환본 | 6 | 3 |
 | F09-03 | 프라이빗 데이팅 | [F09-03_candidate_swipe_prd.md](02_feature_prds/09_private_date/F09-03_candidate_swipe_prd.md) | `F09-03_candidate_swipe` | 실사 기반 전환본 | 2 | 4 |
 | F09-04 | 프라이빗 데이팅 | [F09-04_match_list_prd.md](02_feature_prds/09_private_date/F09-04_match_list_prd.md) | `F09-04_match_list` | 실사 기반 전환본 | 2 | 5 |
-| F09-05 | 프라이빗 데이팅 | [F09-05_chat_prd.md](02_feature_prds/09_private_date/F09-05_chat_prd.md) | `F09-05_chat` | 실사 기반 전환본 | 4 | 1 |
-| F09-06 | 프라이빗 데이팅 | [F09-06_meeting_proposal_prd.md](02_feature_prds/09_private_date/F09-06_meeting_proposal_prd.md) | `F09-06_meeting_proposal` | 실사 기반 전환본 | 3 | 8 |
+| F09-05 | 프라이빗 데이팅 | [F09-05_chat_prd.md](02_feature_prds/09_private_date/F09-05_chat_prd.md) | `F09-05_chat` | 실사 기반 전환본 | 6 | 5 |
+| F09-06 | 프라이빗 데이팅 | [F09-06_meeting_proposal_prd.md](02_feature_prds/09_private_date/F09-06_meeting_proposal_prd.md) | `F09-06_meeting_proposal` | 실사 기반 전환본 | 5 | 7 |
 | F09-07 | 프라이빗 데이팅 | [F09-07_block_prd.md](02_feature_prds/09_private_date/F09-07_block_prd.md) | `F09-07_block` | 실사 기반 전환본 | 3 | 4 |
 | F09-08 | 프라이빗 데이팅 | [F09-08_profile_views_prd.md](02_feature_prds/09_private_date/F09-08_profile_views_prd.md) | `F09-08_profile_views` | 실사 기반 전환본 | 1 | 3 |
 | F10-01 | 캘린더 | [F10-01_unified-calendar-view_prd.md](02_feature_prds/10_calendar/F10-01_unified-calendar-view_prd.md) | `F10-01_unified-calendar-view` | 실사 기반 전환본 | 3 | 3 |

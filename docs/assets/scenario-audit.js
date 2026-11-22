@@ -6,12 +6,12 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,282개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,276개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1282,
+    "documentedScenarioItems": 1276,
     "definedFeatures": 117,
-    "automatedTestFilesScanned": 4978,
+    "automatedTestFilesScanned": 5007,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
     "directlyLinkedAutomatedTests": 76,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 44,
     "partialEvidenceChain": 57,
     "definitionOnlyEvidence": 74,
-    "traceMarkers": 647,
-    "verifiedTraceRecords": 645,
+    "traceMarkers": 654,
+    "verifiedTraceRecords": 652,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -12912,19 +12912,19 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F09-05",
       "domain": "프라이빗 데이팅",
-      "name": "채팅",
-      "scenarioCount": 10,
+      "name": "데이트 채팅과 전송 복구",
+      "scenarioCount": 7,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/09_private_date/F09-05_chat/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/09_private_date/F09-05_chat_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/09_private_date/F09-05_chat/backend.md",
-        "total": 4,
-        "verified": 4,
+        "total": 6,
+        "verified": 6,
         "retired": 0,
         "entries": [
           {
@@ -12994,6 +12994,40 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 79
               }
             ]
+          },
+          {
+            "id": "F09-05:5",
+            "label": "GET /api/v1/date/chats/{roomId}/access — 방 접근 확인",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateChatController.java",
+                "controller": "DateChatController",
+                "method": "access",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/date/chats/{roomId}/access",
+                "targetLine": 52,
+                "methodLine": 53
+              }
+            ]
+          },
+          {
+            "id": "F09-05:6",
+            "label": "GET /api/v1/date/chats/{roomId}/messages/since — 누락 메시지 복구",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateChatController.java",
+                "controller": "DateChatController",
+                "method": "messagesSince",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/date/chats/{roomId}/messages/since",
+                "targetLine": 60,
+                "methodLine": 61
+              }
+            ]
           }
         ]
       },
@@ -13022,21 +13056,107 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F09-06",
       "domain": "프라이빗 데이팅",
-      "name": "만남 제안 & 안전 흐름",
-      "scenarioCount": 10,
+      "name": "만남 제안·상태 변경·본인 피드백",
+      "scenarioCount": 7,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/09_private_date/F09-06_meeting_proposal/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/09_private_date/F09-06_meeting_proposal_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/09_private_date/F09-06_meeting_proposal/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 5,
+        "verified": 5,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F09-06:1",
+            "label": "POST /api/v1/date/meetings — 만남 제안",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateMeetingController.java",
+                "controller": "DateMeetingController",
+                "method": "proposeMeeting",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/date/meetings",
+                "targetLine": 30,
+                "methodLine": 31
+              }
+            ]
+          },
+          {
+            "id": "F09-06:2",
+            "label": "PATCH /api/v1/date/meetings/{meetingId} — 만남 상태 변경",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateMeetingController.java",
+                "controller": "DateMeetingController",
+                "method": "updateMeetingStatus",
+                "httpMethod": "PATCH",
+                "httpPath": "/api/v1/date/meetings/{meetingId}",
+                "targetLine": 38,
+                "methodLine": 39
+              }
+            ]
+          },
+          {
+            "id": "F09-06:3",
+            "label": "GET /api/v1/date/meetings/match/{matchId} — 매치별 만남 목록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateMeetingController.java",
+                "controller": "DateMeetingController",
+                "method": "getMeetings",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/date/meetings/match/{matchId}",
+                "targetLine": 47,
+                "methodLine": 48
+              }
+            ]
+          },
+          {
+            "id": "F09-06:4",
+            "label": "POST /api/v1/date/meetings/{meetingId}/feedback — 본인 피드백 제출",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateMeetingFeedbackController.java",
+                "controller": "DateMeetingFeedbackController",
+                "method": "submitFeedback",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/date/meetings/{meetingId}/feedback",
+                "targetLine": 30,
+                "methodLine": 31
+              }
+            ]
+          },
+          {
+            "id": "F09-06:5",
+            "label": "GET /api/v1/date/meetings/{meetingId}/feedback/me — 본인 피드백 조회",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateMeetingFeedbackController.java",
+                "controller": "DateMeetingFeedbackController",
+                "method": "getMyFeedbackStatus",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/date/meetings/{meetingId}/feedback/me",
+                "targetLine": 40,
+                "methodLine": 41
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,

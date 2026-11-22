@@ -1,142 +1,67 @@
 # 09. 프라이빗 데이팅 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 2026-11-22 기능 PRD와 현재 서버·앱 소스의 대조 요약이다. 새 제품 실행·실기기·외부 인증/알림 검증은 아니다. 실행 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따른다.
 
+## 결론과 기능 정본
 
-<!-- generated: domain-source-first-rollup; updated: 2026-05-18; unit: business_logic/units/09_private_date -->
+본인 인증과 별도 데이트 프로필을 준비해 후보를 보고 LIKE/PASS를 선택한다. 상호 LIKE는 매치와 채팅방을 만들고, 대화·만남 제안·완료 후 본인 피드백으로 이어진다. 차단은 이 흐름을 중단하고 안전 신고를 선택할 수 있다. 현재 앱에는 프로필 생성·사진 관리와 만남 수락·취소·완료가 연결돼 있다. 과거의 “조회/본문 편집만 지원”, “만남 상태 변경 단추 없음” 설명은 현재 범위와 다르다.
 
-> 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/09_private_date/00_overview.md`와 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
+| 기능 정본 | 서버 연결 수 | 제한·미검증 항목 | 확인 항목 수 |
+|---|---:|---:|---:|
+| [F09-01 본인 인증과 증빙 검토](../02_feature_prds/09_private_date/F09-01_verification_prd.md) | 8 | 4 | 7 |
+| [F09-02 데이트 프로필 생성·편집과 사진 관리](../02_feature_prds/09_private_date/F09-02_profile_prd.md) | 6 | 3 | 7 |
+| [F09-03 후보 탐색과 좋아요·넘김](../02_feature_prds/09_private_date/F09-03_candidate_swipe_prd.md) | 2 | 4 | 7 |
+| [F09-04 매칭 목록과 대화 연결](../02_feature_prds/09_private_date/F09-04_match_list_prd.md) | 2 | 5 | 5 |
+| [F09-05 데이트 채팅과 전송 복구](../02_feature_prds/09_private_date/F09-05_chat_prd.md) | 6 | 5 | 7 |
+| [F09-06 만남 제안·상태 변경·본인 피드백](../02_feature_prds/09_private_date/F09-06_meeting_proposal_prd.md) | 5 | 7 | 7 |
+| [F09-07 데이트 차단과 안전 신고](../02_feature_prds/09_private_date/F09-07_block_prd.md) | 3 | 4 | 6 |
+| [F09-08 내 데이트 프로필 방문 기록](../02_feature_prds/09_private_date/F09-08_profile_views_prd.md) | 1 | 3 | 5 |
 
-## 1. 결론
+기능 PRD 8개, 서버 연결 33개, 제한·미검증 35개, 수용 기준 51개다. 연결 수는 기능별 등록 건수이며 고유 엔드포인트 수와 다를 수 있다. 제한·미검증 수는 결함 확정 수가 아니며 수용 기준 수도 실행 통과 수가 아니다.
 
-1:1 데이트 매칭 비즈니스 단위. 본인 인증 → 데이팅 프로필 → 후보자 카드의 LIKE/PASS 버튼 → 매칭 목록 → 채팅 → 만남 제안 → 차단 관리로 이어진다. 체크인/SOS/긴급 연락처는 현재 서버·클라이언트에서 의도적 미운영이다. 서버는 만남 상태 전이를 제공하지만 앱 화면은 새 제안과 목록 확인만 연결하고 수락·취소·완료 CTA는 없다.
+## 실제 진입과 업무 흐름
 
-이 도메인은 기능 PRD 8개로 구성된다. 현재 기능별 trace source는 총 24개이고, risk 후보는 총 19개다. 도메인 수준의 판단은 아래 기능별 PRD와 unit 근거를 따라가며 확정한다.
+| 단계 | 현재 행동과 경계 |
+|---|---|
+| 인증 | 공급자 요청/결과 조회와 증빙 검토. 외부 TOSS/NICE 자동 완료는 현재 NOT_SUPPORTED 경계가 있으며 수동 검토를 구분 |
+| 프로필 | 검증된 만 20세 이상·성별과 동의·3~6장 사진으로 생성. 본문/취향/공개·활성/사진 변경의 제약 적용 |
+| 후보 | 공개·활성·인증·차단·기존 행동 필터 뒤 선호와 점수로 최대 20명. 현재 LIKE/PASS 단추이며 카드 스와이프 동작은 없음 |
+| 매칭 목록 | 상태별 첫 페이지. 새 매칭/대화중은 같은 MATCHED 요청. 카드 탭은 등록된 채팅방 목록으로 이동 |
+| 채팅 | `/dating/chat`에서 방 선택 후 `/dating/chat/{roomId}`. 후보 성공 창은 개별 방으로 직접 진입, CHAT_MESSAGE 알림은 방 목록 |
+| 만남 | 현재 방 actions가 허용할 때 `/dating/meeting/{matchId}`. 제안·수락/거절·취소·완료는 각각 현재 서버 actions를 적용 |
+| 피드백 | 완료 알림은 matchId로 만남 화면을 열며 화면은 최신 완료 한 건의 본인 응답 상태를 표시 |
+| 차단·방문 기록 | 후보/매칭의 차단 입구와 별도 해제 목록. 프로필 방문 기록은 현재 양방향 차단 상대를 페이지/전체 수에서 제외 |
 
-## 2. 실사 근거 맵
+DATING 공개 범위와 안전 출구 예외를 별도로 적용한다. 프로필·인증·차단의 허용된 안전 출구가 있다고 후보·새 프로필·채팅·만남 전체가 공개된 것은 아니다. 인증 유효기간과 프로필 활성은 모든 업무가 공통으로 재검사하는 단일 게이트가 아니다.
 
-| ID | 기능 | PRD | Unit 근거 | 상태 | Trace | Risk 후보 |
-|---|---|---|---|---|---:|---:|
-| F09-01 | F09-01. 본인 인증 (Toss) | [F09-01_verification_prd.md](../02_feature_prds/09_private_date/F09-01_verification_prd.md) | [F09-01_verification](../../units/09_private_date/F09-01_verification) | 전환 완료 | 3 | 0 |
-| F09-02 | F09-02. 데이팅 프로필 관리 | [F09-02_profile_prd.md](../02_feature_prds/09_private_date/F09-02_profile_prd.md) | [F09-02_profile](../../units/09_private_date/F09-02_profile) | 갱신 완료 (2026-07-29) | 6 | 2 |
-| F09-03 | F09-03. 후보자 카드 & 매칭 액션 | [F09-03_candidate_swipe_prd.md](../02_feature_prds/09_private_date/F09-03_candidate_swipe_prd.md) | [F09-03_candidate_swipe](../../units/09_private_date/F09-03_candidate_swipe) | 갱신 완료 (2026-07-29) | 2 | 4 |
-| F09-04 | F09-04. 매칭 목록 조회 | [F09-04_match_list_prd.md](../02_feature_prds/09_private_date/F09-04_match_list_prd.md) | [F09-04_match_list](../../units/09_private_date/F09-04_match_list) | 전환 완료 | 2 | 0 |
-| F09-05 | F09-05. 채팅 (방 목록 + 메시지) | [F09-05_chat_prd.md](../02_feature_prds/09_private_date/F09-05_chat_prd.md) | [F09-05_chat](../../units/09_private_date/F09-05_chat) | 전환 완료 | 4 | 1 |
-| F09-06 | F09-06. 만남 제안 & 안전 흐름 | [F09-06_meeting_proposal_prd.md](../02_feature_prds/09_private_date/F09-06_meeting_proposal_prd.md) | [F09-06_meeting_proposal](../../units/09_private_date/F09-06_meeting_proposal) | 갱신 완료 (2026-07-29) | 3 | 8 |
-| F09-07 | F09-07. 사용자 차단/해제 | [F09-07_block_prd.md](../02_feature_prds/09_private_date/F09-07_block_prd.md) | [F09-07_block](../../units/09_private_date/F09-07_block) | 전환 완료 | 3 | 1 |
-| F09-08 | F09-08. 내 프로필 조회 이력 | [F09-08_profile_views_prd.md](../02_feature_prds/09_private_date/F09-08_profile_views_prd.md) | [F09-08_profile_views](../../units/09_private_date/F09-08_profile_views) | 전환 완료 | 1 | 3 |
+## 신원·프로필·추천의 정보 경계
 
-## 3. 먼저 볼 기능
+신원 확인 자료와 별도 데이트 프로필을 구분한다. 후보 공개 필드는 프로필의 개별 공개 설정을 따르며, 사진은 삭제되지 않은 APPROVED 항목을 사용한다. 공개·활성 전환에는 인증/연령·성별·제재·승인 사진 수 조건을 적용한다. 앱 편집 이름 20자와 생성/서버 50자, 빈 본문의 null 유지와 취향의 빈 값 제거도 구분한다.
 
-| 먼저 볼 기능 | 기능 | 이유 |
-|---|---|---|
-| [F09-06](../02_feature_prds/09_private_date/F09-06_meeting_proposal_prd.md) | F09-06. 만남 제안 & 안전 흐름 | Risk 후보 8 |
-| [F09-03](../02_feature_prds/09_private_date/F09-03_candidate_swipe_prd.md) | F09-03. 후보자 카드 & 매칭 액션 | Risk 후보 4 |
-| [F09-08](../02_feature_prds/09_private_date/F09-08_profile_views_prd.md) | F09-08. 내 프로필 조회 이력 | Risk 후보 3 |
-| [F09-02](../02_feature_prds/09_private_date/F09-02_profile_prd.md) | F09-02. 데이팅 프로필 관리 | Risk 후보 2 |
-| [F09-07](../02_feature_prds/09_private_date/F09-07_block_prd.md) | F09-07. 사용자 차단/해제 | Risk 후보 1 |
-| [F09-05](../02_feature_prds/09_private_date/F09-05_chat_prd.md) | F09-05. 채팅 (방 목록 + 메시지) | Risk 후보 1 |
+후보 결격 조건은 조회자 쪽에서 적용하며 후보 값이 없으면 일부 조건을 통과한다. 커뮤니티 관심사·신뢰점수 성분은 양쪽 프로필 모두 옵트인한 때만 사용하고 나머지 가중치를 다시 맞춘다. 신규 가산·노출 감점까지 반영한 최종 점수에는 100 상한이 없고, 노출은 실제 화면 열람이 아니라 반환 후보에 기록한다. 후보 필터와 직접 선택 API의 검사 범위도 동일하지 않다.
 
-## 4. 도메인 기능 목록
+## 매치·대화방·만남의 상태 분리
 
-### 핵심 기능 목록 (M = 8)
+상호 LIKE는 MATCHED와 ACTIVE 방을 만든다. 대기 매치는 기한 경과 작업으로 EXPIRED가 될 수 있다. 무활동 MATCHED 정리는 방을 INACTIVE로 바꾸고 매치는 MATCHED로 남긴다. 차단은 매치를 BLOCKED로 바꾸고 두 사람의 활성 MATCH/PRIVATE_MEETING 방을 닫는다. 해제는 차단 상태를 UNBLOCKED로 바꾸며 매치와 방을 자동 복원하지 않는다.
 
-| Prefix | 기능명 | 단계 | 진입 화면(Screen ID) | 주요 API |
-|--------|------|------|----------------------|----------|
-| **F09-01** | 본인 인증 (Toss) | 게이트 | SCR-PD-007 `verification_screen.dart` | `POST /api/v1/date/verification/request`, `POST /api/v1/date/verification/verify`, `GET /api/v1/date/verification/status` |
-| **F09-02** | 데이팅 프로필 관리 | 자기 표현 | SCR-PD-001 `date_profile_screen.dart`, `date_profile_edit_screen.dart` | 서버는 생성·조회·수정·활성 토글·사진 API를 제공한다. 앱은 기존 프로필 조회·본문 수정·활성 토글만 연결 |
-| **F09-03** | 후보자 카드 & 매칭 액션 | 상호 발견 | SCR-PD-002 `candidate_card_screen.dart` | `GET /api/v1/date/profile/candidates`, `POST /api/v1/date/matches/action`; 버튼 LIKE/PASS만 있고 swipe gesture 없음 |
-| **F09-04** | 매칭 목록 조회 | 관계 보관 | SCR-PD-003 `match_list_screen.dart` | `GET /api/v1/date/matches`, `GET /api/v1/date/matches/{matchId}` |
-| **F09-05** | 채팅 (방 목록 + 메시지) | 소통 | SCR-PD-004 `chat_room_list_screen.dart`, SCR-PD-005 `chat_screen.dart` | `GET /api/v1/date/chats`, `GET /api/v1/date/chats/{roomId}/messages`, `POST /api/v1/date/chats/{roomId}/messages`, `PATCH /api/v1/date/chats/{roomId}/read` |
-| **F09-06** | 만남 제안 & 안전 흐름 | 오프라인 약속 | SCR-PD-006 `meeting_proposal_screen.dart` | 앱은 `POST /api/v1/date/meetings`와 목록 GET만 연결. 서버 PATCH 상태 전이는 있으나 presentation caller 없음. 체크인/SOS는 의도적 미운영 |
-| **F09-07** | 사용자 차단/해제 | 안전 보호 | `date_blocks_screen.dart` (+ 후보자/매칭/채팅 어디서든 발동) | `GET /api/v1/date/blocks`, `POST /api/v1/date/blocks/{targetUserId}`, `DELETE /api/v1/date/blocks/{targetUserId}` |
-| **F09-08** | 내 프로필 조회 이력 | 부가 동기 부여 | `profile_viewers_screen.dart` | `GET /api/v1/date/profile/views` |
+채팅의 서버 송신은 TEXT만 지원하고 선택 멱등 키로 기존 결과를 찾는다. 앱은 소켓 우선·일부 연결 실패의 같은 키 REST 재시도·결과 미확인 대기·since 복구·과거 페이지를 구분한다. 방 종료 뒤 이미 화면에 남은 기록과 서버의 새 조회 허용은 별개다.
 
-## 5. 상태/권한/의존성
+만남은 PROPOSED → CONFIRMED 또는 CANCELLED, CONFIRMED → COMPLETED 또는 CANCELLED로 바뀐다. 받은 사람만 수락하고 종료 상태는 되돌릴 수 없다. 닫힌 방은 새 제안/수락을 막지만 살아 있는 비차단 매치의 취소/완료는 따로 허용한다. API 입력 범위와 앱의 미래 날짜·메모·장소 입력 제한을 구분한다.
 
-### 단위 분할 근거
+## 차단·신고·완료 피드백
 
-매칭 비즈니스의 사용자 경험은 **단계별로 화면·심리·서버 호출이 모두 다르다.** 한 단위로 묶으면 기능 단위 분석이 어려워지므로 흐름의 마디마다 분리한다.
+차단에 안전 신고를 함께 넣으면 신고·증빙 연결과 조건에 맞는 만남 정산 보류가 이어진다. 차단만으로 모든 정산이 보류되지는 않는다. 해제는 방이나 매치를 다시 열지 않으며 증빙도 즉시 삭제하지 않는다. 증빙 정리의 기준 시점은 연결 신고가 종결 처리된 시각이며 단순 차단 시각과 다르다.
 
-1. **진입 게이트**: 본인 인증(SCR-PD-007)이 데이팅 진입의 필수 조건. Toss SDK 외부 의존이 있어 별도 기능으로 격리.
-2. **자기 표현**: 데이팅 프로필(SCR-PD-001) — 기존 본문 편집 + active 토글. 서버 생성·사진 API는 있지만 신규 생성 화면과 사진 추가/삭제 액션은 없다.
-3. **상호 발견**: 후보자 카드(SCR-PD-002) — 버튼 LIKE/PASS 액션과 매칭 성사 모달. drag/swipe gesture나 일일 LIKE 한도는 현재 코드에서 확인되지 않는다. 과거 액션·매치 row를 후보 쿼리가 제외하지 않아 처리한 페어가 재노출될 수 있다.
-4. **관계 보관**: 매칭 목록(SCR-PD-003) — 매칭된 사용자 리스트, 새매칭/대화중 탭, 단건 조회.
-5. **소통**: 채팅방 목록(SCR-PD-004) + 채팅(SCR-PD-005) — 메시지 송수신, 읽음 처리. 한 번에 동선이 같아 한 기능으로 묶음.
-6. **오프라인 약속**: 만남 제안(SCR-PD-006) — 앱은 일시/장소 신규 제안과 목록 확인만 연결한다. 서버의 확정·취소·완료 전이를 실행할 CTA는 없고 체크인/SOS도 미운영이다.
-7. **안전 보호**: 차단(`/api/v1/date/blocks`) — 어디서든 발동 가능한 횡단 보호 기능. 활성 매칭 BLOCKED 처리.
-8. **부가**: 프로필 조회 이력(`/api/v1/date/profile/views`) — "내 프로필을 본 사람" 화면(`profile_viewers_screen.dart`). 사용자 동기 부여 기능.
+만남 피드백은 본인 응답만 내려준다. 제출에는 COMPLETED·당사자·비차단·미제출을 요구하고 본인 상태 조회는 당사자만 확인한다. 피드백 선택을 다른 회원에게 공개하거나 서로 같은 선택을 했다고 발표하는 응답은 없다. 화면의 최신 완료 한 건 선택과 전송 전 시트 닫기·조회 실패 숨김은 현재 제한으로 남긴다.
 
-긴급 연락처(SCR-PD-008), SOS, 체크인은 **의도적 미운영** 상태이다. 이전 제품 결정으로 서버·클라이언트 양측에서 모두 삭제되었으며(`/api/v1/date/emergency-contacts`, `POST .../check-in`, `POST .../sos` 모두 부재), 본 단위 산출물에 별도 기능으로 도출하지 않는다. 스펙 문서(SCR-PD-006/008)에 흔적이 남아 있으나 이는 deprecated 항목으로 간주한다. 향후 재도입 시 별도 작업으로 다룬다.
+## 우선 확인할 차이와 문서 운영
 
-### 단계별 사용자 경험 요약
+- 매칭 카드의 /dating/chat은 정상 방 목록 경로다. 특정 매치 대화로 직접 여는 흐름과 구분한다. user2Id를 고정 차단 대상으로 쓰는 문제는 별도로 남아 있다.
+- 서버 목록/단건 미리보기 보강에는 방 활성·차단의 추가 검사가 없고 앱의 행 가림과 다르다.
+- 외부 인증 미연결, 후보/직접 선택 검사 차이, 첫 페이지만 소비하는 매칭 목록을 완료된 전체 기능으로 표현하지 않는다.
+- 채팅 연결 실패 안내의 “정상 전송” 단정은 REST까지 실패할 수 있는 범위와 맞지 않는다. 저장·ACK·이벤트 발행·기기 수신을 각각 구분한다.
+- 만남의 “매칭한 지 3일”과 “24시간”은 현재 시간 정책으로 보장되지 않는다. 자동 위치 공유 안내는 제거돼 있다.
+- 피드백 알림은 특정 meetingId를 선택하지 않아 이전 완료 건의 미응답 입구가 보장되지 않는다.
 
-```
-[F09-01 본인 인증] (게이트 통과 안되면 모든 기능 차단)
-       ↓
-[F09-02 기존 프로필 조회·본문 편집·active 토글]
-       ↓
-[F09-03 후보자 카드 LIKE/PASS 버튼] ─── 매칭 미성사 → 다음 카드
-       │ (매칭 성사)
-       ↓
-[F09-04 매칭 목록] ─── (탭) ───→ [F09-05 채팅]
-                                    │
-                                    ↓
-                              [F09-06 만남 제안]
-                                    │
-                                    ├─ 앱: PROPOSED 생성·목록 확인
-                                    └─ 서버: CONFIRMED/CANCELLED/COMPLETED
-                                       (현재 상태 변경 CTA 없음)
-
-[F09-07 차단] — 후보자/매칭/채팅 어느 단계에서나 발동 가능 (횡단)
-[F09-08 조회 이력] — 프로필 진입 측면 동선 (마이페이지)
-```
-
-## 6. 화면/API 매핑
-
-> 이 overview에는 별도 요약 섹션이 없다. 이 도메인의 세부 판단은 위 실사 근거 맵의 기능 PRD와 unit 문서를 기준으로 확인한다.
-
-## 7. Gap / Risk Rollup
-
-| 기능 | 제목 | 후보 수 | 처리 기준 |
-|---|---|---:|---|
-| [F09-06](../02_feature_prds/09_private_date/F09-06_meeting_proposal_prd.md) | F09-06. 만남 제안 & 안전 흐름 | 8 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F09-03](../02_feature_prds/09_private_date/F09-03_candidate_swipe_prd.md) | F09-03. 후보자 카드 & 매칭 액션 | 4 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F09-08](../02_feature_prds/09_private_date/F09-08_profile_views_prd.md) | F09-08. 내 프로필 조회 이력 | 3 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F09-02](../02_feature_prds/09_private_date/F09-02_profile_prd.md) | F09-02. 데이팅 프로필 관리 | 2 | 생성/사진 UI 부재, 사진 요청/응답 계약 불일치 — 기능 PRD 참조 |
-| [F09-05](../02_feature_prds/09_private_date/F09-05_chat_prd.md) | F09-05. 채팅 (방 목록 + 메시지) | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F09-07](../02_feature_prds/09_private_date/F09-07_block_prd.md) | F09-07. 사용자 차단/해제 | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-
-### 접근권한 감사 교정 (2026-07-02)
-
-접근권한 감사(2026-06-30~07-01)에서 확정·교정된 사항이다. 서버 코드에만 적용됐다.
-
-**프로필 사진 모더레이션 필터 (F09-1).** 디스커버리 피드와 채팅 아바타에 노출되는 사진은 검수 통과(APPROVED) 상태이며 삭제되지 않은 사진만 제공된다. 검수 대기(PENDING)·반려(REJECTED)·신고 검토 중(UNDER_REPORT)·소프트 삭제된 사진은 외부에 노출되지 않는다. 본인 프로필 조회에는 필터가 적용되지 않는다.
-
-**만남 약속 상태 전이 제한 (F09-2).** 서버 상태머신은 역행·종료 후 재전이를 막고, 확정(CONFIRMED)은 제안자 본인이 아닌 상대방만 할 수 있다. 다만 현재 Flutter에는 이 PATCH를 호출하는 수락·취소·완료 CTA가 없어 앱 happy path는 PROPOSED 생성에서 끝난다.
-
-**원본 신원 미노출(재확인).** 어떤 화면에서도 데이팅 참여자의 실명·전화번호·주민등록 연계 정보는 노출되지 않는다. 데이팅 프로필은 별도 퍼소나 정보만 사용하며, 원본 신원 데이터는 암호화 보관된다.
-
-## 8. 운영 방법
-
-1. 새 구현이나 QA 착수 전 `PRD_MIGRATION_STATUS.md`에서 담당 기능의 trace/risk 수를 확인한다.
-2. 담당 기능 PRD의 `실사 근거`, `서버 계약`, `프론트 계약`, `상태/권한/시나리오 매트릭스`, `Gap / Risk`를 먼저 읽는다.
-3. PRD가 인용한 `units` 문서와 실제 source trace를 열어 endpoint, DTO, enum, provider, screen이 현재 코드와 맞는지 확인한다.
-4. 도메인 정책은 이 문서에서 확정하지 않는다. 기능 PRD와 정책 PRD의 Gap/Risk가 충돌하면 `05_planning_artifacts/decision_register.md`에 결정 항목으로 올린다.
-
-## 9. 결격 선호·커뮤니티 옵트인·만남 피드백 재실측 (2026-07-29)
-
-F09-02 프로필은 흡연·음주·만남 목적·종교와 네 결격 토글, `communityDataOptIn`을 저장한다. 종교 저장에는 같은 요청의 별도 동의가 필요하고 동의 시각을 기록한다. F09-03 후보 필터는 조회자의 `excludeSmoker`, `excludeHeavyDrinker`, `excludeCasualPurpose`, `sameReligionOnly`를 단방향으로 적용하며 후보 null 값은 통과한다.
-
-후보 점수의 커뮤니티 성분은 관심사 태그 0.30과 신뢰점수 유사도 0.15다. 양쪽 프로필이 모두 옵트인한 경우만 사용하고, 미동의 시 지역 0.25·상호 연령 0.20·활동성 0.10을 재정규화한다. trait 점수와 behavior style estimate는 현재 데이팅 점수에 사용하지 않는다.
-
-F09-06 완료 미팅에는 본인 피드백이 추가됐다.
-
-- `POST /api/v1/date/meetings/{meetingId}/feedback` → 201
-- `GET /api/v1/date/meetings/{meetingId}/feedback/me` → 200
-- body: 필수 `meetAgain`, 선택 `satisfaction` 1~5
-- 조건: `COMPLETED`, 당사자, 비차단, 1인 1회
-- 상대 응답 여부·내용·상호 결과는 비노출
-
-현재 만남 피드백을 취향 프로필이나 추천 점수에 전달하는 호출은 없고 privatedate 격리 데이터 및 본인 export 원본으로만 확인된다.
+이 요약의 정본은 위 기능 PRD다. HTML과 기존 로컬 units는 같은 PRD에서 파생한다. API 함수/주소·문서 상대 링크·정본 지문을 검사하고, 소스가 바뀐 근거 묶음은 변경 영향만 다시 대조한다. 이번 정리는 문서 작업이며 제품 코드 수정·실제 인증·소켓/푸시·기기 시험 결과로 확대하지 않는다.
