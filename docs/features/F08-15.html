@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F08-15 크리에이터 매출 귀속 보정 — community PRD</title>
+  <title>F08-15 크리에이터 매출 귀속·정산</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,172 +17,46 @@
           <a href="../domains/08-plan-market.html">08 플랜 마켓</a><span>›</span>
           F08-15 매출 귀속 보정
         </div>
-        <h1>F08-15. 크리에이터 매출 귀속 보정</h1>
-        <p class="lede">
-          플랜 마켓에서 회원이 판매한 상품의 세 가지 구매(개별 아이템·번들·플랜 직접)는 크리에이터 매출 원장에 잡힌다.
-          유료 포인트로 결제한 금액에만 플랫폼 수수료·원천징수가 붙고, 무료 포인트 사용분은 수수료 없이 별도로 적립된다.
-          번들 매출은 큐레이터가 아니라 <strong>포함 아이템 원작자에게 정가 비례로 배분</strong>되어 원작자 권리를 보호한다.
-          환불은 이 매출 원장을 잠그거나 되돌리므로 두 기능은 같은 구매 기록을 기준으로 동작한다.
-        </p>
+        <h1>F08-15 크리에이터 매출 귀속·정산</h1>
+        <p class="lede">세 구매 원천의 소유자별 배분, 유료·무료 계산, 월 지급 컷오프, 환불 종결과 원금을 보존하는 미수금 상계를 현재 코드에 맞춘다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section id="platform-revenue">
-        <h2>회원 판매 수익과 플랫폼 구매 수익을 구분합니다</h2>
-        <p>아래 창작자 수익 규칙은 <strong>회원이 판매하는 상품</strong>에 적용합니다. 플랫폼 소유 기간권의 구매 수익은 별도로 기록하고
-          회원 판매자의 수수료·원천세·지급 채무를 만들지 않습니다. 혼합 번들은 구성 상품의 판매 주체에 따라 나눠 기록합니다.</p>
-        <p>플랫폼 구매 수익 처리는 기본 브랜치에 반영됐습니다. 기간권의 운영 집계·환불·판매 시작까지 모두 끝난 것은 아니며
-          <a href="F08-06.html#platform-period-pass">플랫폼 기간권의 현재 구현과 남은 일</a>을 따릅니다.</p>
-      </section>
-
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">매출 소스</div><div class="value">3</div><div class="hint">개별 아이템·번들·플랜 직접</div></div>
-          <div class="metric"><div class="label">수수료 대상</div><div class="value">유료분</div><div class="hint">무료 포인트 사용분은 별도</div></div>
-          <div class="metric"><div class="label">번들 모델</div><div class="value">원작자 배분</div><div class="hint">정가 비례</div></div>
-          <div class="metric"><div class="label">제품 시나리오</div><div class="value">9</div><div class="hint">구매·배분·환불·정산·회수</div></div>
-        </div>
-
-        <div class="callout warn">
-          <span class="label">환불과 같은 구매 기록을 써야 하는 이유</span>
-          <p>환불은 "이 구매가 만든 크리에이터 매출"을 정확히 찾아내 잠그거나(아직 정산 전), 회수하거나(이미 정산 완료) 해야 한다.
-            매출 원장이 구매 단위로 식별되지 않으면 환불 회계가 망가진다.
-            현재 매출 귀속과 환불은 모두 구매 ID를 기준으로 연결되어 있으며, 일부 환불도 선택한 구성품의 매출만 되돌린다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">1. 개별 아이템 구매</div>
-            <h3>"마켓에서 단품 데이트 플랜 구매"</h3>
-            <p>구매자가 10,000원 결제. 그 아이템을 만든 크리에이터에게 매출 1건이 잡힌다.
-              플랫폼 수수료·원천징수 적용 후 다음 정산 주기에 크리에이터에게 지급.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 단순 구매에서 가장 직관적인 매출 흐름. 환불 발생 시 이 매출 행을 찾아 처리.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">2. 플랜 직접 구매</div>
-            <h3>"유료·무료 포인트를 섞어 플랜을 직접 구매"</h3>
-            <p>플랜 작성자의 매출이 유료분과 무료분으로 나뉘어 기록된다. 수수료와 원천징수는 유료분에만 붙고,
-              두 금액의 합은 실제 구매 금액과 같아야 한다.</p>
-            <p><strong>완료 판단</strong> — 구매 원장과 크리에이터 매출 원장의 유료·무료 합계가 정확히 일치해야 한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">3. 번들 구매 — 원작자 배분</div>
-            <h3>"3개 아이템 묶음 30,000원 구매"</h3>
-            <p>아이템 A(정가 10,000) + B(15,000) + C(8,000) 묶음. 결제 30,000원 → 각 아이템 정가 비율로 분배 →
-              A 작가 9,090원, B 작가 13,640원, C 작가 7,270원에 매출 행이 따로 만들어진다.</p>
-            <p><strong>완료 판단</strong> — 큐레이터가 매출을 독식하지 않고, 원작자별 배분 합계가 실제 결제액과 같아야 한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">4. 0원 정가와 반올림</div>
-            <h3>"번들 구성품의 정가 합계가 0이거나 나눗셈이 딱 맞지 않는다"</h3>
-            <p>정가 합계가 0이면 원작자 수로 균등 배분하고, 나눗셈 나머지는 마지막 매출 행이 흡수한다.</p>
-            <p><strong>완료 판단</strong> — 어느 원작자 금액도 음수가 되지 않고 모든 매출 행의 합이 실제 결제액과 정확히 같아야 한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">5. 다중 원작자 혼합 결제</div>
-            <h3>"여러 원작자의 번들을 유료 7,000·무료 3,000 포인트로 구매"</h3>
-            <p>각 원작자의 배분액 안에서도 유료분과 무료분을 나눈다. 무료분에는 수수료와 세금을 붙이지 않으며 현금 인출 대상에도 넣지 않는다.</p>
-            <p><strong>완료 판단</strong> — 원작자별 유료·무료 합계와 전체 결제 합계가 모두 맞아야 한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">6. 번들 구매에는 덤 포인트가 없다</div>
-            <h3>"번들을 사도 따로 받는 포인트는 없다"</h3>
-            <p>번들 구매는 결제액만 지갑에서 뺀다. 번들에 덤 포인트를 거는 칸과 구매 때 덤을 적립하는 길은 쓰는 곳이 없어 차수 10 에서 걷었다.</p>
-            <p><strong>완료 판단</strong> — 번들 구매가 지갑에 남기는 것은 결제 차감뿐이고, 덤 적립이나 그 판촉 비용 원장이 생기지 않아야 한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">7. 환불과 매출 보류·복구</div>
-            <h3>"환불 신청 뒤 거절·일부 승인·전액 승인이 갈린다"</h3>
-            <p>신청 중인 매출은 정산에서 빼고, 거절하면 다시 정산 가능 상태로 돌린다. 번들 일부 환불은 선택한 구성품의 매출만 되돌린다.</p>
-            <p><strong>완료 판단</strong> — 환불 결과와 무관한 원작자의 매출은 그대로 남고, 같은 매출을 두 번 되돌리지 않아야 한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">8. 월간 정산 경계</div>
-            <h3>"환불 가능 기간이 끝난 매출과 아직 남은 매출이 섞여 있다"</h3>
-            <p>지급은 매달 한 번 돌고, 그때 <strong>환불 가능 기간 14일이 지난 대기 매출만</strong> 크리에이터별로 묶어 지급한다.
-              즉 14일은 지급 주기가 아니라 "아직 환불될 수 있는 매출을 걸러 내는 기준선"이다 —
-              구매 시점에 따라 실제 대기는 보름에서 한 달 반까지 벌어진다.
-              한 크리에이터의 계좌나 지급 실패가 다른 크리에이터의 정산을 막지 않는다.</p>
-            <p><strong>완료 판단</strong> — 14일 기준선과 매출 상태를 정확히 지키고, 크리에이터별 지급 결과를 서로 독립적으로 남겨야 한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">9. 지급 후 환불금 회수</div>
-            <h3>"이미 지급한 매출이 환불됐는데 다음 정산금이 부족하다"</h3>
-            <p>다음 정산금에서 가능한 금액만 먼저 회수하고, 전액을 회수한 미수금만 종결한다. 부족한 금액은 다음 정산 주기로 넘긴다.</p>
-            <p><strong>완료 판단</strong> — 실제 회수액, 남은 미수금, 회계 분개가 일치하고 일부 회수를 전액 회수로 잘못 표시하지 않아야 한다.</p>
-          </article>
-        </div>
-
-        <div class="callout warn">
-          <span class="label">현재 검증 수준</span>
-          <p>세 구매 경로의 매출 생성, 환불 보류, 정산 후 미수금 일부 회수는 코드와 서버 테스트에서 확인했다.
-            다만 정가 합계 0·반올림 잔액, 여러 원작자의 유료·무료 혼합 배분, 14일 기준선의 경계는 경계값을 직접 고정하는 테스트가 부족하다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>화면에서 창작자와 운영자가 확인하는 것</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:150px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
-            <tbody>
-              <tr><td><strong>매출 원장 라벨</strong></td><td>"개별 아이템·번들·플랜 직접" 출처별로 매출 카드 라벨이 구분.</td><td>창작자가 자기 매출의 출처를 한눈에 인지하게.</td></tr>
-              <tr><td><strong>유료/무료 분리</strong></td><td>"유료 매출 + 무료 포인트 적립" 두 항목이 별도 행으로 노출.</td><td>창작자가 현금 지급 대상과 인출할 수 없는 무료 포인트를 구분하게.</td></tr>
-              <tr><td><strong>번들 배분 안내</strong></td><td>번들 매출 카드에 "정가 비례로 배분됨" 작은 글자 안내.</td><td>원작자가 "왜 매출이 더 적지?" 의문 갖지 않게.</td></tr>
-              <tr><td><strong>매출 상태</strong></td><td>"대기·정산 완료·환불 보류·환불 완료·회수 대상" 상태가 카드에 노출.</td><td>창작자가 자기 매출이 어느 단계인지 알 수 있게.</td></tr>
-              <tr><td><strong>회수 안내</strong></td><td>정산 후 환불이 들어온 매출은 별도 알림과 남은 회수액을 표시.</td><td>창작자가 다음 정산에서 차감되는 이유와 금액을 확인하게.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">정산·환불 영향</span>
-          <ul>
-            <li><strong>매출 행은 구매 ID 기준으로 식별</strong> — 환불 시 "이 구매가 만든 매출"을 정확히 찾을 수 있다.</li>
-            <li><strong>월간 정산은 "대기" 상태 매출만</strong> — 환불 보류·환불 완료·역전 상태는 정산에서 제외.</li>
-            <li><strong>구매 경로별 유료·무료 분리</strong> — 마켓 아이템·번들·플랜 직접 구매 모두 같은 분리 원칙을 사용한다.</li>
-            <li><strong>번들의 정가 합계가 0이면 균등 배분</strong> — 안전망(예외 케이스 대비).</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>레드 플래그</h2>
-        <div class="callout danger">
-          <span class="label">자주 발생하는 케이스</span>
-          <ul>
-            <li><strong>지갑 환불의 유료/무료 분리 보존(2026-06-06 해소)</strong> — 환불이 결제했던 유료/무료 구성 그대로 복원되며, 장부와 실제 지갑이 같은 기준으로 기록된다.</li>
-            <li><strong>번들 큐레이터와 원작자 혼동</strong> — 환불 권한자는 큐레이터, 매출 귀속은 원작자. 분쟁 발생 시 구분 안내 필요.</li>
-            <li><strong>배분 경계값 검증 부족</strong> — 정가 합계 0, 반올림 잔액, 여러 원작자의 혼합 결제를 별도 테스트로 고정해야 한다.</li>
-            <li><strong>정산 후 환불은 미수금으로 관리</strong> — 다음 정산금이 부족하면 일부만 회수하고 남은 금액을 다음 주기로 넘긴다. 창작자에게 차감 이유와 잔액을 보여 줘야 한다.</li>
-          </ul>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>적용 범위와 실행 입구</h2><p>상품 단건·번들·플랜 직접 구매는 구매 트랜잭션 안에서 수익을 기록한다. 이 문서의 입구는 별도의 운영자 수동 보정 화면이 아니라 <a href="F08-11.html">상품·번들·플랜 구매</a>, 서버 월 지급 스케줄러, <a href="F08-14.html">구매 환불</a>이다. 기존 문서의 sourceId 변경·상태 추가·FLOW_THROUGH 전환은 이미 반영된 계약이며 신규 구현 목록이 아니다.</p>
+<p>월 지급은 크리에이터 지갑에 유료·무료 포인트를 적립하는 처리다. 은행 출금, 세금 신고, 실제 알림 수신까지 완료했다는 뜻은 아니다. 모임·정기모임·제공자 거래는 같은 수익 모델을 사용해도 월 마켓 지급의 대상과 상태 규칙이 다르다.</p></section>
+<section id="current-2"><h2>구매별 수익 소유자와 원천 식별</h2><div class="table-wrap"><table><thead><tr><th>구매</th><th>sourceType / sourceId</th><th>수익 행의 소유자와 개수</th></tr></thead><tbody><tr><td>상품 단건</td><td>MARKET_ITEM / MarketPurchase 구매 번호</td><td>구매 시 승인 버전 상품의 소유자에게 1행</td></tr><tr><td>번들</td><td>MARKET_BUNDLE / MarketPurchase 구매 번호</td><td>구성품별 소유자에게 행 생성. bundleItemId와 allocationRatio 보관</td></tr><tr><td>플랜 직접</td><td>PLAN_DIRECT / PlanPurchase 구매 번호</td><td>플랜 창작자 회원에게 1행</td></tr></tbody></table></div>
+<p>위 수익 생성은 실제 결제액이 양수인 경로에 적용한다. 결제액 0인 구매도 구매·권리를 만들 수 있지만 차감·수익 행을 반드시 만든다고 보장하지 않는다. sourceId를 상품 ID나 구매 시각의 근사 매칭으로 해석하지 않는다.</p>
+<p>소유자는 <code>owner_type=USER/PLATFORM</code>과 회원이면 <code>creator_user_id</code>에 저장한다. 자바 접근은 <code>owner()</code>와 회원 소유자 식별을 사용한다. 번들 대표 큐레이터와 매출 귀속자는 같다고 가정하지 않는다. 환불의 판매자 결정은 별도 정책이며 현재 <code>resolveSellerUserId</code>는 닫히지 않은 번들 판매자 후보를 우선하고 없으면 회원 소유자로 돌아간다. 모든 번들의 매출을 큐레이터 한 명에게 몰아주지 않는다.</p></section>
+<section id="current-3"><h2>유료·무료 배분과 계산</h2><p>현재 구매 금액·통화의 기준은 <a href="F08-11.html#current-3">구매 가격과 포인트 사용 방식</a>이다. 상품과 플랜 직접 구매는 활성 상품 버전, 번들은 번들 가격을 사용한다. MARKET_ITEM·MARKET_BUNDLE·PLAN_PURCHASE의 SpendPolicy는 모두 FLOW_THROUGH다. 요청값 PAID만으로 실제 유료 전용 결제를 단정하지 않는다.</p>
+<p>번들 구성품의 가중치는 <strong>활성 버전 단가 × 구성 수량</strong>이다. 가중치 합이 0이면 균등 비율을 사용한다. 총액 배분은 정수로 내리고 마지막 행에 나머지를 배정한다. 유료 배분은 각 행 총액의 비율에 따라 내린 다음 남은 유료액을 행의 여유 범위 안에서 배분한다. 무료액은 행 총액에서 유료액을 뺀다. 구매의 유료·무료 합계와 배분 행 합계가 각각 보존돼야 한다.</p>
+<p>회원 소유 행의 계산은 다음과 같다. 현재 기본 요율을 설명한 것이며 세무 자문이나 외부 신고 완료 기록이 아니다.</p>
+<div class="table-wrap"><table><thead><tr><th>값</th><th>현재 계산</th></tr></thead><tbody><tr><td>grossAmount</td><td>grossPaid + grossFree</td></tr><tr><td>platformFee</td><td>grossPaid × 10%, 정수 HALF_UP</td></tr><tr><td>withholdingTax</td><td>(grossPaid − platformFee) × 3.3%, 정수 HALF_UP</td></tr><tr><td>netAmount</td><td>grossPaid − platformFee − withholdingTax</td></tr><tr><td>무료 적립</td><td>grossFree 전액. 수수료·원천징수와 유료 미수금 상계 대상에서 분리</td></tr></tbody></table></div>
+<p>예를 들어 유료 10,000포인트인 회원 행은 수수료 1,000, 원천징수 297, 순액 8,703이다. 무료분만 있는 양수 거래는 netAmount=0이어도 무료 적립 대상이다. 번들 구매자에게 별도 보너스를 지급하는 계약은 없다. 창작자에게 지급하는 무료 매출분과 구매자 보너스를 혼동하지 않는다.</p></section>
+<section id="platform-revenue"><h2>회원 판매와 플랫폼 판매 수익</h2><p>플랫폼 소유 상품의 배분 행은 grossPaid/grossFree를 보존하지만 회원 수수료·원천징수·순지급액은 0이다. 플랫폼 유료 판매 수익은 MARKET_PLATFORM_REVENUE로 기록하고 무료분은 별도 장부 처리를 한다. 월 지급 조회는 USER 소유자만 고르며, 지급 명령에 플랫폼 행을 직접 섞으면 거절한다.</p>
+<p>혼합 번들은 구성품의 소유자별로 회원 지급과 플랫폼 수익을 나눠 기록한다. 플랫폼 기간권은 판매 유형·승인 버전·권리의 조건을 함께 적용한다. <a href="F08-06.html#platform-period-pass">상품 관리의 플랫폼 기간권</a> 및 구매 문서의 조건을 따른다. 수익 기록 코드가 있다는 사실만으로 판매 공개·운영 환불·실제 지급까지 완료 처리하지 않는다.</p></section>
+<section id="current-5"><h2>월 지급의 대상과 실패 경계</h2><p>스케줄은 <code>0 0 3 1 * *</code>, 즉 스케줄러 환경 기준 매월 1일 03:00이다. 별도 시간대 확인 없이 한국 시각이라고 단정하지 않는다. 배치 잠금은 대기 5초·임대 600초이며 획득하지 못하면 이번 실행을 건너뛴다.</p>
+<p>후보는 MARKET_ITEM·MARKET_BUNDLE·PLAN_DIRECT, USER 소유, PENDING, <strong>createdAt &lt; 현재 시각 − 14일</strong>인 행이다. 정확히 경계 시각인 행은 <code>Before</code> 조건에 포함하지 않는다. 특정 지난달만 조회하는 방식이 아니므로 이전에 남은 후보도 포함한다. APPROVED·FAILED를 포함한 모든 미지급 상태를 자동 재시도한다고 확대하지 않는다.</p>
+<p>회원별로 묶어 각 지급 트랜잭션을 호출한다. 한 회원 지급 실패는 다음 회원의 처리를 막지 않는다. 지급 시 지갑과 대상 수익·미수금 행을 잠그고 소유자, 지급 허용 상태, 환불 종결 여부를 다시 확인한다. 이미 지급되었거나 환불 종결된 행은 제외한다. 마켓 월 지급은 PENDING에서 PAID, 제공자 지급의 APPROVED 경로는 별도 계약이다.</p></section>
+<section id="current-6"><h2>장부·지갑·알림의 반영</h2><p>구매 적립과 월 지급 분개를 같은 시점으로 적지 않는다. 회원 판매의 유료 미지급금은 구매 시 쌓고, 수수료·원천세 인식과 정산 처리는 지급 경로에서 수행한다. 지급 명령은 다음 값을 분리한다.</p>
+<ul><li>명목 순액: 대상 수익 행 netAmount 합계.</li><li>미수금 상계액: 명목 순액에서 먼저 갚는 금액.</li><li>실제 유료 지급: 명목 순액 − 상계액, 최솟값 0.</li><li>실제 무료 지급: grossFree 합계.</li></ul>
+<p>유료·무료 지급이 모두 0이어도 정산 거래를 기록해 전액 상계 등의 결과를 남긴다. 상계 분개, 정산 분개, 양수 유료 지갑 지급 분개, 수익 상태 변경은 지급 거래에 연결된다. 무료 적립에는 USER_WALLET/PROMOTION_EXPENSE 분개가 있다. 기존 문서의 단순한 <code>총액 × (1 − 수수료율 − 세율)</code> 식은 실제 순차 계산과 다르다.</p>
+<p><code>MarketplaceSettlementService</code>는 지급 결과에 따라 거래 번호를 키로 정산 완료·미수금 상계 알림을 outbox에 한 번 등록한다. 이는 알림 발송 의도의 저장이며 단말 수신 증거가 아니다. 판매현황 화면의 플랜 구매 매출 합계 또한 이 실제 지급 순액과 같지 않다. 표시 범위는 <a href="F08-07.html">크리에이터 프로필·판매현황</a>을 따른다.</p></section>
+<section id="current-7"><h2>환불 보류·종결과 미수금</h2><div class="table-wrap"><table><thead><tr><th>사건</th><th>현재 전이·기록</th></tr></thead><tbody><tr><td>미지급 회원/플랫폼 행의 환불 신청</td><td>PENDING → REFUND_HELD. 월 지급에서 제외</td></tr><tr><td>이미 지급된 회원 행의 환불 신청</td><td>PAID 유지. 신청만으로 미수금을 만들지 않음</td></tr><tr><td>보류 해제</td><td>REFUND_HELD → PENDING. PAID를 PENDING으로 되돌리지 않음</td></tr><tr><td>지급 전 환불 확정</td><td>PENDING/REFUND_HELD → REFUNDED</td></tr><tr><td>지급 후 회원 환불 확정, 순액 양수</td><td>PAID → REVERSED. 원래 netAmount 보존</td></tr><tr><td>지급 후 회원 환불 확정, 순액 0</td><td>PAID 유지하면서 환불 종결 기록. 유료 미수금 없음</td></tr><tr><td>미수금 전액 상계</td><td>REVERSED → PAID. 환불 종결 표지는 유지</td></tr><tr><td>별도 미수금 손실 처리</td><td>허용된 REVERSED → WRITTEN_OFF. 월 지급의 자동 탕감 아님</td></tr></tbody></table></div>
+<p>환불 종결은 신청 번호·시각·실제 refundedPaid/refundedFree를 기록한다. 각 통화의 실제 환불액은 해당 행 총액을 넘을 수 없다. 이미 종결된 행의 재환불은 허용 전이가 아니다. 부분 환불은 선택된 구성품의 행을 종결하며, 환불 계획에서 제외된 보류 행은 해제한다. 환불 전체 권한·기한·분쟁 결정은 환불 문서에서 다룬다.</p>
+<p>미수금 잔액은 <code>netAmount − offsetAppliedAmount</code>다. 상계 시 원금을 남은 금액으로 덮어쓰지 않는다. 다음 지급의 유료 순액에서 오래된 미수금(createdAt, id 순)부터 가능한 만큼 갚고 누적 상계액을 늘린다. 부족하면 REVERSED로 남고 전액 상계되면 PAID가 되어도 환불 종결 표지가 있으므로 다시 지급·환불할 수 없다. 무료 적립액으로 유료 미수금을 갚지 않는다.</p>
+<p>전체 enum에는 PENDING·APPROVED·PAID·FAILED·REJECTED·REFUND_HELD·REFUNDED·REVERSED·WRITTEN_OFF가 있다. 상태 이름 하나만으로 지급 가능·환불 가능을 판정하지 않고 원천·소유자·종결 여부를 함께 본다.</p></section>
+<section id="current-8"><h2>처리 흐름</h2><p>``<code>mermaid flowchart TD     Purchase[양수 구매] --&gt; Allocate[구매 번호별 소유자 배분]     Allocate --&gt; User[회원 PENDING]     Allocate --&gt; Platform[플랫폼 수익 기록]     User --&gt; Cutoff[14일 이전 월 지급 후보]     Cutoff --&gt; Recheck[잠금 뒤 상태·소유자·종결 재확인]     Recheck --&gt; Offset[유료 순액에서 기존 미수금 상계]     Offset --&gt; Credit[나머지 유료와 무료 적립·PAID]     User --&gt; Held[환불 보류]     Held --&gt; Refunded[지급 전 환불·REFUNDED]     Credit --&gt; Reverse[지급 후 환불·양수 순액 미수금]     Reverse --&gt; Offset </code>``</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>구분</th><th>경계와 후속 확인</th></tr></thead><tbody><tr><td>미검증</td><td>이번 갱신은 소스·선택된 기존 시험 단언 대조다. 배치 실행, DB 경합, 실제 지갑 지급·환불·알림 수신을 새로 실행하지 않았다</td></tr><tr><td>미검증</td><td>번들 0 가중치·잔액 보정·다중 소유자 혼합 결제의 전 조합 통과를 주장하지 않는다. 실제 구매 합계·배분·장부·권리를 같은 거래로 대조해야 한다</td></tr><tr><td>미검증</td><td>운영의 스케줄 시간대·600초 임대 이후 장시간 배치·중단 복구·세금 신고 결과는 코드 읽기만으로 완료하지 않는다</td></tr><tr><td>기준</td><td>현재 출시 설치 기준은 빈 DB다. 과거 문서의 구매 시각 근사 매칭 백필과 새 마이그레이션 결정을 현재 필수 작업으로 유지하지 않는다. 실제 이관이 생기면 해당 데이터·환경을 별도로 검토한다</td></tr><tr><td>기준</td><td>문서 갱신으로 MARKET·money.live 공개나 외부 지급을 실행하지 않는다. 공개 조건은 현재 출시 문서를 따른다</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 구매 원천:</strong> 세 구매 경로가 상품 번호가 아닌 각각의 구매 번호로 수익을 식별한다. 양수 거래와 금액 0 구매의 기록 차이를 구분한다. 근거는 구매 서비스·명령·플랜 수익 어댑터다.</li><li><strong>AC-02 번들 소유자:</strong> 구성품별 소유자·bundleItemId·배분율을 보존한다. 대표 큐레이터가 전체 수익자가 되는 것으로 표시하지 않는다. 구매 명령의 배분 로직을 대조했다.</li><li><strong>AC-03 배분 합계:</strong> 정가 0은 균등 배분, 정수 잔액은 보정하고 행별/전체 유료·무료 합계를 보존한다. 코드를 대조했으며 전 경계값 새 실행 통과로 세지 않는다.</li><li><strong>AC-04 회원 계산:</strong> 수수료는 유료분, 원천징수는 수수료 차감 후 유료분으로 계산하며 무료분은 별도 적립한다. EarningTransitions·플랜 구매 계산·요율 근거를 재사용했다.</li><li><strong>AC-05 플랫폼 제외:</strong> 플랫폼 행의 회원 순지급액은 0이며 월 지급 후보에서 제외한다. 지급 명령도 플랫폼 행을 거절한다. 후보 조회와 rejectPlatformRows를 대조했다.</li><li><strong>AC-06 월 지급 경계:</strong> 세 원천·USER·PENDING·엄격한 14일 이전 조건을 적용한다. 배치 시험은 고정 시각의 컷오프 인자와 회원별 실패 격리를 단언한다. 이번에는 실행하지 않았다.</li><li><strong>AC-07 지급 재확인:</strong> 잠금 후 지급 상태·소유자·환불 종결을 확인하고 실제 지급·상계·무료 적립을 분리한다. 지급 명령과 장부 함수를 대조했다.</li><li><strong>AC-08 환불 상태:</strong> 보류·해제·지급 전후 환불을 구분하고 순액 0인 PAID 환불은 종결 표지만 남긴다. EarningTransitionsRefundTest의 해당 단언을 읽었다.</li><li><strong>AC-09 원금 보존:</strong> 정산 후 환불은 원래 순액을 보존하고 상계 누적액을 따로 기록한다. 전액 상계된 PAID의 환불 종결도 유지한다. CreatorPayoutPathCommitTest의 구매→지급→환불→다음 지급 단언을 읽었다.</li><li><strong>AC-10 결과 표시:</strong> 지갑 적립과 은행 출금, outbox 등록과 알림 수신, 구매 매출과 실제 순지급액을 구분한다. 지급 서비스·명령 및 이미 대조한 판매현황 계약이 근거다.</li></ul>
+<p>위 10개는 문서 수용 항목 수다. 기존 시험 코드를 읽은 범위와 신규 실행 결과를 구분하며, 이번 갱신에서 제품 시험은 실행하지 않았다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>
-          <li>권한 있는 운영자의 매출 귀속 보정이 대상 판매자·원 거래·감사 기록에만 반영된다.</li>
-          <li>이미 지급·취소된 수익·중복 보정·잘못된 판매자와 동시 환불을 처리한다.</li>
+          <li>세 구매 원천의 소유자별 유료·무료 배분과 구매·지갑·장부 합계가 일치한다.</li>
+          <li>월 지급과 동시 환불에서 소유자·상태·종결 여부를 확인하고, 원금·누적 상계액·실제 지급액이 일치한다.</li>
         </ul>
         <p>기능 본문에 남은 미구현·결함은 해결 증거 또는 명시적인 공개 범위 결정 없이 완료 처리하지 않습니다.
           <a href="../qa/completion-criteria.html#common">함께 적용하는 권한·실패·복구 확인</a>과
@@ -194,7 +68,7 @@
         <div class="hub-grid">
           <a class="card" href="../domains/08-plan-market.html"><div class="eyebrow">상위 도메인</div><h3>08 플랜 마켓</h3></a>
           <a class="card" href="F08-14.html"><div class="eyebrow">의존자</div><h3>F08-14 환불</h3><p>이 매출 모델 위에서 동작한다.</p></a>
-          <a class="card" href="../domains/07-settlement.html"><div class="eyebrow">상위 정산</div><h3>07 모임 정산</h3><p>월간 정산이 이 매출 원장을 집계.</p></a>
+          <a class="card" href="../domains/07-settlement.html"><div class="eyebrow">관련 정산</div><h3>07 모임 정산</h3><p>모임 정산과 마켓 월 지급의 대상·상태를 구분합니다.</p></a>
         </div>
       </section>
 

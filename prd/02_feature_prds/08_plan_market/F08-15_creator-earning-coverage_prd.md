@@ -1,387 +1,134 @@
-# F08-15 — 크리에이터 매출 귀속 보정 (Creator Earning Coverage)
+# F08-15. 크리에이터 매출 귀속·정산 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 소스 대조. 구매·배분·월 지급·환불 미수금의 현재 계약이다. 이번 문서 갱신은 새 실제 거래·시험 통과 기록이 아니다. 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-> 신규 PRD. 작성일: 2026-05-24
-> 상태: **마켓/플랜 창작자 유료·무료 분리 정산 구현됨**. 본 문서가 구현 계약이며 아래는 현행 동작
-> 기준으로 읽는다. 이벤트 정산도 같은 유료·무료 분리 모델과 무료 포인트 전달을 사용한다. 자세한 공통 원칙은
-> [결제·정산 정책의 돈 흐름 무결성 정책](../../03_policy_prds/payment_settlement_policy_prd.md#26-돈-흐름-무결성-정책-2026-06-06)에서 확인한다.
-> 출처: F08-14(플랜 마켓 환불) 합의 과정에서 codex 페어 리뷰가 짚은 선행 결손. 환불 PRD의 하드 의존 대상이다.
+## 적용 범위와 실행 입구
 
-## 1. 결론
+상품 단건·번들·플랜 직접 구매는 구매 트랜잭션 안에서 수익을 기록한다. 이 문서의 입구는 별도의 운영자 수동 보정 화면이 아니라 [상품·번들·플랜 구매](F08-11_purchase_prd.md), 서버 월 지급 스케줄러, [구매 환불](F08-14_purchase-refund_prd.md)이다. 기존 문서의 sourceId 변경·상태 추가·FLOW_THROUGH 전환은 이미 반영된 계약이며 신규 구현 목록이 아니다.
 
-플랜 마켓의 세 가지 구매 소스(`MARKET_ITEM`, `MARKET_BUNDLE`, `PLAN_DIRECT`)는 **모두 크리에이터 매출 원장(`CreatorEarning`)에 잡힌다** — `MarketPurchaseService`가 MARKET_ITEM·MARKET_BUNDLE를, `PlanPurchaseService`가 PLAN_DIRECT를 `grossPaid/gross_free` 분리로 생성하고, `MarketplaceSettlementService`가 세 source type을 모두 정산 대상으로 집계한다(과거 `MARKET_ITEM`만 잡히던 결손은 해소됨). 수수료·원천징수는 유료분에만, 무료분은 무수수료 `free_credit`으로 적립된다. 이벤트 정산도 같은 모델을 사용해 무료 매출을 호스트의 무료 포인트로 전달하고, 무료 매출만 있는 이벤트도 수수료·세금 0의 정산으로 종결한다.
+월 지급은 크리에이터 지갑에 유료·무료 포인트를 적립하는 처리다. 은행 출금, 세금 신고, 실제 알림 수신까지 완료했다는 뜻은 아니다. 모임·정기모임·제공자 거래는 같은 수익 모델을 사용해도 월 마켓 지급의 대상과 상태 규칙이 다르다.
 
-이 기능은 [플랜 마켓 환불](F08-14_purchase-refund_prd.md)의 회계 선행 조건이며, 현재 두 기능 모두 구현되어 있다.
+## 코드 위치
 
-## 2. 현재 구현 현황
+구매 생성은 `MarketPurchaseService`, `MarketPurchaseCommand`, `PlanPurchaseService`, `PlanCreatorEarningAdapter`, 가격·수수료는 `PricingDecision`, `FeePolicyType`, `SpendPolicyRegistry`를 따른다. 수익 모델·상태는 `CreatorEarning`, `CreatorEarningSourceType`, `EarningStatus`, `EarningTransitions`가 기준이다. 지급은 `MarketplaceSettlementBatchScheduler`, `MarketplaceSettlementService`, `CreatorPayoutCommand`, `CreatorEarningQueryRepository`, 장부는 `MarketplaceLedgerFacade`, 환불 연결은 `MarketRefundCommand`를 대조했다.
 
-| 항목 | 현황 | 근거 |
-|---|---|---|
-| `MARKET_ITEM` 수익 생성 | 있음. `sourceId`는 구매 ID(`marketPurchaseId`)로 정정됨 — 구매 단위로 식별되어 환불·정산 시 "이 구매의 수익 row"를 특정할 수 있다. | `MarketPurchaseService.createCreatorEarning(item.getCreatorId(), "MARKET_ITEM", saved.getPurchaseId(), ...)` |
-| `MARKET_BUNDLE` 수익 생성 | 구현됨. 포함 아이템 원작자에게 정가 비례 배분으로 `CreatorEarning` 생성(`grossPaid/grossFree` 분리). | `MarketPurchaseService.createCreatorEarning(..., "MARKET_BUNDLE", ...)` |
-| `MARKET_BUNDLE` 판매자 모델 | 대표 큐레이터는 `bundle_curator` 의 LEAD 행 하나(번들당 하나, 관리자가 만들 때 앉힘)다. 환불 판매자 결정에 쓰고, 매출 귀속은 포함 아이템 원작자 기준. 채우는 곳 없던 `bundle.curator_user_id` 는 차수 10 에서 걷었다. | `BundleCurator.java`, `MarketRefundCommand.resolveSellerUserId` |
-| `PLAN_DIRECT` 수익 생성 | 구현됨. `PlanPurchaseService`가 `CreatorEarning(sourceType=PLAN_DIRECT)`를 `grossPaid/grossFree` 분리로 생성. | `PlanPurchaseService.createCreatorEarning` |
-| `PLAN_DIRECT` 정책 분류 | `SpendPolicy`에서 `PLAN_PURCHASE = FLOW_THROUGH`로 정정됨(플랜 직접 구매도 크리에이터 정산 대상). | `SpendPolicyRegistry.java:52` |
-| 월간 정산 대상 | `MARKET_ITEM`·`MARKET_BUNDLE`·`PLAN_DIRECT`의 `PENDING` 수익을 모두 정산. | `MarketplaceSettlementService.java:36` |
-| `CreatorEarning` 상태 | `PENDING`/`PAID` 외 `REFUND_HELD`/`REFUNDED`/`REVERSED` 추가됨(환불 대기·완료·역전). 정산 쿼리는 `PENDING`만 집계. | `EarningStatus`, 정산 쿼리 |
+기존 시험 중 `MarketplaceSettlementBatchSchedulerTest`, `EarningTransitionsRefundTest`, `CreatorPayoutPathCommitTest`의 해당 단언을 읽었다. 구매 근거는 같은 소스 버전의 F08-11 대조를 재사용했다. 이 기능만을 위한 외부 수익 생성 API는 문서에 추가하지 않는다.
 
-## 3. 결정 사항
+## 구매별 수익 소유자와 원천 식별
 
-### 3.1 매출 귀속 주체
+| 구매 | sourceType / sourceId | 수익 행의 소유자와 개수 |
+| --- | --- | --- |
+| 상품 단건 | MARKET_ITEM / MarketPurchase 구매 번호 | 구매 시 승인 버전 상품의 소유자에게 1행 |
+| 번들 | MARKET_BUNDLE / MarketPurchase 구매 번호 | 구성품별 소유자에게 행 생성. bundleItemId와 allocationRatio 보관 |
+| 플랜 직접 | PLAN_DIRECT / PlanPurchase 구매 번호 | 플랜 창작자 회원에게 1행 |
 
-| 구매 소스 | 판매자 | 수익 행 생성 | 정산 대상 |
-|---|---|---|---|
-| `MARKET_ITEM` | 아이템의 `creator_id` | 구매 시점에 1행 | 예 |
-| `MARKET_BUNDLE` | 본 PRD에서 결정 (아래 3.3 참조) | 구매 시점에 1~N행 | 예 |
-| `PLAN_DIRECT` | 플랜의 `creator_id` | 구매 시점에 1행 | 예 (본 PRD에서 변경) |
+위 수익 생성은 실제 결제액이 양수인 경로에 적용한다. 결제액 0인 구매도 구매·권리를 만들 수 있지만 차감·수익 행을 반드시 만든다고 보장하지 않는다. sourceId를 상품 ID나 구매 시각의 근사 매칭으로 해석하지 않는다.
 
-`PLAN_DIRECT`를 크리에이터 정산 대상으로 포함시킨다. 이는 `SpendPolicy.PLAN_PURCHASE`의 `FREE_BURN` 분류와 충돌한다. 분류를 `FLOW_THROUGH`로 변경하고, 회계 분개 경로를 마켓 아이템과 동일하게 처리한다.
+소유자는 `owner_type=USER/PLATFORM`과 회원이면 `creator_user_id`에 저장한다. 자바 접근은 `owner()`와 회원 소유자 식별을 사용한다. 번들 대표 큐레이터와 매출 귀속자는 같다고 가정하지 않는다. 환불의 판매자 결정은 별도 정책이며 현재 `resolveSellerUserId`는 닫히지 않은 번들 판매자 후보를 우선하고 없으면 회원 소유자로 돌아간다. 모든 번들의 매출을 큐레이터 한 명에게 몰아주지 않는다.
 
-### 3.2 `CreatorEarning` 모델 변경
+## 유료·무료 배분과 계산
 
-#### 3.2.1 `sourceId` 의미 변경
+현재 구매 금액·통화의 기준은 [구매 가격과 포인트 사용 방식](F08-11_purchase_prd.md#가격과-포인트-사용-방식)이다. 상품과 플랜 직접 구매는 활성 상품 버전, 번들은 번들 가격을 사용한다. MARKET_ITEM·MARKET_BUNDLE·PLAN_PURCHASE의 SpendPolicy는 모두 FLOW_THROUGH다. 요청값 PAID만으로 실제 유료 전용 결제를 단정하지 않는다.
 
-현재 `sourceId`가 상품 ID(아이템 ID, 플랜 ID 등)인 것을, **구매 ID**로 변경한다. 즉:
+번들 구성품의 가중치는 **활성 버전 단가 × 구성 수량**이다. 가중치 합이 0이면 균등 비율을 사용한다. 총액 배분은 정수로 내리고 마지막 행에 나머지를 배정한다. 유료 배분은 각 행 총액의 비율에 따라 내린 다음 남은 유료액을 행의 여유 범위 안에서 배분한다. 무료액은 행 총액에서 유료액을 뺀다. 구매의 유료·무료 합계와 배분 행 합계가 각각 보존돼야 한다.
 
-- `MARKET_ITEM`: `sourceId = marketPurchaseId`
-- `MARKET_BUNDLE`: `sourceId = marketPurchaseId` (번들 단위 1행 또는 포함 아이템별 N행 — 3.3에서 결정)
-- `PLAN_DIRECT`: `sourceId = planPurchaseId`
+회원 소유 행의 계산은 다음과 같다. 현재 기본 요율을 설명한 것이며 세무 자문이나 외부 신고 완료 기록이 아니다.
 
-이 변경 없이 환불을 도입하면 "이 구매가 만든 수익 행"을 정확히 잠그거나 역전시킬 수 없다.
+| 값 | 현재 계산 |
+| --- | --- |
+| grossAmount | grossPaid + grossFree |
+| platformFee | grossPaid × 10%, 정수 HALF_UP |
+| withholdingTax | (grossPaid − platformFee) × 3.3%, 정수 HALF_UP |
+| netAmount | grossPaid − platformFee − withholdingTax |
+| 무료 적립 | grossFree 전액. 수수료·원천징수와 유료 미수금 상계 대상에서 분리 |
 
-#### 3.2.2 신규 상태
+예를 들어 유료 10,000포인트인 회원 행은 수수료 1,000, 원천징수 297, 순액 8,703이다. 무료분만 있는 양수 거래는 netAmount=0이어도 무료 적립 대상이다. 번들 구매자에게 별도 보너스를 지급하는 계약은 없다. 창작자에게 지급하는 무료 매출분과 구매자 보너스를 혼동하지 않는다.
 
-`CreatorEarning.status`에 다음 값을 추가한다.
+## 회원 판매와 플랫폼 판매 수익
 
-- `PENDING` (기존)
-- `PAID` (기존, 정산 완료)
-- `REFUND_HELD` — 환불 신청이 열려 있어 정산에서 제외
-- `REFUNDED` — 정산 전 환불 완료. 수익 행은 남기되 정산 대상 아님
-- `REVERSED` — 정산 후 환불로 회수 진행 중 또는 완료. `CREATOR_RECEIVABLE` 회계와 연동
+플랫폼 소유 상품의 배분 행은 grossPaid/grossFree를 보존하지만 회원 수수료·원천징수·순지급액은 0이다. 플랫폼 유료 판매 수익은 MARKET_PLATFORM_REVENUE로 기록하고 무료분은 별도 장부 처리를 한다. 월 지급 조회는 USER 소유자만 고르며, 지급 명령에 플랫폼 행을 직접 섞으면 거절한다.
 
-`MarketplaceSettlementService`의 정산 쿼리는 `PENDING`만 잡도록 유지하되, 본 PRD가 추가하는 상태들은 정의상 정산 대상이 아니다.
+혼합 번들은 구성품의 소유자별로 회원 지급과 플랫폼 수익을 나눠 기록한다. 플랫폼 기간권은 판매 유형·승인 버전·권리의 조건을 함께 적용한다. [상품 관리의 플랫폼 기간권](F08-06_market-item-management_prd.md#회원-상품과-플랫폼-기간권) 및 구매 문서의 조건을 따른다. 수익 기록 코드가 있다는 사실만으로 판매 공개·운영 환불·실제 지급까지 완료 처리하지 않는다.
 
-### 3.3 번들 판매자 모델
+## 월 지급의 대상과 실패 경계
 
-본 PRD의 핵심 결정이다. 현재 `Bundle`에는 판매자 정보가 없다. 세 가지 안 중 결정한다.
+스케줄은 `0 0 3 1 * *`, 즉 스케줄러 환경 기준 매월 1일 03:00이다. 별도 시간대 확인 없이 한국 시각이라고 단정하지 않는다. 배치 잠금은 대기 5초·임대 600초이며 획득하지 못하면 이번 실행을 건너뛴다.
 
-| 안 | 설명 | 채택 |
-|---|---|---|
-| A. 단일 큐레이터 번들 | 번들마다 단일 `creator_id`를 두고 그 사람이 매출 귀속자가 된다. 포함 아이템의 원작자와 무관. | 미채택 (원작자 권리 침해) |
-| B. 다중 크리에이터 번들 (정가 비례 배분) | 포함된 각 아이템의 원작자에게 정가 비율로 매출 배분. 번들 1건 구매 시 `CreatorEarning`이 N행 생성. | **채택** |
-| C. 플랫폼 매출 번들 | 번들은 플랫폼 큐레이션 수익으로 본다. 크리에이터에게 배분되지 않음. | 미채택 (마켓 인센티브 훼손) |
+후보는 MARKET_ITEM·MARKET_BUNDLE·PLAN_DIRECT, USER 소유, PENDING, **createdAt < 현재 시각 − 14일**인 행이다. 정확히 경계 시각인 행은 `Before` 조건에 포함하지 않는다. 특정 지난달만 조회하는 방식이 아니므로 이전에 남은 후보도 포함한다. APPROVED·FAILED를 포함한 모든 미지급 상태를 자동 재시도한다고 확대하지 않는다.
 
-채택안 B의 세부:
+회원별로 묶어 각 지급 트랜잭션을 호출한다. 한 회원 지급 실패는 다음 회원의 처리를 막지 않는다. 지급 시 지갑과 대상 수익·미수금 행을 잠그고 소유자, 지급 허용 상태, 환불 종결 여부를 다시 확인한다. 이미 지급되었거나 환불 종결된 행은 제외한다. 마켓 월 지급은 PENDING에서 PAID, 제공자 지급의 APPROVED 경로는 별도 계약이다.
 
-- 큐레이션 책임자(대표 큐레이터)는 `bundle_curator` 의 LEAD 행으로 둔다 (큐레이션 권한 추적용. 매출 귀속과는 별개). 처음 설계한 `bundle.curator_user_id` 칸은 채우는 곳이 없어 차수 10 에서 걷었다.
-- 번들 구매 시 포함 아이템별로 다음을 계산:
-  - 아이템별 정가 합계 = `sum(item.price * bundleItem.quantity)`
-  - 아이템별 비율 = `(item.price * quantity) / 정가 합계`
-  - 아이템별 수익 = `bundle.payAmount * 아이템별 비율`
-- 각 아이템 원작자에게 `CreatorEarning` 1행 생성. `sourceType = MARKET_BUNDLE`, `sourceId = marketPurchaseId`, 추가 컬럼으로 `bundleItemId` 또는 분배 메타를 남긴다.
-- 정가 합계가 0이면 균등 배분 (안전망)
-- 번들 구매에 덤(보너스) 포인트는 없다. 처음 구현한 덤 포인트는 거는 길이 없어 차수 10 에서 걷었다 (6.4).
+## 장부·지갑·알림의 반영
 
-### 3.4 `SpendPolicy` 정정
+구매 적립과 월 지급 분개를 같은 시점으로 적지 않는다. 회원 판매의 유료 미지급금은 구매 시 쌓고, 수수료·원천세 인식과 정산 처리는 지급 경로에서 수행한다. 지급 명령은 다음 값을 분리한다.
 
-`SpendPolicy.PLAN_PURCHASE`를 `FREE_BURN`에서 `FLOW_THROUGH`로 변경한다. 회계 분개도 다음과 같이 변경:
+- 명목 순액: 대상 수익 행 netAmount 합계.
+- 미수금 상계액: 명목 순액에서 먼저 갚는 금액.
+- 실제 유료 지급: 명목 순액 − 상계액, 최솟값 0.
+- 실제 무료 지급: grossFree 합계.
 
-- 현재: 구매자 지갑 차감, 플랫폼 매출만 인식 (또는 무분개)
-- 변경: 구매자 지갑 차감 → `CREATOR_PAYABLE` 증가 + `PLATFORM_FEE_REVENUE` 증가 + `WITHHOLDING_TAX_PAYABLE` 증가
+유료·무료 지급이 모두 0이어도 정산 거래를 기록해 전액 상계 등의 결과를 남긴다. 상계 분개, 정산 분개, 양수 유료 지갑 지급 분개, 수익 상태 변경은 지급 거래에 연결된다. 무료 적립에는 USER_WALLET/PROMOTION_EXPENSE 분개가 있다. 기존 문서의 단순한 `총액 × (1 − 수수료율 − 세율)` 식은 실제 순차 계산과 다르다.
 
-마켓 아이템과 동일 경로. `AccountingLedgerService`에 신규 메서드 또는 기존 마켓 분개 재사용.
+`MarketplaceSettlementService`는 지급 결과에 따라 거래 번호를 키로 정산 완료·미수금 상계 알림을 outbox에 한 번 등록한다. 이는 알림 발송 의도의 저장이며 단말 수신 증거가 아니다. 판매현황 화면의 플랜 구매 매출 합계 또한 이 실제 지급 순액과 같지 않다. 표시 범위는 [크리에이터 프로필·판매현황](F08-07_creator-profile-stats_prd.md)을 따른다.
 
-### 3.4a 유료/무료 분리정산 — CreatorEarning split
+## 환불 보류·종결과 미수금
 
-> 포인트 분리 정산의 공통 기준은 [결제·정산 정책의 유료·무료 포인트 분리정산 정책](../../03_policy_prds/payment_settlement_policy_prd.md#25-유료무료-포인트-분리정산-정책-point-split-flow-through)이다.
+| 사건 | 현재 전이·기록 |
+| --- | --- |
+| 미지급 회원/플랫폼 행의 환불 신청 | PENDING → REFUND_HELD. 월 지급에서 제외 |
+| 이미 지급된 회원 행의 환불 신청 | PAID 유지. 신청만으로 미수금을 만들지 않음 |
+| 보류 해제 | REFUND_HELD → PENDING. PAID를 PENDING으로 되돌리지 않음 |
+| 지급 전 환불 확정 | PENDING/REFUND_HELD → REFUNDED |
+| 지급 후 회원 환불 확정, 순액 양수 | PAID → REVERSED. 원래 netAmount 보존 |
+| 지급 후 회원 환불 확정, 순액 0 | PAID 유지하면서 환불 종결 기록. 유료 미수금 없음 |
+| 미수금 전액 상계 | REVERSED → PAID. 환불 종결 표지는 유지 |
+| 별도 미수금 손실 처리 | 허용된 REVERSED → WRITTEN_OFF. 월 지급의 자동 탕감 아님 |
 
-마켓 구매는 flow-through 사용처이므로 결제 시 유료/무료 split이 창작자까지 전파된다. `CreatorEarning`은 유료/무료를 **분리 기록**한다.
+환불 종결은 신청 번호·시각·실제 refundedPaid/refundedFree를 기록한다. 각 통화의 실제 환불액은 해당 행 총액을 넘을 수 없다. 이미 종결된 행의 재환불은 허용 전이가 아니다. 부분 환불은 선택된 구성품의 행을 종결하며, 환불 계획에서 제외된 보류 행은 해제한다. 환불 전체 권한·기한·분쟁 결정은 환불 문서에서 다룬다.
 
-- **유료 매출**: 수수료(10%)·원천징수(3.3%)를 차감한 net을 정산 대상(`PENDING`)으로 적재. 정산 시 창작자 paid로 지급.
-- **무료 매출**: 수수료·원천징수를 **부과하지 않고** 무수수료 `free_credit`으로 적재. 창작자 free에 적립되어 **인출 불가**(무료→현금 전환 차단).
-- 따라서 위 `SpendPolicy 정정`의 수수료·원천세 인식은 **유료분에만** 적용된다. 무료 매출분은 정산 시
-  `MarketplaceSettlementService`가 창작자 지갑의 무료 포인트로 적립하고, 대응 `PROMOTION_EXPENSE`
-  원장도 함께 기록한다.
+미수금 잔액은 `netAmount − offsetAppliedAmount`다. 상계 시 원금을 남은 금액으로 덮어쓰지 않는다. 다음 지급의 유료 순액에서 오래된 미수금(createdAt, id 순)부터 가능한 만큼 갚고 누적 상계액을 늘린다. 부족하면 REVERSED로 남고 전액 상계되면 PAID가 되어도 환불 종결 표지가 있으므로 다시 지급·환불할 수 없다. 무료 적립액으로 유료 미수금을 갚지 않는다.
 
-> **Fact (2026-06-06 돈 흐름 무결성 — H3 해소)**: 과거 무료 매출 정산(freeCredit 지급)이 **원장 분개 없이** 지갑에만 입금되어 USER_WALLET 차변 < 실지급으로 장부가 비대칭이던 결함이 해소됨. `MarketplaceSettlementService` 무료분 지급에 대응 원장 분개가 추가되어(`AccountingLedgerService` 확장), 무료 free_credit 지급도 차/대변이 대칭으로 기록된다.
+전체 enum에는 PENDING·APPROVED·PAID·FAILED·REJECTED·REFUND_HELD·REFUNDED·REVERSED·WRITTEN_OFF가 있다. 상태 이름 하나만으로 지급 가능·환불 가능을 판정하지 않고 원천·소유자·종결 여부를 함께 본다.
 
-`MarketplaceSettlementService`가 현재 `MARKET_ITEM`의 `PENDING`만 집계한다. 다음 두 source type까지 확장한다.
+## 처리 흐름
 
-- `MARKET_BUNDLE` (다중 크리에이터별 행)
-- `PLAN_DIRECT`
-
-확장 쿼리는 source type을 IN 절로 받고, `status = PENDING`만 집계한다. F08-14가 추가할 `REFUND_HELD` / `REFUNDED` / `REVERSED`는 자연히 제외된다.
-
-또한 정산 시점 조건을 추가한다. **환불 가능 기간이 끝난 수익만 정산**한다. F08-14의 정책에 따라 환불 가능 기간이 14일이 되면, 정산 쿼리는 `created_at <= now - 14일` 조건을 포함한다. 이 결정은 F08-14와 결합되므로 두 PRD의 정산 쿼리 변경을 함께 본다.
-
-### 3.6 백필 정책
-
-기존 구매 데이터에 대한 처리:
-
-- **`MARKET_ITEM` 기존 데이터**: 이미 `CreatorEarning`이 있다. `sourceId`를 `itemId`에서 `marketPurchaseId`로 일괄 변경. 매핑은 `MarketPurchase.referenceId + purchaseType=MARKET_ITEM`으로 찾는다. 같은 아이템 다수 구매자 케이스에서 1:1 매핑이 모호하면, **가장 가까운 시점의 구매**와 매칭한다. 매칭 실패 행은 운영자 검토 큐로 보낸다.
-- **`MARKET_BUNDLE` 기존 데이터**: `CreatorEarning`이 없다. 번들에 `curator_user_id`도 없다. 자동 백필 불가. 두 가지 옵션 중 결정:
-  - (a) 백필 포기. 기존 번들 구매는 매출 귀속 없는 상태로 둠. 환불도 정상 처리되되 크리에이터 회수 분개는 없음.
-  - (b) 운영자 수동 백필. 번들별 큐레이터·배분 비율을 운영자가 채운 뒤 일괄 분개 발행.
-  - 권장: **(a)**. 과거 번들이 많지 않다면 (a)가 안전하다. 데이터 양이 많으면 (b).
-- **`PLAN_DIRECT` 기존 데이터**: `CreatorEarning`이 없고 `SpendPolicy`도 다르다. 백필 옵션:
-  - (a) 백필 포기. 과거 플랜 직접 구매는 매출 귀속 없음.
-  - (b) 운영자 수동 백필.
-  - 권장: **(a)**. PLAN_DIRECT 거래량은 적을 가능성이 높다.
-
-(a)를 택한 경우, F08-14 환불이 백필 안 된 과거 구매에 들어오면 회계는 다음과 같이 처리:
-- 구매자 지갑 환불은 정상 진행
-- 크리에이터 회수 분개는 발생하지 않음 (애초에 잡힌 수익이 없음)
-- 플랫폼이 손실 흡수
-- 거래 메모에 "백필 이전 구매" 표시
-
-## 4. 데이터 모델 변경
-
-### 4.1 `bundle` 테이블
-
-`bundle` 에는 큐레이터 칸을 두지 않는다. 큐레이션 책임자(대표 큐레이터)의 정본은 `bundle_curator` 의 `role = 'LEAD'` 행 하나다
-(번들당 하나, `uk_bundle_curator_lead`). 매출 귀속과 무관하다 (3.3 채택안 B). 처음 설계한 `bundle.curator_user_id` 는 채우는
-곳이 없어 차수 10 에서 걷었다.
-
-### 4.2 `creator_earning` 테이블
-
-```sql
--- source_id 의미 변경: 상품 ID → 구매 ID
--- 상태 enum 확장
-ALTER TABLE creator_earning
-  MODIFY COLUMN status VARCHAR(20) NOT NULL;  -- PENDING/PAID/REFUND_HELD/REFUNDED/REVERSED
-
--- 번들 배분 추적용 (다중 크리에이터)
-ALTER TABLE creator_earning
-  ADD COLUMN bundle_item_id BIGINT NULL AFTER source_id,
-  ADD COLUMN allocation_ratio DECIMAL(10,8) NULL AFTER bundle_item_id;
+```mermaid
+flowchart TD
+    Purchase[양수 구매] --> Allocate[구매 번호별 소유자 배분]
+    Allocate --> User[회원 PENDING]
+    Allocate --> Platform[플랫폼 수익 기록]
+    User --> Cutoff[14일 이전 월 지급 후보]
+    Cutoff --> Recheck[잠금 뒤 상태·소유자·종결 재확인]
+    Recheck --> Offset[유료 순액에서 기존 미수금 상계]
+    Offset --> Credit[나머지 유료와 무료 적립·PAID]
+    User --> Held[환불 보류]
+    Held --> Refunded[지급 전 환불·REFUNDED]
+    Credit --> Reverse[지급 후 환불·양수 순액 미수금]
+    Reverse --> Offset
 ```
 
-`source_id` 컬럼 타입은 그대로지만 의미가 바뀐다. 마이그레이션 시 일괄 UPDATE 필요.
+## 현재 제한과 확인 범위
 
-### 4.3 마이그레이션 정책
+| 구분 | 경계와 후속 확인 |
+| --- | --- |
+| 미검증 | 이번 갱신은 소스·선택된 기존 시험 단언 대조다. 배치 실행, DB 경합, 실제 지갑 지급·환불·알림 수신을 새로 실행하지 않았다 |
+| 미검증 | 번들 0 가중치·잔액 보정·다중 소유자 혼합 결제의 전 조합 통과를 주장하지 않는다. 실제 구매 합계·배분·장부·권리를 같은 거래로 대조해야 한다 |
+| 미검증 | 운영의 스케줄 시간대·600초 임대 이후 장시간 배치·중단 복구·세금 신고 결과는 코드 읽기만으로 완료하지 않는다 |
+| 기준 | 현재 출시 설치 기준은 빈 DB다. 과거 문서의 구매 시각 근사 매칭 백필과 새 마이그레이션 결정을 현재 필수 작업으로 유지하지 않는다. 실제 이관이 생기면 해당 데이터·환경을 별도로 검토한다 |
+| 기준 | 문서 갱신으로 MARKET·money.live 공개나 외부 지급을 실행하지 않는다. 공개 조건은 현재 출시 문서를 따른다 |
 
-CLAUDE.md 규칙대로 `V1__init.sql` 단일 파일에 직접 반영. V2 파일 만들지 않음. 기존 데이터에 대한 백필 UPDATE문도 같은 파일에 포함.
+## 수용 기준과 검증 근거
 
-## 5. 백엔드 변경
+- **AC-01 구매 원천:** 세 구매 경로가 상품 번호가 아닌 각각의 구매 번호로 수익을 식별한다. 양수 거래와 금액 0 구매의 기록 차이를 구분한다. 근거는 구매 서비스·명령·플랜 수익 어댑터다.
+- **AC-02 번들 소유자:** 구성품별 소유자·bundleItemId·배분율을 보존한다. 대표 큐레이터가 전체 수익자가 되는 것으로 표시하지 않는다. 구매 명령의 배분 로직을 대조했다.
+- **AC-03 배분 합계:** 정가 0은 균등 배분, 정수 잔액은 보정하고 행별/전체 유료·무료 합계를 보존한다. 코드를 대조했으며 전 경계값 새 실행 통과로 세지 않는다.
+- **AC-04 회원 계산:** 수수료는 유료분, 원천징수는 수수료 차감 후 유료분으로 계산하며 무료분은 별도 적립한다. EarningTransitions·플랜 구매 계산·요율 근거를 재사용했다.
+- **AC-05 플랫폼 제외:** 플랫폼 행의 회원 순지급액은 0이며 월 지급 후보에서 제외한다. 지급 명령도 플랫폼 행을 거절한다. 후보 조회와 rejectPlatformRows를 대조했다.
+- **AC-06 월 지급 경계:** 세 원천·USER·PENDING·엄격한 14일 이전 조건을 적용한다. 배치 시험은 고정 시각의 컷오프 인자와 회원별 실패 격리를 단언한다. 이번에는 실행하지 않았다.
+- **AC-07 지급 재확인:** 잠금 후 지급 상태·소유자·환불 종결을 확인하고 실제 지급·상계·무료 적립을 분리한다. 지급 명령과 장부 함수를 대조했다.
+- **AC-08 환불 상태:** 보류·해제·지급 전후 환불을 구분하고 순액 0인 PAID 환불은 종결 표지만 남긴다. EarningTransitionsRefundTest의 해당 단언을 읽었다.
+- **AC-09 원금 보존:** 정산 후 환불은 원래 순액을 보존하고 상계 누적액을 따로 기록한다. 전액 상계된 PAID의 환불 종결도 유지한다. CreatorPayoutPathCommitTest의 구매→지급→환불→다음 지급 단언을 읽었다.
+- **AC-10 결과 표시:** 지갑 적립과 은행 출금, outbox 등록과 알림 수신, 구매 매출과 실제 순지급액을 구분한다. 지급 서비스·명령 및 이미 대조한 판매현황 계약이 근거다.
 
-### 5.1 `MarketPurchaseService.purchaseItem`
-
-기존 호출:
-```java
-createCreatorEarning(item.getCreatorId(), "MARKET_ITEM", itemId, payAmount);
-```
-
-변경:
-```java
-createCreatorEarning(item.getCreatorId(), "MARKET_ITEM", marketPurchase.getPurchaseId(), payAmount);
-```
-
-### 5.2 `MarketPurchaseService.purchaseBundle`
-
-신규 로직:
-
-```java
-@Transactional(rollbackFor = Exception.class)
-public MarketPurchaseVo purchaseBundle(long userId, long bundleId) {
-    // 기존 결제·구매 row·Collection 생성 유지
-    // ...
-    
-    // 신규: 포함 아이템별 매출 배분
-    List<BundleItem> items = bundleItemRepository.findByBundleId(bundleId);
-    long totalRetailPrice = items.stream()
-        .mapToLong(bi -> getItemPrice(bi.getItemId()) * bi.getQuantity())
-        .sum();
-    
-    for (BundleItem bi : items) {
-        MarketItem item = marketItemService.getItem(bi.getItemId());
-        long retailPortion = item.getPrice() * bi.getQuantity();
-        double ratio = totalRetailPrice == 0
-            ? 1.0 / items.size()
-            : (double) retailPortion / totalRetailPrice;
-        long allocatedAmount = Math.round(bundle.getPayAmount() * ratio);
-        
-        creatorEarningService.create(
-            item.getCreatorId(),
-            "MARKET_BUNDLE",
-            marketPurchase.getPurchaseId(),
-            allocatedAmount,
-            bi.getId(),
-            BigDecimal.valueOf(ratio)
-        );
-    }
-    
-    // 회계 분개도 N행으로 분할
-}
-```
-
-반올림 차이는 마지막 행에서 보정한다. 합계가 `payAmount`와 일치해야 한다.
-
-### 5.3 `PlanPurchaseService.purchase`
-
-신규:
-```java
-createCreatorEarning(plan.getCreatorId(), "PLAN_DIRECT", planPurchase.getPurchaseId(), payAmount);
-```
-
-회계 분개도 마켓 아이템과 동일 패턴으로 추가.
-
-### 5.4 `SpendPolicyRegistry`
-
-```java
-register(SpendCategory.PLAN_PURCHASE, SpendPolicy.FLOW_THROUGH);
-```
-
-`FREE_BURN`에서 `FLOW_THROUGH`로 변경.
-
-### 5.5 `MarketplaceSettlementService`
-
-쿼리 확장:
-
-```java
-Page<CreatorEarning> earnings = creatorEarningRepository
-    .findBySourceTypeInAndStatusAndCreatedAtBefore(
-        List.of("MARKET_ITEM", "MARKET_BUNDLE", "PLAN_DIRECT"),
-        EarningStatus.PENDING,
-        now.minusDays(refundWindow),  // F08-14에서 결정한 환불 가능 기간
-        pageable
-    );
-```
-
-`refundWindow`는 설정값으로 빼고 기본 **14일**.
-
-## 6. 회계 분개
-
-### 6.1 `MARKET_ITEM` 구매 (변경 없음)
-
-```
-차변: USER_WALLET (구매자 지갑 차감)
-대변: CREATOR_PAYABLE (크리에이터 미지급금)
-대변: PLATFORM_FEE_REVENUE (수수료)
-대변: WITHHOLDING_TAX_PAYABLE (원천징수)
-```
-
-### 6.2 `MARKET_BUNDLE` 구매 (신규)
-
-번들 1건이 N행의 분개를 만든다.
-
-```
-차변: USER_WALLET = bundle.payAmount
-
-For each item in bundle:
-  대변: CREATOR_PAYABLE[creator_i] = allocatedAmount_i × (1 - feeRate - taxRate)
-  대변: PLATFORM_FEE_REVENUE = allocatedAmount_i × feeRate
-  대변: WITHHOLDING_TAX_PAYABLE = allocatedAmount_i × taxRate
-```
-
-### 6.3 `PLAN_DIRECT` 구매 (신규)
-
-```
-차변: USER_WALLET
-대변: CREATOR_PAYABLE
-대변: PLATFORM_FEE_REVENUE
-대변: WITHHOLDING_TAX_PAYABLE
-```
-
-마켓 아이템과 동일 패턴.
-
-### 6.4 번들 보너스 포인트
-
-번들 구매에는 덤(보너스) 포인트가 없다. 구매는 결제액만 지갑에서 빼고, 덤 적립이나 그에 따른 `PROMOTION_EXPENSE`
-분개도 없다. 처음 구현한 덤 포인트(`bundle_currency` 표, `WalletService.creditBonusToWallet`, 지갑 참조 `BUNDLE_BONUS`)는
-번들에 덤을 거는 길이 없어 차수 10 에서 걷었다.
-
-## 7. 환불과의 인터페이스 (F08-14 의존)
-
-F08-14가 본 PRD에 의존하는 인터페이스:
-
-- 환불 신청 시: `creatorEarning.status = REFUND_HELD`로 변경. 정산에서 제외.
-- 정산 전 환불 승인: `creatorEarning.status = REFUNDED`. 분개 역전.
-- 정산 후 환불 승인: `creatorEarning.status = REVERSED`. `CREATOR_RECEIVABLE` 신설 분개로 회수 시작.
-- 환불 거절: `creatorEarning.status = PENDING`으로 복원.
-- 운영자 강제 환불: 위와 동일 경로, `decision_source = OPERATOR` 메타.
-
-### 7.1 정산 사이클 회수 흐름 (구현됨)
-
-월간 정산 직전 `MarketplaceSettlementService.offsetCreatorReceivable(creatorId, totalNet)`이 호출되어 `REVERSED`
-상태 매출을 가용 정산금에서 우선 회수한다. 가용 금액이 부족하면 가능한 만큼 부분 회수하고 남은 금액을
-다음 정산 주기로 넘긴다.
-
-| 입력 | 처리 |
-|---|---|
-| `REVERSED` earning 없음 | 회수 0, 정산 그대로 |
-| 가용 정산금 ≥ earning.netAmount | earning을 `PAID`로 전이, 가용금에서 차감, `recordCreatorReceivableOffset` 분개 발행 |
-| 가용 정산금 < earning.netAmount | 가능한 금액만 회수하고 `netAmount`에 남은 미수금을 저장해 다음 사이클로 이월 |
-
-### 7.2 부분 환불 (F08-14 PARTIAL_ITEM)
-
-F08-14 부분 환불의 경우 선택된 BundleItem의 earning만 상태 전이 + 분개. `PurchaseRefundService.earningsForRefund`가 `refundScope=PARTIAL_ITEM`이면 `purchase_refund_item` 행과 대조해 선택된 earning만 반환한다. 미선택 earning은 `PENDING` 유지되어 정상 정산 대상이 된다.
-
-본 PRD는 위 상태와 회계 메서드 시그니처를 보장한다. 실제 환불 흐름은 F08-14가 정한다.
-
-## 8. 클라이언트 영향
-
-본 PRD는 백엔드 보정이 중심이다. 클라이언트는 다음만 영향받는다.
-
-- 크리에이터 대시보드(`F06-09`) — 번들·플랜 직접 구매 수익이 새로 잡힘. 기존 가이드 본문 수정 필요.
-- 거래 내역(`F06-06`) — 신규 분개로 거래 표시가 늘어남. 영문 enum 노출 금지(`MARKET_BUNDLE`, `PLAN_DIRECT`)는 기존 정책대로 한글 표기.
-
-## 9. 권한·검증
-
-- `CreatorEarning` 생성은 결제 트랜잭션 안에서만 실행. 외부 호출 금지.
-- 정산 확장 쿼리는 운영자 권한으로만 실행 (`MarketplaceSettlementService` 스케줄러).
-- 백필 SQL은 마이그레이션 시점 1회 실행. 운영 중 재실행 금지.
-
-## 10. Gap / Risk
-
-- **번들 정가 합계 0**: 무료 아이템 묶음 번들이 있으면 정가 비례 배분 불가. 균등 배분 fallback이 들어가지만, 운영 정책으로 무료 번들은 별도 처리할지 결정 필요.
-- **반올림 누적 오차**: 다중 크리에이터 배분에서 1~2원 차이가 누적 가능. 마지막 행 보정으로 합계 일치 보장.
-- **번들 큐레이터와 매출 귀속자 불일치**: 큐레이터가 자기 아이템 하나만 포함시켜 매출 100% 가져가는 케이스. 마켓 정책으로 별도 안내 필요.
-- **`PLAN_DIRECT` 정책 변경의 사용자 영향**: 기존 `FREE_BURN`에서 `FLOW_THROUGH`로 바뀌면, 거래 내역 표시·환불 정책이 달라진다. 사용자 가이드(F08-11) 갱신 필수.
-- **백필 미수행 데이터**: (a) 선택 시 과거 구매는 매출 귀속 없음. 운영 보고에서 "백필 이전 구매" 분리 표시 필요.
-- **세무 보고**: 신규 매출 귀속에 따른 원천징수 신고 변경. 재무팀과 합의.
-
-## 11. 구현 순서
-
-1. **재무·운영 합의**: 3.6 백필 옵션 (a/b)
-2. **데이터 모델 변경**: `V1__init.sql`에 `creator_earning` 컬럼·status enum (대표 큐레이터는 `bundle_curator` LEAD 행, 4.1)
-3. **백엔드**:
-   - `CreatorEarning` 신규 상태 처리
-   - `MarketPurchaseService.purchaseItem` `sourceId` 변경
-   - `MarketPurchaseService.purchaseBundle` 매출 배분 로직
-   - `PlanPurchaseService.purchase` 매출 행 생성
-   - `SpendPolicyRegistry` `PLAN_PURCHASE` 정정
-   - `MarketplaceSettlementService` 쿼리 확장
-   - `AccountingLedgerService` 신규 분개 메서드
-4. **백엔드 테스트**: 번들 배분 계산, 반올림 정합성, 정산 쿼리 확장, `PLAN_DIRECT` 분개
-5. **백필 마이그레이션**: 기존 `MARKET_ITEM` `sourceId` 일괄 UPDATE, 매칭 실패 검토
-6. **사용자 가이드 갱신**: F08-11, F06-09, F06-06 본문 수정
-7. **F08-14 진행 가능 상태로 전환**
-
-## 12. 명시되지 않은 결정 사항 (재무팀 합의)
-
-- 백필 (a) vs (b)
-- 무료 아이템 포함 번들의 배분 정책
-- 큐레이션 수수료 도입 여부 (큐레이터에게 추가 보상)
-
-## 13. 시나리오 기준 수용 조건
-
-아래 9개는 매출 귀속과 정산을 “행이 생성됐다”가 아니라 구매 금액, 유료·무료 구성, 환불, 실제 지급까지
-합계가 어긋나지 않는지로 판정하기 위한 제품 시나리오다. `직접 검증 없음`은 코드 부재가 아니라 해당 경계를
-독립 테스트로 고정하지 못했다는 의미다.
-
-| 번호 | 시작 상황과 처리 | 완료로 인정하는 결과 | 현재 근거 |
-|---:|---|---|---|
-| 1 | 사용자가 단일 마켓 아이템을 구매한다. | 구매 ID를 원천 식별자로 하는 매출 귀속 1행이 생성되고 판매자·총액·상태가 구매 결과와 일치한다. | 서버 단위 테스트 있음 |
-| 2 | 사용자가 유료·무료 포인트가 섞인 플랜을 직접 구매한다. | `PLAN_DIRECT` 매출 귀속이 유료·무료로 분리되고, 수수료·원천징수는 유료분에만 적용되며 구매 원장과 합계가 일치한다. | 서버 단위 테스트 있음 |
-| 3 | 여러 원작자의 아이템을 묶은 번들을 구매한다. | 구매 당시 구성과 정가 비율대로 원작자별 행이 생기고 모든 행의 총액 합이 실제 결제액과 정확히 같다. | 코드 구현 확인. 성공 테스트는 있으나 배분 행 전체 단언은 부분적 |
-| 4 | 번들 정가 합계가 0이거나 나눗셈에서 나머지가 생긴다. | 정가 0은 균등 배분하고 마지막 행이 반올림 잔액을 흡수해 음수 없이 총액을 맞춘다. | 코드 구현 확인. 경계값 직접 검증 없음 |
-| 5 | 유료·무료 포인트가 섞인 번들을 여러 원작자에게 배분한다. | 원작자별 `유료 + 무료 = 배분 총액`, 전체 `유료 합 + 무료 합 = 결제액`이 성립하고 무료분에는 수수료·세금을 부과하지 않는다. | 코드 구현 확인. 다중 원작자 혼합 결제 직접 검증 없음 |
-| 6 | 사용자가 번들을 구매한다. | 결제액만 지갑에서 빼고 덤(보너스) 포인트는 적립하지 않는다(차수 10 에서 걷음). | 구매 경로 실 DB 시험(`MarketPurchasePathCommitTest` A2)이 번들 구매의 지갑 접근을 선잠금·차감 둘로 단언 |
-| 7 | 환불 신청·거절·일부 승인·전액 승인이 발생한다. | 신청 중에는 정산에서 제외하고, 거절 시 다시 정산 가능하게 하며, 일부 환불은 선택한 구성품의 매출 행만 되돌린다. | 환불 서비스 단위 테스트 있음 |
-| 8 | 월간 정산일에 환불 가능 기간이 끝난 매출과 끝나지 않은 매출이 섞여 있다. | 세 구매 유형의 `PENDING` 중 14일이 지난 행만 크리에이터별로 묶고, 한 크리에이터 실패가 다른 지급을 막지 않는다. | 배치·저장소 테스트 있음. 정확한 14일 경계 직접 단언은 부족 |
-| 9 | 이미 지급한 매출이 환불돼 미수금이 생기고 다음 정산금이 부족하거나 충분하다. | 다음 정산금에서 가능한 만큼 먼저 회수하고, 전액 회수한 행만 종결하며, 남은 미수금과 회계 분개가 다음 주기로 이어진다. | 정산 서비스 단위 테스트 있음 |
-
-현재 가장 먼저 보강할 검증은 4번 정가 0·반올림 경계, 5번 다중 원작자 혼합 결제, 8번 14일 컷오프다.
-이 세 묶음을 통과하기 전에는 “모든 매출 배분 경계값 검증 완료”라고 표현하지 않는다.
+위 10개는 문서 수용 항목 수다. 기존 시험 코드를 읽은 범위와 신규 실행 결과를 구분하며, 이번 갱신에서 제품 시험은 실행하지 않았다.

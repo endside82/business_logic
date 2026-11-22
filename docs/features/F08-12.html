@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F08-12 내 컬렉션 — community PRD</title>
+  <title>F08-12 내 보관함</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,184 +17,45 @@
           <a href="../domains/08-plan-market.html">08 플랜 마켓</a><span>›</span>
           F08-12 내 컬렉션
         </div>
-        <h1>F08-12. 내 컬렉션</h1>
-        <p class="lede">
-          마켓에서 산 콘텐츠가 모이는 보유함입니다. 구매와 사용 시작을 구분하고 상품별 사용 조건을 적용합니다.
-          기간권은 구매할 때 확정한 기간을 새로 시작하거나 기존 프리미엄 기간 뒤에 더합니다. 만료 임박 카드는 상단 배너로 따로 알려 주고,
-          전체 · 활성 · 만료 예정 세 필터로 상태별로 분리해 본다. 카드를 누르면 그 콘텐츠의 마켓 상세로 다시 들어가 미리보기·리뷰 작성으로 이어진다.
-        </p>
+        <h1>F08-12 내 보관함</h1>
+        <p class="lede">보관함 입구·세 필터·켜기 권한·상품별 전달·만료 갱신·환불 연결과 결과 화면 복귀를 구분한다. 활성화 재요청과 전달 키, 목록 재조회 중 행 잠금의 현재 계약을 반영한다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section id="publication-and-ownership-current">
-        <h2>발행·판매 제한과 기존 구매권</h2>
-        <p>운영자가 플랜의 재발행을 제한하면 작성자가 바로 다시 공개할 수 없습니다. 운영자가 제한을 풀어도 작성자가 재발행해야 하며 판매는 자동으로 재개되지 않습니다. 비공개 플랜의 연결 상품·모임 패키지도 판매를 멈춥니다. 기존 구매권은 유지하고 판매 이력이 있는 상품은 삭제 대신 중지합니다.</p><p><a href="../domains/08-plan-market.html#current-plan-use">연결 가능한 플랜과 기존 구매권을 확인합니다</a>에서 적용 조건과 예외를 확인합니다.</p>
-      </section>
-
-
-      <section id="purchased-period">
-        <h2>기간권은 구매 당시의 조건대로 사용합니다</h2>
-        <p>1·3·6개월 기간권을 구매하면 그때 정한 혜택과 기간을 보관합니다. 이후 운영자가 상품 조건을 바꾸더라도
-          사용 시점에 새 조건으로 다시 계산하지 않습니다. 기존 프리미엄 기간이 있으면 그 뒤에 이어 붙이고 없으면 새 기간을 시작합니다.</p>
-        <p>기간권의 별도 판매 제한은 새 판매를 막는 규칙이며 이미 산 권리의 활성화·환불에 추가 제한을 걸지 않습니다.
-          다만 현재 마켓 전체의 출시 제한은 별도로 적용됩니다. 기간권의 운영 편성과 환불 보완은
-          <a href="F08-06.html#platform-period-pass">플랫폼 기간권의 현재 구현과 남은 일</a>을 따릅니다.</p>
-      </section>
-
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">필터</div><div class="value">3</div><div class="hint">전체 · 활성 · 만료 예정</div></div>
-          <div class="metric"><div class="label">만료 알림 기준</div><div class="value">7일 내</div><div class="hint">서버에서 활성 카드만 추출 · 화면 카피와 같은 기준</div></div>
-          <div class="metric"><div class="label">활성화 시점</div><div class="value">사용자 누름</div><div class="hint">구매 시점이 아닌 사용 시점</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — 구매와 사용을 분리한다</span>
-          <p>구매한 항목을 보관하고 사용자가 활성화할 때 해당 상품의 이용 권한을 적용합니다.
-            만료가 있는 상품은 기간을 표시하며, 기간권은 기존 프리미엄 기간을 고려해 새 구간을 더합니다.
-            모든 상품이 활성화 즉시 같은 기간으로 만료되는 것은 아닙니다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>한 카드의 일생</h2>
-        <p class="subtitle">구매와 활성화를 구분합니다. 사용 시작·만료는 상품별 조건을 따르며 기간권은 기존 기간 뒤에 더할 수 있습니다.</p>
-        <div class="diagram">
-          <div class="mermaid">
-stateDiagram-v2
-    [*] --> 비활성: 구매 직후 적재
-    비활성 --> 활성: 사용자 활성화
-    활성 --> 만료: 사용 기간 종료
-    note right of 비활성
-      "미활성" 표시
-      "활성화" 버튼 노출
-    end note
-    note right of 활성
-      D-day 카운트 표시
-      만료 임박 시 상단 배너에 노출
-    end note
-    note right of 만료
-      카드가 흐릿하게 표시
-      이용 종료
-    end note
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>이 화면이 다루는 네 가지</h2>
-
-        <div class="cards">
-          <div class="card">
-            <div class="eyebrow">동작 1</div>
-            <h3>만료 예정 배너</h3>
-            <p>활성 카드 중 곧 만료되는 것이 있으면 상단에 "만료 예정 N개" 배너로 띄운다. 만료를 깜빡하고 잊는 사용자에게 신호를 보낸다.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">동작 2</div>
-            <h3>전체 · 활성 · 만료 필터</h3>
-            <p>세 칩으로 보고 싶은 상태만 분리해서 본다. "만료 예정"은 이레 안에 만료되는 활성 카드만 남긴다.
-              이미 만료된 카드만 따로 모아 보는 칩은 없다.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">동작 3</div>
-            <h3>활성화 버튼</h3>
-            <p>비활성 카드에서 사용을 시작합니다. 상품별로 사용 조건을 적용하며 기간권의 만료는 구매한 기간과 기존 프리미엄 종료일을 기준으로 계산합니다.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">동작 4</div>
-            <h3>카드 탭 → 본문 열람</h3>
-            <p>카드를 누르면 그 콘텐츠의 마켓 상세로 들어간다. 거기서 미리보기를 펼치거나 리뷰를 작성한다.</p>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">구매 직후</div>
-            <h3>방금 산 콘텐츠가 비활성으로 들어와 있다</h3>
-            <p>마켓에서 산 직후 컬렉션 화면으로 자동 이동했다. 방금 산 카드가 가장 위에 있고 "미활성" 표시.
-              우측의 "활성화" 버튼을 누르면 D-day가 시작된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 구매와 사용 시점을 분리해 두어, 사용자가 "지금 당장 쓸 게 아니어도" 부담 없이 산다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">활성화</div>
-            <h3>이번 주말에 쓸 코스를 켠다</h3>
-            <p>이번 주말 데이트에 쓸 플랜 카드의 활성화 버튼을 누른다. "활성화되었습니다" 안내가 뜨고
-              카드 표시가 "활성 D-30"으로 바뀐다. 썸네일이 활성 색으로 강조된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 자기 손으로 사용 시점을 정한다 — "쓸 준비가 됐다"는 신호가 데이터로 남는다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">만료 임박</div>
-            <h3>상단 배너에 "만료 예정 2개"가 떴다</h3>
-            <p>활성화해 둔 카드 중 이레 안에 만료되는 것이 두 개 있다. 컬렉션에 들어가면 상단에 노란 배너가 떠 있고
-              "만료 예정 2개 · 7일 내 만료되는 플랜이 있습니다"라고 적혀 있다.
-              우측 "갱신하기"를 누르면, 만료 예정이 한 건일 때는 그 상품의 마켓 상세로 바로 가고
-              여러 건일 때는 목록이 "만료 예정" 필터로 바뀌어 어느 카드가 걸렸는지 보여 준다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 만료 인지에서 재구매 결정까지 한 번의 탭으로 이어진다.
-              배너 카피의 "7일"과 서버가 추출하는 기준이 같아, 사용자가 본 문구와 실제 목록이 어긋나지 않는다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">필터 분리</div>
-            <h3>만료된 카드만 따로 본다</h3>
-            <p>"만료 예정" 칩을 누르면 이레 안에 만료되는 활성 카드만 남는다. 사용자가 다시 살지, 그 안에 쓸지 결정한다.
-              카드를 누르면 마켓 상세로 돌아가 재구매할 수도 있다.
-              이미 만료된 카드는 "전체"에서 흐릿하게 표시되고, 따로 모아 보는 칩은 없다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">본문 다시 보기</div>
-            <h3>산 플랜의 본문을 다시 펼친다</h3>
-            <p>예전에 산 플랜의 카드를 누른다. 마켓 상세로 들어가 미리보기 영역에서 본문 전체를 본다.
-              리뷰를 아직 안 썼다면 리뷰 작성 다이얼로그를 띄울 수도 있다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">빈 상태</div>
-            <h3>아직 한 번도 안 산 사용자</h3>
-            <p>한 번도 마켓에서 구매한 적 없는 사용자가 컬렉션에 들어왔다. "구매한 플랜이 없습니다" 안내만 표시된다.
-              사용자가 직접 마켓 메인으로 이동해야 한다(현재는 안내 안에 마켓으로 가는 버튼이 없다).</p>
-            <p><strong>운영 관찰 포인트</strong> — 빈 컬렉션에서 마켓으로 가는 출구가 화면에 없다. 첫 사용자 이탈을 줄이려면 "마켓 둘러보기" 같은 안내가 필요한 자리.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">동기화</div>
-            <h3>당겨서 새로고침로 만료 D-day를 갱신</h3>
-            <p>오랜만에 컬렉션에 들어온 사용자가 화면을 아래로 당긴다. 만료 임박 배너와 카드의 D-day가 다시 계산된다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">컬렉션은 구매 가치를 사용자가 느끼는 자리다</span>
-          <ul>
-            <li><strong>활성화 시점에 만료 카운트가 시작된다.</strong> 구매 시점이 아니다 — 충동 구매한 콘텐츠를 미뤄 뒀다가 사용하는 행동을 직접 지원하는 정책.
-              한편 활성화 안 한 비활성 카드가 무한히 쌓이는 것은 운영 부담이라, 자동 활성화나 비활성 한도 도입은 향후 결정점.</li>
-            <li><strong>만료 임박 배너 카피와 서버 추출 기준이 이레로 맞춰져 있다.</strong> 한쪽만 바꾸면 사용자가 본 문구와 목록이 다시 어긋난다.</li>
-            <li><strong>"갱신하기"는 재구매 쪽으로 보낸다.</strong> 만료 예정이 한 건이면 그 상품의 마켓 상세로 보내고, 여러 건이면 "만료 예정" 필터로 좁혀 준다.
-              같은 카드를 다시 활성화해 기간을 늘리는 경로는 없다 — 갱신은 다시 사는 것이다.</li>
-            <li><strong>필터는 모두 화면에서 갈린다.</strong> 서버는 전체와 활성 두 가지만 내려 주고, 만료 예정 카드는 화면이 시간 비교로 골라낸다.
-              만료 기준이 바뀌면 화면 쪽 계산도 함께 바꿔야 한다.</li>
-            <li><strong>활성화 액션은 무료다.</strong> 결제도 일어나지 않고 잔액에도 영향이 없다.
-              이 점이 화면 카피에 충분히 안내돼 있어야 사용자가 "활성화 = 결제"로 오인하지 않는다.</li>
-            <li><strong>아이템 종류에 따라 만료 정책이 다르다.</strong> 일반 플랜은 만료 없음, 일정 종류는 N개월, N년 단위.
-              사용자에게 만료 정책 자체가 카드 단계에서 분명하지 않으면 "왜 이건 만료되고 저건 안 되지" 혼란이 생긴다.</li>
-          </ul>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>진입과 화면의 역할</h2><p>로그인 회원이 상품·번들 구매로 받은 보관함 항목을 켜고 이용하는 화면이다. 경로는 <code>/market/collection</code>, 이름은 <code>planMarketCollection</code>이다. <a href="F08-11.html">구매</a> 성공 뒤 이동하고, 마켓 상단의 <strong>내 보관함</strong>에서도 연다. 전체 메뉴의 <code>money.marketRefunds</code>는 <strong>마켓 구매·환불</strong>이라는 이름으로 구매 기록이 있는 회원에게 이 경로를 제공한다. 프로필에 언제나 같은 이름의 메뉴가 있다고 설명하지 않는다.</p>
+<p>상단 <strong>내 환불 내역</strong>, 카드 본문 <strong>상품 상세</strong>, 행의 <strong>켜기/상품 이용</strong>, 행 더보기의 <strong>환불 신청</strong>은 목적과 결과가 다른 입구다. 카드 본문은 <code>/market/items/{itemId}</code>로 이동하며 상품 이용을 대신 실행하지 않는다. 플랜 직접 구매는 별도의 ACTIVE 권리·플랜 본문 경로이므로 모든 구매가 이 목록에 같은 모양으로 생긴다고 보장하지 않는다.</p></section>
+<section id="current-2"><h2>목록 조회와 표시</h2><p>화면은 보관함 전체와 만료 예정 목록을 별도로 조회한다. 목록 응답은 <code>List&lt;CollectionVo&gt;</code>이며 페이지 응답이 아니다. 전체 조회는 생성 시각 역순의 회원 보관함에서 회수·만료 및 구매 접근 조건을 적용한다. <code>active=true</code>일 때만 활성 보관함 조회로 바뀌며, false나 생략을 미활성 전용 조회로 해석하지 않는다. 앱은 전체를 받아 필터링한다.</p>
+<p>주요 필드는 collectionId·itemId·itemTitle, purchaseId·purchaseType·bundleId·bundleItemId, productVersionId·entitlementId·resourceType·resourceId·resourceVersion·entitlementStatus·deliveryAction, quantity·activated·activatedAt·expiredAt, 이용 횟수/시각, <code>actions.activate</code>다. 서버의 <code>activated</code>를 임의로 <code>isActivated</code> JSON 키로 바꾸지 않는다. 상품 제목은 현재 상품에서, 자원 유형·버전은 권리의 상품 버전에서 가져온다. 권리가 참조하는 버전이 없으면 버전 필요 오류로 조회가 실패할 수 있다.</p>
+<div class="table-wrap"><table><thead><tr><th>화면 상태</th><th>현재 표시·행동</th></tr></thead><tbody><tr><td>처음 읽는 중</td><td>내 보관함 로딩 안내</td></tr><tr><td>목록 오류</td><td>오류 화면과 다시 시도. 다시 시도는 보관함 목록 재조회</td></tr><tr><td>선택 필터가 비었음</td><td>구매한 플랜이 없다는 빈 안내. 자동 마켓 이동·빈 상태 전용 구매 버튼 없음</td></tr><tr><td>항목 미활성</td><td>꺼짐. 서버 activate.allowed가 true일 때 켜기</td></tr><tr><td>활성·기간 없음</td><td>사용 중 · 기한 없음</td></tr><tr><td>활성·기간 있음</td><td>사용 중 D-N. 남은 일수는 서울 벽시계 기준 정수 일수</td></tr><tr><td>만료 시각이 지남</td><td>만료 표시·주 행동 없음. 새 서버 조회에서는 만료 행이 제외됨</td></tr></tbody></table></div>
+<p>화면 필터는 <strong>전체·사용 중·만료 예정</strong>이다. 별도의 만료 이력 필터는 없다. 사용 중은 activated이면서 만료 시각이 없거나 현재보다 뒤인 행이다. 만료 예정은 activated이고 현재보다 뒤부터 7일 뒤까지인 행이다. 화면에 이미 있던 행의 만료 표시는 서버가 만료 이력을 계속 반환한다는 보장이 아니다.</p></section>
+<section id="publication-and-ownership-current"><h2>판매 제한과 기존 구매권</h2><p>서버 보관함 컨트롤러는 MARKET의 safetyExit이며 앱도 마켓이 닫혔을 때 <code>/market/collection</code>을 허용 경로로 둔다. 신규 판매 공개와 이미 산 권리의 조회·이용 입구를 구분한다. 다만 카드에서 이동한 상품 상세 등 다음 화면의 공개 조건까지 모두 우회하는 것은 아니다.</p>
+<p>조회는 회수된 행·만료된 행을 제외하고, 연결 구매가 ACTIVE인지 확인한다. 환불 잠금 중에는 SUBSCRIPTION 유형만 계속 이용하도록 <code>RefundPendingUsePolicy</code>가 허용한다. 일반 상품의 환불 잠금은 조회·이용을 제한한다. 오래된 행의 purchaseId 또는 구매 행이 없을 때 조회가 허용되는 호환 동작과, 실제 이용 시 purchaseId가 있으면 구매 행이 필요하다는 조건도 구분한다.</p>
+<p>미공개·판매 중지 상품과 기존 구매권은 별개다. 연결된 플랜의 가시성·발행 제한은 <a href="F08-02.html">플랜 상세</a>와 <a href="F08-05.html">플랜 발행</a>을 함께 적용한다. 이 화면에 행이 보인다는 이유만으로 모든 콘텐츠 접근이 허용된다고 판정하지 않는다.</p></section>
+<section id="current-4"><h2>켜기와 반복 요청</h2><p><code>POST /api/v1/market/collection/{id}/activate</code>는 응답 본문 없는 200이다. 서버는 보관함을 잠그고 본인 행인지, 이용 가능한 구매인지, 권리의 소유자와 유효 상태가 GRANTED 또는 ACTIVE인지 순서대로 확인한다.</p>
+<ul><li>없는 행·남의 보관함 행: NOT_FOUND.</li><li>회수·만료·구매 상태 등 이용 불가: MARKET_COLLECTION_NOT_USABLE.</li><li>권리 없음: MARKET_ENTITLEMENT_NOT_FOUND. 남의 권리: FORBIDDEN.</li><li>유효 권리 상태가 GRANTED/ACTIVE 아님: MARKET_ENTITLEMENT_INACTIVE.</li><li>이미 유효한 ACTIVE: 기존 권리를 반환하며 활성화 시각·기간을 새로 늘리지 않는다. 기존 문서의 무조건 400 이중 활성화 설명은 적용하지 않는다.</li></ul>
+<p>새 활성화는 권리의 승인 상품 버전으로 기간을 계산하고 어댑터 grant를 실행한 뒤 보관함에 활성화 시각·만료 시각을 반영한다. 일반 기간은 DAY/MONTH/YEAR에 따라 더하며 NONE 또는 기간 없음은 만료 시각 없음이다. EXPIRATION도 이 일반 계산 함수에서는 null이며 별도 자원 어댑터의 결과와 구분한다. 양수가 아닌 기간 값은 거절한다.</p>
+<p>앱은 서버 <code>actions.activate.allowed</code>가 없거나 false이면 켜기를 제공하지 않는다. 요청 중 및 후속 목록 재조회 중 같은 행을 잠근다. 성공 후 재조회가 끝나면 켰다는 안내를 표시한다. 능력 거절은 원천 목록을 다시 읽는 공통 처리로 연결한다. 새 목록 읽기가 실패하면 이전 행을 성공 상태처럼 남기지 않고 오류·다시 시도를 표시한다.</p></section>
+<section id="current-5"><h2>상품 전달과 실제 결과 열기</h2><p>활성 행은 deliveryAction이 있고 entitlementStatus가 ACTIVE일 때 이용 단추를 제공한다. 사용은 <code>POST /api/v1/market/collection/{id}/deliver</code>와 필수 <code>Idempotency-Key</code>를 사용한다. 서버는 소유·구매 이용권·실제 권리 상태·만료를 다시 확인하며 키는 공백 없이 최대 120자다.</p>
+<div class="table-wrap"><table><thead><tr><th>전달 action</th><th>단추</th><th>성공 응답 후 실제 행동</th></tr></thead><tbody><tr><td>OPEN_PLAN</td><td>플랜 열기</td><td>deliveredPlanId의 planDetail 화면</td></tr><tr><td>DOWNLOAD_FILE</td><td>받기</td><td>downloadUrl을 외부 앱으로 열기</td></tr><tr><td>EVENT_PACKAGE_READY</td><td>모임 만들기</td><td>deliveredPlanId의 planCreateEvent 화면</td></tr><tr><td>SUBSCRIPTION_EXTENDED</td><td>혜택 확인</td><td>응답 만료 시각 또는 구독 연장 안내</td></tr></tbody></table></div>
+<p>응답에는 entitlementId·resourceType·resourceId·resourceVersion·status·action, 선택적 downloadUrl·deliveredPlanId·remainingQuantity·activatedAt·expiresAt와 replayed가 있다. 보관함의 <code>expiredAt</code>과 전달 응답의 <code>expiresAt</code> 이름을 혼동하지 않는다. 결과 ID/URL이 없거나 파일을 열지 못하면 전달됐지만 열 수 있는 결과가 없다는 안내를 한다. 서버 전달 성공과 외부 파일 열기 성공은 별도다.</p>
+<p>동일 권리·동일 전달 키의 성공 기록이 있으면 어댑터로 결과를 다시 만들고 replayed=true를 반환한다. 이 경우 보관함 downloadCount·첫/마지막 이용 시각을 다시 늘리지 않는다. 새 전달 성공일 때는 파일 외 유형도 이 이용 횟수 필드에 기록된다. 재시도도 현재 ACTIVE·만료 조건을 먼저 통과해야 한다.</p>
+<p>앱 키는 해당 공급자의 메모리 맵에 항목별로 보관하며 실패 시 유지, 서버 성공 시 제거한다. 구매 명령의 디스크 보관 키와 같은 재시작 보장을 제공한다고 쓰지 않는다. 이용 결과는 후속 목록 재조회를 기다리지 않고 즉시 열고, 같은 행의 잠금은 재조회 완료까지 유지한다. 결과 화면에서 돌아올 때 아직 읽는 중이면 이전 행이 잠긴 채 보이고, 재조회가 끝나면 새 목록을 표시한다. 서버 성공 뒤 외부 결과 열기에 실패한 경우에는 이미 키가 제거된 상태라는 경계도 있다.</p>
+<p>옛 <code>/download</code> POST와 API 함수는 남아 있으나 현재 이용 단추는 호출하지 않는다. 서버는 해당 경로의 권한 검사 후 MARKET_PRODUCT_VERSION_REQUIRED를 반환한다. 단순 다운로드 기록 API를 현재 상품 전달 경로로 설명하지 않는다.</p></section>
+<section id="purchased-period"><h2>기간권의 구매 조건과 혜택 확인</h2><p>기간권 활성화는 권리에 저장한 grantedTerms의 플랜 유형·개월 수로 <code>grantPrepaidDuration</code>을 호출하고, 실제 부여 결과의 시작·끝 시각을 권리에 보관한다. 현재 상품 설정을 다시 읽어 구매 당시 기간을 바꾸지 않는다. 저장 조건이 없으면 MARKET_PRODUCT_VERSION_INVALID다. 상세 판매 조건은 <a href="F08-06.html#platform-period-pass">회원 상품과 플랫폼 기간권</a>을 따른다.</p>
+<p>기간권의 혜택 확인 deliver는 저장된 권리 결과를 반환한다. 단추를 누를 때마다 구독 기간을 다시 적립하지 않는다. 환불 잠금 중 이용 예외는 이 유형에만 적용하며, 환불 시 권리 회수는 별도의 환불 경로가 수행한다.</p></section>
+<section id="current-7"><h2>만료 예정·갱신·새로고침</h2><p>서버 만료 예정 조회는 한 현재 시각부터 정확히 7일 뒤까지 활성 항목을 조회한 뒤 본인·접근 조건을 적용한다. 배너 조회가 실패하거나 로딩 중이면 배너를 숨기며 별도 배너 오류를 표시하지 않는다. 만료 예정이 한 개이고 itemId가 있으면 <strong>갱신하기</strong>는 그 원상품 상세로 이동한다. 여러 개이거나 itemId가 없으면 현재 목록의 만료 예정 필터를 선택한다. 갱신하기 자체가 재구매·결제·기간 연장을 실행하지 않는다.</p>
+<p>당겨서 새로고침은 보관함과 만료 예정 공급자를 둘 다 무효화한다. 켜기·이용 뒤의 공급자 refresh는 보관함을 다시 읽으며 만료 예정 공급자까지 자동 갱신하지 않는다. 자동 타이머로 매초 D-day·배너를 재계산한다는 계약은 없다.</p>
+<p>카드의 만료 표시는 <code>현재 &gt; 만료 시각</code>, 사용 중 필터는 <code>만료 시각 &gt; 현재</code>, 서버 권리 판정은 <code>만료 시각 &lt;= 현재</code>를 사용한다. 정확히 같은 시각의 화면 표기와 허용 동작을 하나의 동일한 비교식으로 문서화하지 않는다. 최종 이용 허용은 서버가 판정한다.</p></section>
+<section id="current-8"><h2>환불 연결과 복귀</h2><p>행 더보기의 환불 신청은 purchaseId가 있을 때 신청 화면을 연다. purchaseType=BUNDLE이면 MARKET_BUNDLE, 그 외는 MARKET_ITEM으로 전달하며 bundleId·상품명·같은 구매의 기간권 포함 여부를 함께 넘긴다. 단추가 보인다는 사실만으로 기한·사용량·판매자 판단까지 환불 가능하다고 확정하지 않는다. 신청 조건과 후속 결정은 <a href="F08-14.html">구매 환불</a>을 따른다.</p>
+<p>보관함·이용 결과·상품 상세·환불 내역은 각 경로로 이동한다. 이용 성공의 목록 갱신은 공급자가 유지해서 처리하며 결과 화면에서 돌아왔을 때 새 상태 또는 재조회 오류를 보여 준다. 환불 화면 복귀만으로 목록·배너가 모두 자동 갱신된다는 별도 보장은 이 화면에 없다.</p></section>
+<section id="current-9"><h2>요청과 응답</h2><div class="table-wrap"><table><thead><tr><th>요청</th><th>인자·응답</th></tr></thead><tbody><tr><td>GET /api/v1/market/collection</td><td>선택 Boolean active. List&lt;CollectionVo&gt;, 페이지 없음</td></tr><tr><td>GET /api/v1/market/collection/expiring</td><td>List&lt;CollectionVo&gt;</td></tr><tr><td>POST /api/v1/market/collection/{id}/activate</td><td>보관함 ID. 200, 본문 없음</td></tr><tr><td>POST /api/v1/market/collection/{id}/deliver</td><td>보관함 ID와 필수 Idempotency-Key. ProductDeliveryVo</td></tr></tbody></table></div>
+<p>네 요청은 회원 신원과 자신의 보유 항목을 기준으로 한다. 활성화와 전달의 권한 오류를 동일한 403으로 뭉뚱그리지 않는다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>구분</th><th>경계와 후속 확인</th></tr></thead><tbody><tr><td>미검증</td><td>소스·선택된 기존 단언을 읽었으며 실제 앱·외부 파일·구독 적립·환불 동시성 시험을 새로 실행하지 않았다</td></tr><tr><td>Gap</td><td>전달 키는 메모리에 보관한다. 앱 재시작을 포함한 장기 결과 불명 복구를 구매 영수증과 동일하게 보장하지 않는다</td></tr><tr><td>Gap</td><td>켜기·전달 후 만료 예정 배너는 별도 자동 갱신이 아니며, 빈 필터도 구매 없음 문구를 쓴다. 실제 UI와 문서를 일치시킨 내용이지 기능 수정 완료가 아니다</td></tr><tr><td>Risk</td><td>만료 경계의 표시·필터·서버 비교식이 다르며, 앱 표시는 서버의 최종 권리 판정을 대신하지 않는다</td></tr><tr><td>기준</td><td>플랫폼 기간권·마켓의 판매 공개와 기존 구매권 이용, 상품 상세 진입과 실제 전달을 각각 판정한다</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 실제 입구:</strong> 구매 성공·마켓 보관함·구매 기록이 있는 회원의 전체 메뉴가 같은 보관함 경로를 연다. 상단 환불 내역·카드·이용·더보기를 목적별로 구분한다. 라우터·메뉴·화면을 대조했다.</li><li><strong>AC-02 목록 계약:</strong> 전체/active 조회는 List이며 서버 접근 필터를 적용한다. 앱의 전체·사용 중·만료 예정 필터와 만료 이력 미제공을 구분한다. 서비스·화면 필터가 근거다.</li><li><strong>AC-03 켜기 권한:</strong> 남의 행은 NOT_FOUND, 이용 불가는 전용 오류이며 actions.activate 허용일 때만 켜기를 제공한다. 서비스·정책과 회수 행 시험 단언을 읽었다.</li><li><strong>AC-04 반복 활성화:</strong> GRANTED를 ACTIVE로 만들고 유효한 ACTIVE 재요청은 기존 기간을 보존한다. 권리 서비스가 근거다.</li><li><strong>AC-05 전달 목적지:</strong> 네 action별 플랜·외부 파일·모임 작성·혜택 안내로 연결한다. 기존 전달 시험은 deliver 한 번과 legacy download 미호출, 실제 플랜 ID 이동을 단언한다.</li><li><strong>AC-06 전달 재시도:</strong> 같은 키 성공 재생은 이용 횟수를 늘리지 않으며, 앱은 실패 키를 메모리에서 유지한다. 서버·공급자를 대조했다. 재시작 지속성은 보장하지 않는다.</li><li><strong>AC-07 결과와 목록 갱신:</strong> 결과는 재조회보다 먼저 열고 같은 행은 재조회가 끝날 때까지 잠근다. 기존 잠금 시험의 복귀·중복 호출 방지 단언을 읽었다.</li><li><strong>AC-08 재조회 실패:</strong> 서버 성공 뒤 목록 갱신이 실패하면 결과를 취소하지 않고 보관함에 오류·다시 시도를 제공한다. 기존 잠금 시험의 해당 단언을 읽었다.</li><li><strong>AC-09 만료와 갱신:</strong> 7일 조회, 서울 벽시계 필터, 한 항목 상세 이동/여러 항목 필터 선택을 적용한다. 서비스 기간 인자와 벽시계 단언, 화면 갱신 분기를 대조했다.</li><li><strong>AC-10 기간권:</strong> 활성화는 저장된 구매 조건으로 기간을 부여하고 혜택 확인은 재적립하지 않는다. 기간권 어댑터의 grant/deliver를 대조했다.</li><li><strong>AC-11 환불과 제한:</strong> MARKET이 닫혀도 보관함 경로는 안전 출구로 두며, 환불 잠금 중 이용은 기간권만 예외다. 환불 입구가 최종 승인 보장이 아님을 표시한다. 라우팅·접근 정책·화면이 근거다.</li></ul>
+<p>위 11개는 문서 수용 항목이다. 기존 시험의 선택된 단언을 읽은 범위이며 이번 갱신에서 제품 시험은 실행하지 않았다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>
@@ -211,7 +72,7 @@ stateDiagram-v2
         <div class="hub-grid">
           <a class="card" href="../domains/08-plan-market.html"><div class="eyebrow">상위 도메인</div><h3>08 플랜 마켓</h3></a>
           <a class="card" href="F08-11.html"><div class="eyebrow">앞 단위</div><h3>F08-11 구매</h3><p>구매 완료 후 도착하는 화면.</p></a>
-          <a class="card" href="F08-10.html"><div class="eyebrow">카드 탭</div><h3>F08-10 마켓 아이템 상세</h3><p>카드를 눌렀을 때 도착하는 본문 화면.</p></a>
+          <a class="card" href="F08-10.html"><div class="eyebrow">카드 탭</div><h3>F08-10 마켓 아이템 상세</h3><p>카드 본문은 상품 상세로, 이용 단추는 전달 결과로 이동합니다.</p></a>
           <a class="card" href="F08-13.html"><div class="eyebrow">활용</div><h3>F08-13 이벤트 만들기 · 리뷰</h3><p>산 플랜으로 모임을 만들거나 리뷰를 남기는 자리.</p></a>
         </div>
       </section>

@@ -311,7 +311,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F08-12 | 플랜 마켓 | [F08-12_my-collection_prd.md](02_feature_prds/08_plan_market/F08-12_my-collection_prd.md) | `F08-12_my-collection` | 실사 기반 전환본 | 4 | 4 |
 | F08-13 | 플랜 마켓 | [F08-13_plan-event-and-review_prd.md](02_feature_prds/08_plan_market/F08-13_plan-event-and-review_prd.md) | `F08-13_plan-event-and-review` | 실사 기반 전환본 | 4 | 2 |
 | F08-14 | 플랜 마켓 | [F08-14_purchase-refund_prd.md](02_feature_prds/08_plan_market/F08-14_purchase-refund_prd.md) | `source-first` | source-first 구현 확인 | 6 | 2 |
-| F08-15 | 플랜 마켓 | [F08-15_creator-earning-coverage_prd.md](02_feature_prds/08_plan_market/F08-15_creator-earning-coverage_prd.md) | `source-first` | source-first 구현 확인 | 4 | 1 |
+| F08-15 | 플랜 마켓 | [F08-15_creator-earning-coverage_prd.md](02_feature_prds/08_plan_market/F08-15_creator-earning-coverage_prd.md) | `source-first` | source-first 구현 확인 | 0 | 3 |
 | F09-01 | 프라이빗 데이팅 | [F09-01_verification_prd.md](02_feature_prds/09_private_date/F09-01_verification_prd.md) | `F09-01_verification` | 실사 기반 전환본 | 3 | 0 |
 | F09-02 | 프라이빗 데이팅 | [F09-02_profile_prd.md](02_feature_prds/09_private_date/F09-02_profile_prd.md) | `F09-02_profile` | 실사 기반 전환본 | 6 | 2 |
 | F09-03 | 프라이빗 데이팅 | [F09-03_candidate_swipe_prd.md](02_feature_prds/09_private_date/F09-03_candidate_swipe_prd.md) | `F09-03_candidate_swipe` | 실사 기반 전환본 | 2 | 4 |

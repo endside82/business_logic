@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,318개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,320개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1318,
+    "documentedScenarioItems": 1320,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4967,
     "journeyFilesScanned": 336,
@@ -12019,14 +12019,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F08-12",
       "domain": "플랜 마켓",
-      "name": "내 컬렉션",
-      "scenarioCount": 9,
+      "name": "내 보관함",
+      "scenarioCount": 11,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/08_plan_market/F08-12_my-collection/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-12_my-collection_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9
+        "documentScenarioCount": 11
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-12_my-collection/backend.md",
@@ -12087,18 +12087,18 @@ window.SCENARIO_AUDIT = {
           },
           {
             "id": "F08-12:4",
-            "label": "GET /api/v1/plans/{planId}/preview — 플랜 미리보기",
+            "label": "POST /api/v1/market/collection/{id}/deliver — 구매 상품 전달",
             "status": "verified",
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java",
-                "controller": "PlanController",
-                "method": "getPreview",
-                "httpMethod": "GET",
-                "httpPath": "/api/v1/plans/{planId}/preview",
-                "targetLine": 73,
-                "methodLine": 74
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/CollectionController.java",
+                "controller": "CollectionController",
+                "method": "deliver",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/market/collection/{id}/deliver",
+                "targetLine": 62,
+                "methodLine": 63
               }
             ]
           }
@@ -12289,7 +12289,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F08-15",
       "domain": "플랜 마켓",
-      "name": "크리에이터 매출 귀속 보정",
+      "name": "크리에이터 매출 귀속·정산",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-15_creator-earning-coverage_prd.md",
