@@ -441,7 +441,8 @@
         "numbers_reference_20261122",
         "money_scenarios_20261122",
         "money_flowcharts_20261122",
-        "authoring_navigation_20261122"
+        "authoring_navigation_20261122",
+        "planning_decisions_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -8401,10 +8402,12 @@
       "kind": "supporting_document_or_tool",
       "document": true,
       "baselineSha256": "5793a49228a58c7322a3a2d98174b4538d71603669e688571f53e6bc7be6f112",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "planning_decisions_20261122"
+      ],
+      "reviewedSha256": "b941cae80ec690d0b1bae66ec63fa9bffcde8f2f2a8453f5229edb4b48efcae3"
     },
     {
       "path": "prd/05_planning_artifacts/mvp_scope_matrix.md",
@@ -8412,10 +8415,12 @@
       "kind": "supporting_document_or_tool",
       "document": true,
       "baselineSha256": "8b70772fa6e6a4d13a45d68140be579c4288417ac27ceae49f973a9e1befa851",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "planning_decisions_20261122"
+      ],
+      "reviewedSha256": "ba14645586e6e1a85edba0e817162f937e968cdc59d53796d8feed8bb9bbaf36"
     },
     {
       "path": "prd/05_planning_artifacts/notion_import_order.md",
@@ -8447,10 +8452,12 @@
       "kind": "supporting_document_or_tool",
       "document": true,
       "baselineSha256": "d74215b7b4b464cd59717ba40bb98bee7c125ab017eee18bb74a1a837265f616",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "planning_decisions_20261122"
+      ],
+      "reviewedSha256": "2d49c02796e9c763faffce4a0bd41aecf5075638474090f6b280c11bb8fbf0fe"
     },
     {
       "path": "prd/FEATURE_PRD_STANDARD.md",
@@ -49377,6 +49384,275 @@
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; repository documentation and local links only; no external upload/browser"
+      },
+      "observedSourceVersions": {
+        "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
+        "community_app": "a412d4489de36c985715480d0936740121c94609"
+      }
+    },
+    "planning_decisions_20261122": {
+      "kind": "source_review",
+      "scope": "기존 결정 등록부·17영역 MVP 후보표·워크숍 전체 본문 읽기. 현재 첫 출시/후속 공개/확인 범위와 검수된 정본 동일 SHA를 대조. 과거 승인 원문은 식별자 유지·인용 보존하며 현재 계약과 분리.",
+      "sources": [
+        {
+          "path": "docs/README.md",
+          "sha256": "22c787230db5657483b67788275f164bb73dd53c9e9c2b81969fdd93c5bb8619",
+          "reviewScope": "첫 출시에서 제공할 것 및 첫 출시를 기다리게 하지 않는 일 본문 전체"
+        },
+        {
+          "path": "docs/development/IMPLEMENTATION_WORKBOARD.md",
+          "sha256": "7d608628f5b723f9751e1a229147150fb15c565a3ab40dc8ed744e0fc004496c",
+          "reviewScope": "첫 출시 기능의 확인 범위 표 전체와 확인 범위 주석"
+        },
+        {
+          "path": "docs/plan/NEXT_WORK.md",
+          "sha256": "63d5c9fe56f8514e3c13eda10d5c17092037af4d0021262dff5f4a1c2a1fa997",
+          "reviewScope": "사용자가 정할 것 개요·첫 출시 전에 정할 것 전체, 기능을 넓히거나 열 때 정할 것의 목록 및 질문 41~45. 나머지 전문 검수 아님"
+        }
+      ],
+      "reusedSources": [],
+      "reuses": [
+        "auth_domain_rollup_20261122",
+        "authoring_navigation_20261122",
+        "calendar_domain_20261122",
+        "club_domain_20261122",
+        "club_finance_20261122",
+        "curated_domain_20261122",
+        "date_chat_meeting_20261122",
+        "dispute_evidence_20261122",
+        "event_domain_rollup_20261122",
+        "favorite_domain_rollup_20261122",
+        "feature_inventory_20261122",
+        "home_feed_core_20261122",
+        "location_domain_20261122",
+        "market_management_20261122",
+        "mileage_commands_20261122",
+        "notification_domain_20261122",
+        "notification_results_20261122",
+        "payment_domain_rollup_20261122",
+        "payment_policy_20261122",
+        "payment_supplement_20261122",
+        "plan_market_domain_20261122",
+        "planning_qa_20261122",
+        "prd/FEATURE_PRD_STANDARD.md",
+        "privacy_policy_20261122",
+        "profile_domain_rollup_20261122",
+        "purchase_refund_20261122",
+        "qa_acceptance_20261122",
+        "regular_meeting_commands_20261122",
+        "regular_meeting_participation_20261122",
+        "review_domain_20261122",
+        "saisoop_docs:docs/development/DOCUMENTATION_GUIDE.md",
+        "search_workflows_20261122",
+        "settlement_domain_rollup_20261122",
+        "support_20261122",
+        "warning_domain_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/05_planning_artifacts/decision_register.md",
+          "sha256": "b941cae80ec690d0b1bae66ec63fa9bffcde8f2f2a8453f5229edb4b48efcae3"
+        },
+        {
+          "path": "business_logic/prd/05_planning_artifacts/mvp_scope_matrix.md",
+          "sha256": "ba14645586e6e1a85edba0e817162f937e968cdc59d53796d8feed8bb9bbaf36"
+        },
+        {
+          "path": "business_logic/prd/05_planning_artifacts/prd_review_workshop.md",
+          "sha256": "2d49c02796e9c763faffce4a0bd41aecf5075638474090f6b280c11bb8fbf0fe"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/01_인증_and_온보딩_prd.md",
+          "sha256": "43ecf5b20a50b6e1c38f1f4d67b49c04d4294a85cbb6940b8760edf15ba08e99"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/02_홈_피드_prd.md",
+          "sha256": "b47888b92c10ee7746e6f7c62aa8d7368486b6b82c420ac875afed8c7e21ec88"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/03_이벤트_prd.md",
+          "sha256": "788c2e0d3b3b0e2840b7a6fc036068484aeee8d90dff0e340b7a57b6d51b2d6f"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/04_클럽_prd.md",
+          "sha256": "0ab490d49b83e0b642220c40dedd03714ecaa8ef9759f73df233f0fd1e96ec2a"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/05_검색_prd.md",
+          "sha256": "9c7bcdf9dff4585e71bcaa53cfc321a9bc3866f446121ed060eeaaa54bf1728d"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/06_결제_and_지갑_prd.md",
+          "sha256": "b3c80af478c7898d953c82f9d4cdb0dc00a93a794d1ab439042a8d4cccd760ca"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/07_모임_정산_prd.md",
+          "sha256": "908d8b4f69867c732244f61ad3c74d4474db6f05397fa86340c0fe9a24f4c9be"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/08_플랜_마켓_prd.md",
+          "sha256": "a45b1a19d4a1e276458bc5a6cbb45eeca97dc3ace089b57fbccb823dae090fcb"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/09_프라이빗_데이팅_prd.md",
+          "sha256": "39959e319afdad8a3e5175f48212322e73f99b42e4615a25d55224b4ab0fe93c"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/10_캘린더_prd.md",
+          "sha256": "d061936509b9b99975debd2c9ae498e91ebbf3fe036de9ec881615de87d57831"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/11_리뷰_and_신고_prd.md",
+          "sha256": "13ddce944e0a9cf5dbd77f7bedf213d731d376c247d57727f0b3f7d36327cb9b"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/12_알림_prd.md",
+          "sha256": "4c2ffc503d3761148d0bdbfbe9e376b5913e9b900de4a2c774934eb6ad0fe81f"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/13_프로필_and_설정_prd.md",
+          "sha256": "df9f07d478109e1c4b6655733f11c4435b8031375ecf07f567d210bbb8718c7a"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/14_위치_and_길찾기_prd.md",
+          "sha256": "42c0ee21ce42e0036915c511aa7d4434fde7d805374d65d88136fec1ac87a152"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/15_경고_징계_prd.md",
+          "sha256": "49ca45b26dd59329c4cc63a6065bc81f97c73bd5793ec7b0cec3a8d0a10b6d04"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/16_마일리지_prd.md",
+          "sha256": "f7b71689a2abc0f6a2be6fe28030d3b178a9b1dd4a0b4acb93f03e600e5952a9"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/17_정기모임_prd.md",
+          "sha256": "a4c6c4ccfbe36c741bd7dbfa26ed1f84014940fdc50d2c8bf894337d25d16f9a"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/18_분쟁_해결_prd.md",
+          "sha256": "bd6aee8cb82d00699962400ffb2a9927cd30e1af64c032b93539680000bb0862"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/19_관심인_prd.md",
+          "sha256": "64538d4f60d2208afc6bb92bed683f534551624ac2af38d1167920cb28d97a6a"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/20_고객지원_prd.md",
+          "sha256": "2c1d80ffc09ee8f160dcccf2a8db629a6940836753c5ef5a9f8fbf713741c7fa"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/21_제공자_배정_정산_prd.md",
+          "sha256": "990c57595c32c406ad7db0f3e57e6acdc8786f55de723bfe45da91da1f17042e"
+        },
+        {
+          "path": "business_logic/prd/FEATURE_PRD_STANDARD.md",
+          "sha256": "bb0409b2ebfe8eb13d45dc0cf06e4cb4b26d4aeebf047d7fb464348d9b70bd22"
+        },
+        {
+          "path": "business_logic/prd/00_prd_items/05_feature_definitions.md",
+          "sha256": "fe6ce989f6085734f481dd3b623f39eeaf88a2ec8e0449721276d5b8b722feef"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/planning_qa_policy.md",
+          "sha256": "9ba20ccf929f12c64c6a1f0228bcdd2c21bb3af9b62e1b4907ef83ec9f83edbe"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/payment_settlement_policy_prd.md",
+          "sha256": "453c34121d0364f951b45e0c2960b19bb21fa37bbd58f0f729e0f1cb680577af"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/privacy_safety_policy_prd.md",
+          "sha256": "0742e1a59c020577ddefa437af8d1488ab244abf36091acb93f9c8757ae561d2"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/notification_policy_prd.md",
+          "sha256": "33b47a7240b350980237f9421cf1e99c0d98a5ed853df422879317e09fc732c4"
+        },
+        {
+          "path": "business_logic/prd/04_qa_acceptance/acceptance_criteria_matrix.md",
+          "sha256": "6f233d0cd0f480b8b15b03b1a7b64bc8eb361ca0c065de0836e0ecc530fa9da8"
+        },
+        {
+          "path": "business_logic/prd/00_prd_items/12_notion_markdown_guide.md",
+          "sha256": "c5b8cae905c1309a4d847b0285f55787ec432549767d33e4c62b783f13d43881"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-06_grant-redeem-reverse_prd.md",
+          "sha256": "5e3b0daf6bc0250da6f88ab9a8c4cfa3659e8a960affb7ec2a51a01254efef0e"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-06_market-item-management_prd.md",
+          "sha256": "0c83e0865dfbf278ec4f6430dca7af8beb2ba6e0033631884a64f1d0793efae8"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-14_purchase-refund_prd.md",
+          "sha256": "ef4baa7802a7af6aa7fe5549a95a359a4d2be024110d9b10de0a011f33cd6058"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-15_fund-withdrawal_prd.md",
+          "sha256": "dd9253664cb218411be25b9d32fa249e46c397d8c933a8b216aa83a37d29fc9b"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md",
+          "sha256": "273b1852a33e43befdc03d4d62dc590c1b19b9a14ac3e2c6042287536ebae9ff"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-05_regular-meeting-sessions_prd.md",
+          "sha256": "0085b9cdc3949d7a89c432b228a675ba660dc59d40ef22612579698621d515dd"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-06_regular-meeting-enrollment_prd.md",
+          "sha256": "5f281c1b01c2bd40fc5623314af27693e991bd62b92226f57457604d83766961"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-07_regular-meeting-payment_prd.md",
+          "sha256": "c37b11088f99c9f22dfec5be15cc03063607ffa46b9a82315f43a80837adf4eb"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-08_regular-meeting-refund_prd.md",
+          "sha256": "380620d03b2463ee1a413b564d1325f428e3a1d8bc76f955e921b0bca06be2d8"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-09_regular-meeting-attendance_prd.md",
+          "sha256": "16e72499f9b219ab6bb08d82e2a1d520f67eafcc08658183184e36b4f11a353c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md",
+          "sha256": "1aca822bd967ce9c826e6494ec2ce58e554172e8f7cac1dd5ac9b1b367a32704"
+        }
+      ],
+      "retainedHtmlIds": {},
+      "referenceChanges": [],
+      "followUpFindings": [
+        "D-01~10의 기존 질문을 현재 결정·정본·재검토 질문으로 분리",
+        "17개 영역 후보를 현재 21개 영역 연결표로 대체",
+        "마일리지 자동 적립 호출 부재·VARIABLE 자동 종료 미구현 진단 정정",
+        "워크숍에서 질문별 증거 선택과 문서·실행·공개 완료 구분"
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "prd/05_planning_artifacts/decision_register.md",
+          "sha256": "650dd6de36dda725493fbaaa1dc3f60ac35b0abedd3d8d6e1c80c533ce18f00a",
+          "characters": 2365,
+          "note": "수정 전 정기모임 결정/초기 MVP 논의안 원문 보존; 현재 미결정·결함·출시 범위로 합산하지 않음",
+          "heading": "## 정기모임 결정 원문 보존"
+        },
+        {
+          "path": "prd/05_planning_artifacts/mvp_scope_matrix.md",
+          "sha256": "284359968b491d5584c96f2b339c697f723fd609d502f3204bb3074d0ae65e84",
+          "characters": 1167,
+          "note": "수정 전 정기모임 결정/초기 MVP 논의안 원문 보존; 현재 미결정·결함·출시 범위로 합산하지 않음",
+          "heading": "## 과거 MVP 후보표 원문 보존"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "46 source/canonical digests; 0 retained HTML IDs",
+        "derivedDocuments": "3 documents; shared batch verified 3 paths, 61 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; canonical/source-document comparison and links only; no product/browser test"
       },
       "observedSourceVersions": {
         "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
