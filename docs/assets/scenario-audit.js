@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 44,
     "partialEvidenceChain": 56,
     "definitionOnlyEvidence": 75,
-    "traceMarkers": 801,
-    "verifiedTraceRecords": 799,
+    "traceMarkers": 811,
+    "verifiedTraceRecords": 809,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -21150,7 +21150,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F21-02",
       "domain": "제공자 배정·정산",
-      "name": "참가자 서비스비 분담 결제",
+      "name": "참가자 서비스 이용료 첫 납부·추가 납부·자동 분담",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/21_curated/F21-02_participant-fee-charge_prd.md",
@@ -21161,10 +21161,96 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 5,
+        "verified": 5,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F21-02:1",
+            "label": "GET /api/v1/events/{eventId}/assignments/my-charge-status",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "myChargeStatus",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/assignments/my-charge-status",
+                "targetLine": 174,
+                "methodLine": 175
+              }
+            ]
+          },
+          {
+            "id": "F21-02:2",
+            "label": "POST /api/v1/events/{eventId}/assignments/{assignmentId}/charge",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "charge",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/charge",
+                "targetLine": 285,
+                "methodLine": 286
+              }
+            ]
+          },
+          {
+            "id": "F21-02:3",
+            "label": "POST /api/v1/events/{eventId}/assignments/{assignmentId}/charge/topup",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "topup",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/charge/topup",
+                "targetLine": 308,
+                "methodLine": 309
+              }
+            ]
+          },
+          {
+            "id": "F21-02:4",
+            "label": "POST /api/v1/events/{eventId}/assignments/{assignmentId}/charge/my-share",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "chargeMyShare",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/charge/my-share",
+                "targetLine": 334,
+                "methodLine": 335
+              }
+            ]
+          },
+          {
+            "id": "F21-02:5",
+            "label": "POST /api/v1/events/{eventId}/assignments/{assignmentId}/service-fee",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "setServiceFee",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/service-fee",
+                "targetLine": 266,
+                "methodLine": 267
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -21342,7 +21428,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F21-05",
       "domain": "제공자 배정·정산",
-      "name": "환불·회수",
+      "name": "제공자 이용료 환불·정산 후 회수·배정 종료",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/21_curated/F21-05_refund-clawback_prd.md",
@@ -21353,10 +21439,96 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 5,
+        "verified": 5,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F21-05:1",
+            "label": "POST /api/v1/events/{eventId}/assignments/{assignmentId}/refund",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "refund",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/refund",
+                "targetLine": 423,
+                "methodLine": 426
+              }
+            ]
+          },
+          {
+            "id": "F21-05:2",
+            "label": "POST /api/v1/events/{eventId}/assignments/{assignmentId}/partial-refund",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "partialRefund",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/partial-refund",
+                "targetLine": 475,
+                "methodLine": 478
+              }
+            ]
+          },
+          {
+            "id": "F21-05:3",
+            "label": "POST /api/v1/events/{eventId}/assignments/{assignmentId}/clawback",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "clawback",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/clawback",
+                "targetLine": 497,
+                "methodLine": 500
+              }
+            ]
+          },
+          {
+            "id": "F21-05:4",
+            "label": "POST /api/v1/events/{eventId}/assignments/{assignmentId}/noshow-forfeit",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "noShowForfeit",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/noshow-forfeit",
+                "targetLine": 448,
+                "methodLine": 451
+              }
+            ]
+          },
+          {
+            "id": "F21-05:5",
+            "label": "POST /api/v1/events/{eventId}/assignments/{assignmentId}/cancel",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "cancel",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/cancel",
+                "targetLine": 564,
+                "methodLine": 567
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,

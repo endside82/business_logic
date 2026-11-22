@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F21-05 환불·회수 — community PRD</title>
+  <title>F21-05 제공자 이용료 환불·정산 후 회수·배정 종료</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,274 +17,47 @@
           <a href="../domains/21-curated.html">21 서비스 제공자 배정·정산</a><span>›</span>
           F21-05 환불·회수
         </div>
-        <h1>F21-05. 환불 · 회수</h1>
-        <p class="lede">
-          배정된 서비스 비용을 참가자에게 돌려주거나 제공자로부터 되찾는 네 가지 경우를 다룬다.
-          정산 전이냐 후냐, 전액이냐 부분이냐, 참가자가 왔느냐 안 왔느냐에 따라 돈이 움직이는
-          방향이 완전히 달라진다. 네 경로 모두 요청 고유키와 도메인 상태를 함께 사용해 응답 유실·
-          연속 실행에도 같은 돈이 두 번 움직이지 않게 한다.
-        </p>
+        <h1>F21-05 제공자 이용료 환불·정산 후 회수·배정 종료</h1>
+        <p class="lede">다섯 명령의 영속 요청키, 실제 반환/부담 주체와 지급 전후 회수, 노쇼·종료·앱 선택 한계를 현재 계약으로 대조했다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section id="host-transfer-current">
-        <h2>이전할 수 있는 회차와 돈의 책임</h2>
-        <p>호스트·소유권을 바꿀 때 미해결 돈 기록과 회차의 현재 책임자를 검사합니다. 넘기지 못한 회차는 이전 호스트에게 남고 새 코스 호스트의 명령으로 함께 변경하지 않습니다. 환불 회수의 책임도 실제로 해당 금액을 낸 사람을 기준으로 유지합니다.</p><p><a href="../policies/permission.html#host-transfer">미해결 돈과 회차 책임을 남긴 채 주최자를 바꾸지 않습니다</a>에서 적용 조건과 예외를 확인합니다.</p>
-      </section>
-
-
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">환불·회수 종류</div><div class="value">4가지</div><div class="hint">전액 / 부분(호스트 흡수) / 정산 후 회수 / 노쇼 귀속</div></div>
-          <div class="metric"><div class="label">요청 고유키 적용 범위</div><div class="value">4 / 4 경로</div><div class="hint">전액·부분 환불, 정산 후 회수, 노쇼 귀속 모두 필수</div></div>
-          <div class="metric"><div class="label">제공자 보호</div><div class="value">부분 환불 시 제공자 몫 유지</div><div class="hint">참가자 복원액과 같은 금액을 호스트가 부담</div></div>
-          <div class="metric"><div class="label">부족분 처리</div><div class="value">다음 정산 차감</div><div class="hint">정산 후 회수 시 제공자 잔액 부족이면 미수금으로 이월</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — 정산 전과 후는 전혀 다른 규칙이 적용된다</span>
-          <p>정산 전 전액환불은 제공자 수익 예정분을 취소하지만, 부분환불은 그 수익을 그대로 둔 채
-            참가자에게 돌려준 만큼을 호스트가 부담한다. 반면 주간 지급까지 끝난 뒤에는 이미 제공자에게
-            나간 돈을 되찾아야 하므로 흐름이 반대로 흐른다. 경로마다 원래 납부와 제공자 수익을 다르게
-            다루므로 무엇을 하려는 요청인지 먼저 갈라야 한다.</p>
-        </div>
-        <div class="callout warn">
-          <span class="label">2026-09-04 현재 상태 — 코드 완료, 출시 전</span>
-          <p>전액환불은 원래 납부의 총액과 플랫폼 수수료·원천징수·제공자 실수령액을 한꺼번에 되돌린다.
-            부분환불은 제공자 수익을 건드리지 않고 호스트가 참가자에게 돌려준 금액을 부담한다. 정산이
-            잠긴 뒤라도 주간 지급 전이면 제공자 지갑에서 되찾지 않고 수익 예정분만 취소한다. 실제로
-            지급된 뒤에만 제공자 실수령액을 회수하고 모자라는 만큼을 미수금으로 남긴다. 환불·취소·
-            회수는 최신 계약조건이 아직 수락되지 않은 배정에서도 열려 있는 되감기 경로이고, 배정
-            취소는 참가자 납부를 자동으로 되돌린다. 참가자와 제공자의 지갑은 회원 번호 오름차순으로 잠가 서로 반대 방향의
-            환불이 맞물려 멈추지 않게 했고, 지급은 지갑을 먼저 잠근 뒤 미수금을 읽어 환불과 동시에
-            일어나도 최신 잔액을 반영한다. 네 경로 모두 요청 고유키를 요구하며 앱도 결과가 확정될
-            때까지 같은 키를 유지한다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>4가지 환불·회수의 차이</h2>
-        <p class="subtitle">어떤 상황인지에 따라 돈이 움직이는 방향이 달라진다.</p>
-
-        <div class="cards">
-          <div class="card">
-            <div class="eyebrow">정산 전 — 전액 환불</div>
-            <h3>참가자가 냈던 분담금 전부를 돌려받는다</h3>
-            <p>호스트가 특정 참가자의 분담금 전액을 취소한다.
-              참가자가 낸 금액이 그대로 복원되고, 해당 참가자에게 적립되어 있던 제공자 수익 예정분도 함께 취소된다.
-              배정이 확정 상태이고 정산이 잠기기 전이라면 처리할 수 있다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 참가자가 사전에 모임에 올 수 없게 됐을 때
-              호스트가 주도하여 분담금을 되돌려 줄 수 있는 기본 경로.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">정산 전 — 부분 환불 (호스트 흡수)</div>
-            <h3>참가자에게 돌려준 금액만큼 호스트도 같은 금액을 부담한다</h3>
-            <p>호스트가 부분환불 금액을 지정한다.
-              참가자에게는 그 금액이 복원되고, 호스트 지갑에서도 정확히 같은 금액이 차감된다.
-              원래 참가자 납부와 그 몫의 제공자 수익은 그대로 유지되므로,
-              제공자는 부분 환불이 있었는지와 무관하게 처음 약정한 금액을 그대로 받는다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 제공자와의 약정을 지키면서도 참가자에게 합리적인
-              보상을 줄 수 있는 경로. 참가자·호스트·제공자 세 당사자 모두에게 예측 가능한 결과.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">정산 잠금 후 — 취소 또는 회수</div>
-            <h3>실지급 여부에 따라 제공자 지갑 회수가 갈린다</h3>
-            <p>정산이 잠긴 뒤 환불 사유가 생겼을 때 쓴다. 주간 지급 전이면 제공자 수익 예정분만
-              취소하고 제공자 지갑에서는 되찾지 않는다. 이미 지급이 끝났다면
-              참가자에게 분담금 전액을 복원하고
-              제공자로부터 실수령액만큼 회수를 시도하되, 제공자의 남은 수익 잔액이 부족하면
-              모자라는 만큼 제공자 미수금으로 기록해 다음 정산 때 차감한다.
-              부분 환불과 마찬가지로 같은 요청이 두 번 들어와도 한 번만 처리된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 정산 완료 이후에도 분쟁이나 귀책 사유가 생겼을 때
-              참가자 보호와 제공자 책임 추적이 동시에 가능한 경로. 제공자 잔액이 없어도
-              흐름이 멈추지 않는다.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">노쇼 귀속</div>
-            <h3>선결제하고 오지 않은 참가자의 분담금은 제공자에게 귀속된다</h3>
-            <p>참가자가 비용을 미리 냈지만 모임에 나타나지 않은 경우, 호스트가 노쇼 처리를
-              실행하면 해당 참가자에게 환불이 이루어지지 않는다.
-              본인 결제였던 몫이 노쇼 귀속으로 바뀌어 정산 조건에서 해결된 것으로 인정되며,
-              이 처리 자체는 돈이나 제공자 수익을 새로 움직이지 않는다.
-              실제로 온 참가자들의 부담도 변하지 않는다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 제공자 입장에서는 참석 인원과 관계없이
-              서비스를 준비하고 제공했으므로, 노쇼 참가자의 비용을 수익으로 인정받는 것이
-              계약의 완결이다.</p>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>환불·회수 흐름</h2>
-        <p class="subtitle">상황에 따라 돈이 어떤 방향으로 움직이는지.</p>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart TD
-    A["호스트가 환불·회수 요청"] --> B{"정산이 잠겼는가?"}
-
-    B -->|"정산 전"| C{"전액인가 부분인가?"}
-    C -->|"전액"| D["참가자 전액 복원<br/>제공자 수익 예정분 취소"]
-    C -->|"부분"| E["참가자 지정액 복원<br/>같은 금액 → 호스트 지갑 차감<br/>제공자 수익은 그대로"]
-
-    B -->|"정산 잠금 후"| F{"주간 지급 완료?"}
-    F -->|"아직"| H0["참가자 납부액 전액 복원<br/>제공자 수익 취소<br/>지갑 회수 없음"]
-    F -->|"지급됨"| G{"제공자 잔액 충분?"}
-    G -->|"충분"| H["참가자 납부액 전액 복원<br/>제공자 실수령액 회수 완료"]
-    G -->|"부족"| I["참가자 납부액 전액 복원<br/>가능한 만큼만 회수<br/>나머지 → 제공자 미수금"]
-
-    B -->|"노쇼"| J["본인 결제 → 노쇼 귀속<br/>돈·수익 즉시 이동 없음<br/>정산 조건에서 해결로 인정"]
-
-    K["네 환불·회수 경로 재시도"] --> L["같은 요청 고유키로<br/>첫 결과 그대로 재생"]
-    M["배정 상태 재검사"] --> N["이미 되돌렸거나 끝난 건을 걸러<br/>중복 돈 이동을 이중으로 막는다"]
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">기본 흐름 — 정산 전 전액 환불</div>
-            <h3>모임 전날 참가자가 갑작스럽게 올 수 없게 됐다</h3>
-            <p>호스트가 해당 참가자의 분담금 전액을 취소한다.
-              참가자의 지갑으로 납부 금액이 즉시 복원되고,
-              그 참가자 몫으로 제공자에게 적립되어 있던 수익 예정분도 함께 취소된다.
-              나머지 참가자들의 분담은 그대로 유지된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 제공자에게 나가기 전에 처리되므로 모든 계산이 깔끔하게
-              정리된다. 부담이 호스트나 제공자에게 전가되지 않는다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">부분 환불</div>
-            <h3>참가자가 일부만 돌려받고 싶어 한다, 제공자 몫은 건드리지 않는다</h3>
-            <p>호스트가 특정 참가자에게 낸 금액의 절반만 돌려주기로 합의한다.
-              참가자는 절반을 돌려받고, 그 복원액과 같은 절반이 호스트 지갑에서 차감된다.
-              원래 참가자 납부와 제공자 수익은 바뀌지 않아 제공자는 받기로 한 금액을 그대로 수령한다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 제공자와의 약속을 지키는 선에서 참가자와 합의 가능한
-              가장 유연한 조정 도구. 호스트가 "돌려준 금액을 내가 부담하겠다"는 명확한 선택을 한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">정산 후 회수 — 잔액 충분</div>
-            <h3>정산이 끝났는데 귀책이 생겨 참가자에게 돌려줘야 한다</h3>
-            <p>제공자에게 정산 지급이 완료된 뒤, 서비스에 심각한 문제가 있었음이 확인됐다.
-              호스트가 회수를 실행하면 참가자 지갑이 복원되고,
-              제공자의 수익 잔액에서 그 납부의 제공자 실수령액이 차감된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 정산이 끝난 뒤에도 제공자 책임을 소급하여 물을 수 있다.
-              참가자는 사후에도 보호받는다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">정산 후 회수 — 잔액 부족</div>
-            <h3>제공자 잔액이 없는데 회수해야 한다</h3>
-            <p>회수 실행 시점에 제공자의 수익 잔액이 회수할 금액보다 적다.
-              잔액이 있는 만큼만 즉시 차감되고, 부족분은 제공자 미수금으로 기록된다.
-              다음 정산 때 새로운 수익이 생기면 미수금부터 먼저 차감된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 제공자 잔액 상황에 따라 환불 처리 자체가 막히지 않는다.
-              참가자 복원은 즉시 이루어지고, 제공자 부채는 추적되어 소멸되지 않는다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">노쇼 귀속</div>
-            <h3>비용을 냈는데 당일 나타나지 않은 참가자</h3>
-            <p>모임 당일 특정 참가자가 아무 연락 없이 나타나지 않았다.
-              호스트가 노쇼 처리를 실행하면 해당 참가자에게 환불이 이루어지지 않고,
-              본인 결제였던 몫이 노쇼 귀속으로 바뀌어 정산 조건에서 해결된 것으로 인정된다.
-              이 처리 순간에는 돈이나 제공자 수익이 새로 이동하지 않는다.
-              실제 출석한 참가자들이 추가 부담을 지지 않는다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 제공자가 인원을 기준으로 서비스를 준비했으므로
-              노쇼로 인한 손실을 제공자가 떠안지 않는다. 정직하게 참석한 참가자에게도 불이익이 없다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">재시도 제어 범위</div>
-            <h3>네 경로 모두 응답 유실 뒤 같은 요청으로 재시도한다</h3>
-            <p>전액·부분 환불, 정산 후 회수와 노쇼 귀속은 모두 앱이 간직한 요청 고유키로 첫 결과를
-              그대로 다시 받는다. 전액환불이 남긴 처리 흔적과 노쇼 귀속의 완료 여부 검사도 그대로
-              유지해, 요청 고유키와 상태 규칙이 이중으로 중복 처리를 막는다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 성공 응답을 못 받아 다시 눌러도 참가자
-              복원·호스트 차감·제공자 회수가 한 번만 실행된다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>상황별 돈의 움직임 요약</h2>
-
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:140px">상황</th><th>참가자</th><th>제공자</th><th style="width:30%">호스트 부담</th></tr></thead>
-            <tbody>
-              <tr>
-                <td><strong>정산 전 전액 환불</strong></td>
-                <td>낸 금액 전액 복원</td>
-                <td>해당 분 수익 예정 취소</td>
-                <td>없음</td>
-              </tr>
-              <tr>
-                <td><strong>정산 전 부분 환불</strong></td>
-                <td>합의된 금액만 복원</td>
-                <td>약정 수령액 그대로 유지</td>
-                <td>참가자에게 복원한 금액과 같은 금액을 호스트 지갑에서 부담</td>
-              </tr>
-              <tr>
-                <td><strong>정산 잠금 후·지급 전 취소</strong></td>
-                <td>낸 금액 전액 복원</td>
-                <td>아직 지급되지 않은 수익만 취소, 지갑 회수 없음</td>
-                <td>없음</td>
-              </tr>
-              <tr>
-                <td><strong>정산 후 회수 (잔액 충분)</strong></td>
-                <td>낸 금액 전액 복원</td>
-                <td>수익 잔액에서 제공자 실수령액 차감</td>
-                <td>없음</td>
-              </tr>
-              <tr>
-                <td><strong>정산 후 회수 (잔액 부족)</strong></td>
-                <td>낸 금액 전액 복원</td>
-                <td>가능분 즉시 차감 + 나머지 미수금으로 이월</td>
-                <td>없음 (미수금은 제공자 부채로 추적)</td>
-              </tr>
-              <tr>
-                <td><strong>노쇼 귀속</strong></td>
-                <td>처리 순간 환불 없음; 정산 전 전액환불 가능</td>
-                <td>기존 수익 유지, 정산 조건에서 해결로 인정</td>
-                <td>없음</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">경로별 되감기 규칙이 다르다 — 실행 전 반드시 확인</span>
-          <ul>
-            <li><strong>정산 전, 정산 잠금 후, 주간 지급 후는 서로 다른 동작이다.</strong>
-              정산 전에는 제공자 수익이 아직 나가지 않아 취소만 하면 되고,
-              정산이 잠긴 뒤라도 아직 지급되지 않았으면 수익 취소로 끝난다. 실제로 지급된 뒤에만 이미
-              나간 제공자 실수령액을 되찾는다. 운영자는 배정 상태와 수익의 지급 여부를 함께 봐야 한다.</li>
-            <li><strong>부분 환불은 호스트 지갑 잔액을 소진한다.</strong>
-              참가자 복원액과 같은 금액을 호스트가 부담하므로, 호스트 지갑 잔액이 환불액보다 적으면 처리가 거절된다.
-              잔액 부족으로 부분 환불이 실패하면 호스트가 먼저 지갑을 채워야 한다.</li>
-            <li><strong>회수 시 제공자 잔액이 부족해도 흐름이 멈추지 않는다.</strong>
-              미수금으로 이월되어 다음 정산에서 차감된다 — 미수금이 쌓인 제공자의 다음 정산 지급액이
-              예상보다 적게 나올 수 있으므로 제공자에게 사전 안내를 권장한다.</li>
-            <li><strong>노쇼 귀속 뒤에도 정산 전 전액환불 경로는 열려 있다.</strong>
-              배정이 확정 상태라면 돈이 오간 몫을 환불하고 그 처리를 지울 수 있다. 같은 노쇼 요청을
-              다시 보내면 저장된 첫 결과를 그대로 돌려준다.</li>
-            <li><strong>모든 환불·회수 요청은 같은 재시도 규칙을 따른다.</strong> 결과가 불확실할 때는
-              같은 요청 고유키를 재사용하고, 사용자가 대상이나 금액을 바꾼 새 의도에만 새 키를 발급한다.</li>
-          </ul>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>현재 범위와 입구</h2><p>정산 전 전액환불, 호스트 부담 부분환불, 정산 후 회수, 노쇼 몫 귀속, 배정 취소 시 금전 종료를 다룬다. 각 경로의 수령자·부담자·수익 상태·분할납부 허용 범위가 다르다. 앱 이벤트 배정 카드에서 서버 actions가 허용한 행동을 선택하며, 대상 선택은 coverage 목록을 사용한다.</p>
+<p>현재 아래 다섯 명령은 모두 Idempotency-Key가 필수다. 전액환불/노쇼에는 키가 없고 Repository가 매번 자동 생성한다는 옛 설명을 폐기한다. 현재 앱은 계정별 영속 의도 보관함을 거쳐 키를 Repository에 명시적으로 전달한다.</p></section>
+<section id="current-2"><h2>현재 서버 계약</h2><p>경로의 공통 앞부분은 /api/v1/events/{eventId}/assignments/{assignmentId}다. 다섯 POST 모두 PROVIDER safetyExit 선언을 사용한다.</p>
+<div class="table-wrap"><table><thead><tr><th>요청</th><th>본문</th><th>200 응답</th></tr></thead><tbody><tr><td>POST …/refund</td><td>beneficiaryUserId</td><td>본문 없음</td></tr><tr><td>POST …/partial-refund</td><td>beneficiaryUserId, long partialAmount</td><td>ServiceAssignmentRefundVo</td></tr><tr><td>POST …/clawback</td><td>beneficiaryUserId</td><td>ServiceAssignmentRefundVo</td></tr><tr><td>POST …/noshow-forfeit</td><td>beneficiaryUserId</td><td>본문 없음</td></tr><tr><td>POST …/cancel</td><td>선택 reason</td><td>ServiceAssignmentVo</td></tr></tbody></table></div>
+<p>모든 서비스는 실제 배정 eventId와 URL의 일치를 검사한 뒤 이벤트 호스트/공동 주최자 권한을 확인한다. 부분환불은 HANDLE_REFUND_ISSUE 위임을 추가 검사하고, 비용을 낼 현재 이벤트 호스트를 결정한 뒤 배정 상태를 확인한다. 일반 공동 주최자 자격만으로 호스트 지갑을 차감할 수 없다.</p></section>
+<section id="current-3"><h2>정산 전 전액환불</h2><p>CONFIRMED 배정의 해당 beneficiary에 연결된 취소되지 않은 금전 행들을 조회한다. FREE_EXCLUDED, 거래/수익/실제 payer 연결이 없는 행은 제외하며 유효 행이 없으면 ASSIGNMENT_SETTLEMENT_INVALID_EARNING이다. 분할 추가 납부가 여러 행이어도 전액환불은 각 행을 처리한다. 그중 어떤 행에든 기존 refund 감사 기록이 있으면 ASSIGNMENT_REFUND_AMBIGUOUS로 거절한다.</p>
+<p>실제 payer 계정과 지갑·수익 행을 잠그고, 각 수익이 같은 제공자의 SERVICE_ASSIGNMENT·해당 chargeId·PENDING인지 확인한다. 원 거래에서 gross를 payer에게 복원하고 수익을 REFUNDED로 전이한 뒤 charge 행을 삭제한다. 대납은 실제 납부한 호스트/공동 주최자가 반환받으며 beneficiary가 자동 수령자가 되는 것은 아니다.</p>
+<p>원 수수료·세금 스냅샷은 정산 전 원장 함수에 전달한다. 현재 이 함수는 지갑 복구와 CREATOR_PAYABLE 감소를 합계 gross로 기록한다. 아직 인식하지 않은 플랫폼 수수료 수익·원천세 예수금을 정산 후 방식으로 되돌린다고 쓰지 않는다.</p>
+<p>삭제한 사람은 수금 판정에서 빠지므로 필요하면 새로 납부/대납할 수 있다. NOSHOW_FORFEIT도 유효한 금전 행이고 아직 CONFIRMED이면 서버 전액환불 대상이 될 수 있다. 현재 앱 picker의 노출 범위는 아래와 다르다.</p></section>
+<section id="current-4"><h2>호스트가 부담하는 부분환불</h2><p>CONFIRMED, 양수 partialAmount, 열린 배정 분쟁 없음이 필요하다. 동일 beneficiary의 취소되지 않은 금전 거래 행이 두 개 이상이면 ASSIGNMENT_REFUND_AMBIGUOUS다. 선택 행은 SELF_PAID이고 transactionId·payerUserId가 있어야 한다. 기존 refund 기록 금액 합계와 이번 금액이 charge.amount를 넘으면 ASSIGNMENT_REFUND_EXCEEDS_CHARGE다. 합계가 정확히 원금과 같아지는 것은 이 비교에서 허용한다.</p>
+<p>원 납부자에게 partialAmount를 복원하고 현재 이벤트 호스트의 유상 지갑에서 같은 금액을 차감한다. 참가자 복원·호스트 지출·원장은 하나의 트랜잭션이며 호스트 잔액 부족 등 뒤 실패가 있으면 앞 복원도 롤백된다. 호출자가 위임받은 공동 주최자여도 부담자는 이벤트 호스트다.</p>
+<p>coverage의 원금과 제공자 earning은 그대로 둔다. PARTIAL_HOST_ABSORBED 감사 행에는 수령자·환불액·환불 거래, 실제 부담자 hostRecoveryUserId와 지출 거래 hostRecoveryTransactionId를 남긴다. 제공자 수령 약정은 줄어들지 않는다. 이 감사 행의 originalGross/Fee/Tax/Net/recoveredAmount는 별도로 설정하지 않아 모델 기본값 0이며, 부분환불 영수증의 0을 원 제공자 수익이 없다는 의미로 읽지 않는다.</p></section>
+<section id="current-5"><h2>정산 후 회수</h2><p>배정은 SETTLEMENT_LOCKED여야 하고 단일 금전 행만 허용한다. 무료 행·금전 연결 누락은 거절한다. 같은 charge에 CLAWBACK 감사 행이 있으면 ASSIGNMENT_REFUND_ALREADY_PROCESSED다. 새 키 재호출의 도메인 거절과 같은 키의 원 결과 재생은 다른 경로다.</p>
+<div class="table-wrap"><table><thead><tr><th>실제 수익 상태</th><th>원 납부자 반환·제공자 처리</th></tr></thead><tbody><tr><td>PENDING 또는 APPROVED</td><td>gross 반환, 지급 전 원장 복구, 수익 REFUNDED. 제공자 지갑 회수 없음</td></tr><tr><td>PAID, 제공자 계정 활성</td><td>gross 반환 후 제공자 유상 잔액에서 원 net까지 회수. 부족분은 CREATOR_RECEIVABLE 원장, 수익 REVERSED·netAmount=부족분</td></tr><tr><td>그 밖의 수익 상태 또는 원 제공자/charge 연결 불일치</td><td>ASSIGNMENT_SETTLEMENT_INVALID_EARNING</td></tr><tr><td>PAID, 제공자 계정 종료</td><td>ASSIGNMENT_PROVIDER_CLOSED. 닫힌 지갑에서 회수하지 않음</td></tr></tbody></table></div>
+<p>회수액은 현재 수수료율로 다시 계산하지 않고 원 수익 gross/fee/tax/net을 사용한다. 회수 가능한 유상 잔액을 0과 원 net 사이로 제한하며, 지갑이 없거나 유상 잔액이 없으면 실제 회수 0으로 부족분을 기록한다. 지급 전 취소는 제공자가 종료한 계정이어도 회수 분기를 타지 않는다. 실제 환불 수령자는 활성 계정이어야 한다.</p>
+<p>감사 행에는 원 금액 스냅샷, recoveredAmount, refundRecipientUserId, 환불 거래를 저장하고 charge 행은 보존한다. 응답에는 지급 전/후를 구분하는 필드나 확정 미수금 필드가 없다. 지급 전에도 originalNet은 양수이고 recoveredAmount는 0일 수 있으므로 두 값의 차이를 무조건 미수금이라고 표시해서는 안 된다. 내부 ClawbackResult.shortfall() 역시 단순 차이이므로 로그 값만으로 실제 미수금 발생을 판정하지 않는다.</p>
+<p>원 거래 환불은 남은 환불 가능액을 잠그고 검사한다. 부분환불을 이미 받은 뒤에는 clawback이 전체 charge.amount를 다시 요청하므로 REFUND_EXCEEDS_ORIGINAL로 막힐 수 있다. 부분환불 잔액을 자동 계산해 정산 후 반환하거나 이전 호스트 부담을 함께 되돌리는 기능으로 설명하지 않는다.</p></section>
+<section id="current-6"><h2>노쇼 몫 귀속</h2><p>CONFIRMED·최신 조건 수락·열린 분쟁 없음·이벤트 CLOSED가 필요하다. 대상 활성 행이 없으면 NOT_FOUND다. 모든 행이 이미 NOSHOW_FORFEIT이면 성공 no-op으로 반환한다. 그 외에는 대상이 실제 출석자이면 ASSIGNMENT_BENEFICIARY_ATTENDED로 거절하고, 금전/수익 연결을 가진 SELF_PAID 행을 NOSHOW_FORFEIT으로 바꾼다. 분할 납부 여러 행도 이 전환은 처리한다.</p>
+<p>새 지갑 이동이나 수익 생성은 없다. 정산 때 노쇼 수혜자를 예상 수금 대상에 포함해 기존 돈을 유지한다. 이미 전환한 뒤 출석 상태가 바뀌면 재호출의 no-op과 별개로 정산 게이트가 노쇼/실출석 충돌을 다시 검사한다.</p>
+<p>서버 actions는 종료 전 노쇼 버튼을 거절하므로 ‘앱에 종료 조건이 없어 항상 노출한다’는 과거 결함은 현재 설명에서 뺀다. 다만 actions의 노쇼 조건에는 최신 terms 수락 검사가 없고 실제 명령에는 있어, 오래된 조건에서는 버튼이 허용돼도 서버가 거절할 수 있다.</p></section>
+<section id="current-7"><h2>배정 종료와 부분환불 부담 되돌리기</h2><p>배정 취소는 범위·권한·열린 분쟁 없음·상태 전이를 검사해 CANCELED로 바꾸고 금전 종료 범위를 잠근다. PAID·미적용 계약금의 제공자 귀속은 <a href="F21-06.html">계약금의 처리 중 취소와 배정 취소</a>를 따른다. 그다음 취소되지 않은 유효 금전 charge마다 참가자 과금을 되돌린다.</p>
+<p>부분환불이 없으면 원 payer에게 charge 전액을 반환한다. 부분환불이 있으면 참가자에게는 charge.amount−누적 부분환불만 반환하고, 기록된 각 hostRecoveryUserId에게 해당 hostRecoveryTransactionId의 부담액을 되돌린다. 예를 들어 10,000원 중 3,000원을 먼저 부분환불했다면 종료 때 참가자는 7,000원, 당시 부담 호스트는 3,000원을 복원받는다. 제공자 수익은 REFUNDED로 바꾼다.</p>
+<p>부담액 총합과 실제 부담자·지출 거래를 모두 가진 감사 기록 합계가 다르면 ASSIGNMENT_SETTLEMENT_INVALID_EARNING으로 차단한다. 원천이 부족한 데이터를 임의의 현재 호스트에게 돌려주지 않는다. 세금 분해는 참가자 잔액/호스트 부담액과 각 부담 기록의 가중치로 나누며 잔여 원은 큰 나머지·원래 순서로 배분한다.</p>
+<p>이 종료 함수는 유효 금전 행을 되감지만 charge 행을 삭제하지 않는다. 개별 전액환불의 행 삭제와 다르다. 배정 취소 영수증에는 배정 ID를 저장하고, 응답은 커밋 뒤 현재 권한으로 배정을 다시 읽어 만든다. 응답 재조회가 실패해도 같은 키로 금전 종료를 다시 실행하지 않는 구조다.</p></section>
+<section id="host-transfer-current"><h2>호스트 이전 뒤 반환 책임</h2><p>권한 판단은 현재 이벤트의 호스트/공동 주최자에 따르지만 돈의 원천은 기록된 실제 payer와 hostRecoveryUserId에 남는다. 새 호스트라는 이유로 과거 대납 반환이나 부분환불 부담 되돌리기를 새 호스트에게 바꾸지 않는다. 반대로 새로 실행하는 호스트 부담 부분환불은 실행 시점 이벤트 호스트 지갑을 사용한다.</p>
+<p>정기모임에서 이전 호스트에게 남은 회차를 새 호스트의 묶음 명령에서 제외하는 기준은 <a href="F21-07.html">대상 회차와 호스트 이전</a>을 따른다. 소유권 변경 자체가 미해결 환불/회수 책임을 일괄 이전했다는 뜻은 아니다.</p></section>
+<section id="current-9"><h2>앱의 선택·재시도·갱신</h2><p>전액환불·정산 후 회수 picker는 SELF_PAID/HOST_SUBSIDIZED만 선택 가능하고 부분환불·노쇼는 SELF_PAID만 고른다. 서버가 전액환불/회수 가능한 NOSHOW_FORFEIT은 현재 기본 picker에서 선택할 수 없다. 같은 사용자의 분할 행을 사전 합치거나 부분환불/회수 불가를 미리 경고하는 분기도 없다. 취소 이력과 payer 표시 한계는 <a href="F21-04.html">무료 제외 이력 조회와 남은 선택 한계</a>를 따른다.</p>
+<p>부분환불은 양수 금액 입력, 노쇼와 회수는 확인 대화상자를 거친다. 회수 안내는 현재 항상 제공자 지갑에서 지급액을 돌려받는다고 표현하지만 실제 지급 전 분기는 지갑 회수가 없다. 성공 시 _dispatch는 토스트만 표시하고 반환된 originalNet/recoveredAmount 등 상세 영수증을 화면에 펼치지 않는다. ‘회수액은 보이고 부족분만 없다’는 옛 설명과 다르다.</p>
+<p>다섯 명령은 계정·명령·배정·본문별 영속 키와 동일 의도 동시 요청 공유를 사용한다. 서버는 각각 다른 명령 종류로 대상/본문을 결박하고 최초 결과 또는 확정 거절을 보관한다. 상세 규칙은 <a href="F21-06.html">계약금 요청키와 앱의 결과 처리</a>를 따른다. 저장 실패 때 새 키로 임의 전송하거나 네트워크 실패마다 키를 바꾸는 흐름이 아니다.</p>
+<p>성공·커밋 가능 실패·저장 결과 불명에서는 배정 변경 신호를 보내고, 노쇼를 제외한 네 명령은 지갑 변경도 알린다. 화면 명령은 세션 범위에서 수행하며 입력 시트는 성공 후 닫고 실패 입력은 남긴다. 키와 서버 상태 방어가 실제 실기기 재시도 시험을 통과했다는 의미는 아니다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Gap</td><td>부분환불/회수의 분할 행 거절을 picker가 사전 구분하지 않는다.</td><td>전액·노쇼의 다중 행 지원과 분리한다.</td></tr><tr><td>Gap</td><td>서버가 반환 가능한 NOSHOW_FORFEIT이 전액/회수 picker에서 제외된다.</td><td>API 가능과 앱 입구를 구분한다.</td></tr><tr><td>Gap</td><td>회수 안내가 지급 전 분기를 설명하지 않고 결과 금액은 토스트 뒤 별도 표시하지 않는다.</td><td>원 net−회수액을 항상 미수금으로 간주하지 않는다.</td></tr><tr><td>Risk</td><td>부분환불 후 정산 잠금 회수는 원거래 남은 반환액을 넘겨 거절될 수 있다.</td><td>자동 잔액 반환/부담자 복구를 보장하지 않는다.</td></tr><tr><td>Risk</td><td>노쇼 행동 표지에는 최신 terms 수락 검사가 없지만 명령에는 있다.</td><td>버튼 허용과 최종 명령 거절 가능성을 명시한다.</td></tr><tr><td>미검증</td><td>실제 원장/잔액·닫힌 계정·부분환불 후 취소·동시 재시도·기기 복귀는 이번에 실행하지 않았다.</td><td>소스 대조와 제품 실행을 구분한다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 요청키와 계약:</strong> 다섯 POST의 필수 요청키·정확한 본문·무본문/영수증/배정 응답을 구분한다.</li><li><strong>AC-02 전액:</strong> CONFIRMED의 유효 PENDING 금전 행을 각 payer에게 반환하고 감사 이력 충돌을 거절한 뒤 행을 삭제한다.</li><li><strong>AC-03 부분환불:</strong> 위임·단일 SELF_PAID·누계/양수·분쟁을 검사하고 현재 이벤트 호스트가 부담하며 제공자 수익은 유지한다.</li><li><strong>AC-04 회수 상태:</strong> 지급 전 REFUNDED·지급 후 REVERSED와 실제 유상 회수/미수금·계정 종료 조건을 구분한다.</li><li><strong>AC-05 반환 원천:</strong> 원 거래 잔여 한도·원 스냅샷을 따르고 부분환불 후 잠금 회수를 자동 잔액 환불로 해석하지 않는다.</li><li><strong>AC-06 노쇼:</strong> 종료·terms·분쟁·출석 검사와 이미 전환된 행의 no-op·정산 재검사를 구분한다.</li><li><strong>AC-07 배정 종료:</strong> 계약금 귀속과 참가자/과거 부담 호스트 반환을 나누고 원천 누락은 차단하며 charge 행을 보존한다.</li><li><strong>AC-08 소유권과 돈:</strong> 현재 권한과 과거 실제 납부자/부담자 원천을 분리한다.</li><li><strong>AC-09 앱 한계:</strong> 타입별 picker·노쇼 환불 입구 누락·분할 경고 부재·회수 안내/결과 표시를 실제 구현대로 적는다.</li><li><strong>AC-10 결과 복구:</strong> 계정별 영속 키·세션·배정/지갑 갱신과 취소 커밋 후 응답 재조회를 구분한다.</li></ul>
+<p>근거는 현재 서버·앱 소스이며 새 제품 시험 통과 기록은 없다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>

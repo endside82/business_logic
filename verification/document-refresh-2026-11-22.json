@@ -323,7 +323,9 @@
         "support_20261122",
         "curated_bulk_20261122",
         "curated_deposit_20261122",
-        "curated_subsidy_20261122"
+        "curated_subsidy_20261122",
+        "curated_refund_20261122",
+        "curated_charge_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -408,7 +410,9 @@
         "support_20261122",
         "curated_bulk_20261122",
         "curated_deposit_20261122",
-        "curated_subsidy_20261122"
+        "curated_subsidy_20261122",
+        "curated_refund_20261122",
+        "curated_charge_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -4760,9 +4764,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "ff87d5669bd82279499eca4e940ffdc0686ab88b9c914d6d33370ddc787db761",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "curated_charge_20261122"
+      ],
+      "reviewedSha256": "82ec07f571a2739a6aa01ead3a414af42fcebda1c8eceab587dc6e1c0b8fcc92"
     },
     {
       "path": "docs/features/F21-03.html",
@@ -4793,9 +4800,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "7b1b0ca42e51042d037a4bbfb7e07f9ca1f0532b8d954b3aa46a219052cdce07",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "curated_refund_20261122"
+      ],
+      "reviewedSha256": "f91e6950b647dcf11cbb22fd78436b408fc78927c8cdb33793df44c0035db644"
     },
     {
       "path": "docs/features/F21-06.html",
@@ -5363,7 +5373,9 @@
         "support_20261122",
         "curated_bulk_20261122",
         "curated_deposit_20261122",
-        "curated_subsidy_20261122"
+        "curated_subsidy_20261122",
+        "curated_refund_20261122",
+        "curated_charge_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5481,7 +5493,9 @@
         "support_20261122",
         "curated_bulk_20261122",
         "curated_deposit_20261122",
-        "curated_subsidy_20261122"
+        "curated_subsidy_20261122",
+        "curated_refund_20261122",
+        "curated_charge_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5623,7 +5637,9 @@
         "support_20261122",
         "curated_bulk_20261122",
         "curated_deposit_20261122",
-        "curated_subsidy_20261122"
+        "curated_subsidy_20261122",
+        "curated_refund_20261122",
+        "curated_charge_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -8208,10 +8224,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "97ffda1a8cf281ba6fad8c73bd5cb19ed573d9de3f9b1f3cd696f57fe2340371",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "curated_charge_20261122"
+      ],
+      "reviewedSha256": "838b5a7e3c1de24c8ecb49a41a2d24bef9f837c328c51605af10d20f9b7dfd88"
     },
     {
       "path": "prd/02_feature_prds/21_curated/F21-03_provider-settlement_prd.md",
@@ -8243,10 +8261,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "077d27ae66481012cc00efc89ba255bcd4bec9843a98b1396f76e5623b88c263",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "curated_refund_20261122"
+      ],
+      "reviewedSha256": "c84de1ce585ae6e29a768287b470c4481cc175fa102fc0e2e3b8ad1d1e8b650c"
     },
     {
       "path": "prd/02_feature_prds/21_curated/F21-06_engagement-prepayment_prd.md",
@@ -8623,7 +8643,9 @@
         "support_20261122",
         "curated_bulk_20261122",
         "curated_deposit_20261122",
-        "curated_subsidy_20261122"
+        "curated_subsidy_20261122",
+        "curated_refund_20261122",
+        "curated_charge_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8893,7 +8915,9 @@
         "support_20261122",
         "curated_bulk_20261122",
         "curated_deposit_20261122",
-        "curated_subsidy_20261122"
+        "curated_subsidy_20261122",
+        "curated_refund_20261122",
+        "curated_charge_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -40880,6 +40904,442 @@
         "sourceReferences": "코드 위치 표 161개가 실제 소스와 일치합니다.",
         "groupDigests": "29 source/canonical digests; 3 retained HTML IDs",
         "derivedDocuments": "2 documents; shared batch verified 2 paths, 18 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review only"
+      },
+      "observedSourceVersions": {
+        "community_api": "ce303fc5a0a4cef8ac97068fbdf0609a8767ea12",
+        "community_app": "c804482752e3c9e6ec18a39958f235315dc8dc80"
+      }
+    },
+    "curated_refund_20261122": {
+      "kind": "source_review",
+      "scope": "F21-05 전액/호스트부담부분/지급전후회수/노쇼/배정종료의 API·행위자/실제payer·환불한도·earning/원장·앱키/선택/갱신 대조",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/port/CuratedProviderEarningPort.java",
+          "sha256": "7896b45e9cc35347fc99ec4feeb4da9b62ccaf22b83857ec444ba6147750fd0f",
+          "reviewScope": "156-159 ClawbackResult.shortfall 단순 net-recovered"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/model/ServiceAssignmentRefund.java",
+          "sha256": "edbbd6da08d64ac89d4d965d0b5232d97eab8be9817e710a979b564ced999b61",
+          "reviewScope": "전체 감사모델·실수령자/과거부담자거래·snapshot0기본값"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/vo/ServiceAssignmentRefundVo.java",
+          "sha256": "3149c38b38f50704134ea06aeb5366c90b9a5ab7ca0f67bb1f805c4d78080b3f",
+          "reviewScope": "전체 반환필드·회수전후/확정shortfall필드없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/param/ServiceAssignmentRefundParam.java",
+          "sha256": "2370d4a1b3b25c0d96f54c456bd4433bb3815fdb751ad1701d767cf5d047d7f4",
+          "reviewScope": "전체 beneficiaryUserId"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/param/ServiceAssignmentPartialRefundParam.java",
+          "sha256": "ebb7fea6a445156df3e6fc591c1bf9d227390fdabe9314df2f568f9d7ee1ba2b",
+          "reviewScope": "전체 beneficiaryUserId/partialAmount"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/param/ServiceAssignmentClawbackParam.java",
+          "sha256": "65bb5afc532aad4c566333e4846b8d472c0494afe9598150cc872f360d7451e1",
+          "reviewScope": "전체 beneficiaryUserId"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/param/ServiceAssignmentCancelParam.java",
+          "sha256": "37a0b91f96b3b2b5965a9407519fbfbee825fc3b12d4895a82b00e91da8a28f2",
+          "reviewScope": "전체 reason"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/constants/AssignmentRefundType.java",
+          "sha256": "ebf718efa5d1a97f4eb05ebbf60cae05644fcf73331ad559320a7d4474e18bb7",
+          "reviewScope": "전체 PARTIAL_HOST_ABSORBED/CLAWBACK"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/money/WalletRefundCommand.java",
+          "sha256": "d329f111dea77e1810d31cf0ec5e8b8d0f8ccb8337209b7abcbb95210584a827",
+          "reviewScope": "84-125 원거래잠금·남은유상/무료 누계초과거절·양수"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/CuratedChargeSplitCalculator.java",
+          "sha256": "0f7b78579fe7cd197db0084ef47a64fddbd79fccef913d771cac72a01973bccb",
+          "reviewScope": "75-108 종료복원세금가중분해·큰나머지/원래순서"
+        },
+        {
+          "path": "community_app/lib/data/models/curated/service_assignment_refund_vo.dart",
+          "sha256": "0d59e31b519386e08f1e21569f6b838de419b23bb24f8c8a811a91851d4dcd99",
+          "reviewScope": "전체 typedenum/unknown·모든금액double·확정shortfall/지급분기필드없음"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+          "sha256": "a071d34fe7ecedc9b2d6d5d907222f335285d0fd7717eb2d86aef8b202928178",
+          "reviewScope": "423-512,564-579 다섯필수키/실제반환·safetyExit·취소ID영수증후재조회"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentChargeService.java",
+          "sha256": "4920ed408685add96599e7be9db6b4e509720c3950734576d58890dbe7602904",
+          "reviewScope": "492-496,588-631,645-929 전액/부분/회수/노쇼/종료·singleMoneyRow·실제payer/hostRecovery원천·감사가드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/port/CuratedProviderEarningAdapter.java",
+          "sha256": "e19e390d3a71e63fa8d1eaf8355d388c09427fb5a4dd48698cc47b41434cd8b1",
+          "reviewScope": "154-367 원수익잠금/권위·PENDING전액·호스트부담·종료분할복원·미지급vsPAID회수·종료제공자·유상clamp"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentService.java",
+          "sha256": "b14d20701ef3f8cb550f889158a6594102d0026f7b56f43726b6030f7e2d9224",
+          "reviewScope": "curated_deposit와 같은 현재파일:913-970 취소범위/권한/분쟁·forfeit/charges복원·ID영수증후권한재조회"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentResponseService.java",
+          "sha256": "8331b489b2b64afe25f991d24ca565d89eea8b6a1c7214540a5c72d7f9f34dec",
+          "reviewScope": "105-129 노쇼void/부분회수VO변환·취소후배정VO읽기"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/port/CuratedEventAccessAdapter.java",
+          "sha256": "b4256ec4b2809c5cbbc8f0895044b4828a2fa3aa0add8fe3bd8d8e5337c2720f",
+          "reviewScope": "66-101 HANDLE_REFUND_ISSUE 위임/현재eventHost 부담자·발견표면동일판정"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentActionPolicy.java",
+          "sha256": "6dcd3ff1a0ecdf2bfe19235c98a1aaa7b01d5b4a54f75a218dfcd02914ccd52c",
+          "reviewScope": "312-366 각명령상태/돈/권한/분쟁·노쇼종료와terms검사부재"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/money/EarningTransitions.java",
+          "sha256": "7083601f1ec99cdd4cda3d0c24d6f9f7c143678ec0898eacaddeaa720dbdfcce",
+          "reviewScope": "173-179,424-437 지급전REFUNDED/지급후REVERSED·net부족분으로교체"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/AccountingLedgerService.java",
+          "sha256": "021ab3fad4aa752c1cb9a3da6d51ec3e587ae0bb8c278f7269fb643cbe018329",
+          "reviewScope": "997-1004,1134-1144,1171-1225 지급전원장위임/호스트부담/지급후gross/net/fee/tax/recovered/CREATOR_RECEIVABLE"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/MarketplaceLedgerFacade.java",
+          "sha256": "fe20868bb39bbce0ea21d4270fba1741de6bd980aec4ed2039586f6297eb0e7f",
+          "reviewScope": "30-77 지급전총액USER_WALLET/CREATOR_PAYABLE·수수료세금별별도수익예수계정아님"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/idempotency/MemberCommandReceiptExecutor.java",
+          "sha256": "8ef6e6e975e54953e25df5150d171971420423c6d1989ea81f3ada91d3bf3ac2",
+          "reviewScope": "curated_deposit 동일 SHA:86-101,159-289 공통키/대상본문/최초결과·확정거절"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/idempotency/MemberCommandType.java",
+          "sha256": "3c32fc39642a1ca348768b4b89a08f266da133802397570ffdeb3f5dabb8dffc",
+          "reviewScope": "curated_deposit 동일 SHA:377-413 다섯명령 확정거절기록집합"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentSettlementService.java",
+          "sha256": "7d60d200c836e5eeb4eabd5737ee628449b54944daa522f3d542d2543d12d32b",
+          "reviewScope": "curated_deposit 동일 SHA:166-301,437-470 노쇼실출석충돌재검사·계약금귀속"
+        },
+        {
+          "path": "community_app/lib/data/api/service_assignment_api.dart",
+          "sha256": "9367ccc03fd8974b6b59c75cefafd670f64848faee5cf57d6fd036a02135e769",
+          "reviewScope": "137-143,174-180,192-216 다섯POST필수키/반환"
+        },
+        {
+          "path": "community_app/lib/data/repositories/service_assignment_repository.dart",
+          "sha256": "6909b2e13882d799c1c92bf47caa2adb7d82ecd1bca32d946cd8f5e3addaedd7",
+          "reviewScope": "77-88,201-211,267-304 키명시전달/Result"
+        },
+        {
+          "path": "community_app/lib/domain/providers/curated/service_assignment_provider.dart",
+          "sha256": "6cfaaede57dd5cf9f73679c932e97149c44cc8c801df3e0fa5ab75751b113d51",
+          "reviewScope": "188-201,299-369 다섯영속money명령·노쇼외지갑신호;curated_deposit공통46-153재사용"
+        },
+        {
+          "path": "community_app/lib/presentation/curated/screens/event_assignments_screen.dart",
+          "sha256": "5496abec9e73dd989ec46026b8a358f5379b4c8a439ea071e0431acd9533ec6f",
+          "reviewScope": "457-478,510-517,835-857,962-984,1015-1111 버튼actions/타입별picker·부분입력/회수문구·dispatch토스트(554-577 기존근거)"
+        },
+        {
+          "path": "community_app/lib/presentation/curated/widgets/assignment_pickers.dart",
+          "sha256": "6f010e5b4536a86c8f6bdf8f0ec3708a5e723f69afdea0e1043802a54bc05d01",
+          "reviewScope": "curated_subsidy 동일 SHA:310-415 타입별선택·실payer미표시·분할행사전필터없음"
+        },
+        {
+          "path": "community_app/lib/data/models/curated/service_assignment_coverage_vo.dart",
+          "sha256": "6b80ac1e2a04b24416c29872c98b8c62d31b630b48ac8c43e979bf9cd8f01c08",
+          "reviewScope": "curated_subsidy 동일 SHA:전체 isRefundable=SELF_PAID/HOST_SUBSIDIZED·취소감사필드없음"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/member_money_command.dart",
+          "sha256": "2692e606ee316e147747691e4b3f92bea4b9e0c02a63babd5a81f1859c4c5c03",
+          "reviewScope": "curated_deposit 동일 SHA:18-277 의도singleflight·계정세션·저장/결과판정"
+        },
+        {
+          "path": "community_app/lib/core/storage/member_command_intent_store.dart",
+          "sha256": "d85e229469c90416470855e28ac8c4d6a14ab25736be4fd7b3cbaac56ebeeed3",
+          "reviewScope": "curated_deposit 동일 SHA:298-331,553-617 영속키·저장실패전송차단"
+        }
+      ],
+      "reuses": [
+        "club_finance_20261122",
+        "creator_earning_20261122",
+        "curated_subsidy_20261122",
+        "purchase_refund_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/21_curated/F21-05_refund-clawback_prd.md",
+          "sha256": "c84de1ce585ae6e29a768287b470c4481cc175fa102fc0e2e3b8ad1d1e8b650c"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F21-05.html": [
+          "sidebar",
+          "launch-strip",
+          "host-transfer-current",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "다섯 실제 POST Controller 연결",
+        "host-transfer-current 앵커 보존",
+        "units 미존재 유지"
+      ],
+      "followUpFindings": [
+        "다섯명령모두필수영구키·앱영속보관",
+        "지급전회수는provider지갑/미수금없음·VO net-recovered만으로미수금판정불가",
+        "부분환불후clawback fullgross는원거래잔여가드로거절가능",
+        "노쇼종료게이트존재·actions 최신terms검사미포함",
+        "NOSHOW_FORFEIT 서버환불가능하지만기본picker선택불가",
+        "회수결과토스트만·항상지갑회수안내문구",
+        "배정종료시실제과거hostRecoveryUserId별복원·charge보존"
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 163개가 실제 소스와 일치합니다.",
+        "groupDigests": "33 source/canonical digests; 4 retained HTML IDs",
+        "derivedDocuments": "2 documents; shared batch verified 4 paths, 39 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review only"
+      },
+      "observedSourceVersions": {
+        "community_api": "ce303fc5a0a4cef8ac97068fbdf0609a8767ea12",
+        "community_app": "c804482752e3c9e6ec18a39958f235315dc8dc80"
+      }
+    },
+    "curated_charge_20261122": {
+      "kind": "source_review",
+      "scope": "F21-02 세 과금·총액설정·본인현황/숫자권위·분할/참가자·앱direct route/TOP_UP/영속키/충전복귀 대조",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/model/ServiceAssignmentCharge.java",
+          "sha256": "e5f102bdc675ca7b1f77e825ed896e860217c8b667d37d623cc1a084ea41afa4",
+          "reviewScope": "40-136 charge기록/버전·origin기본/주문번호"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/repository/ServiceAssignmentChargeRepository.java",
+          "sha256": "f3d6adb680b3dc561fb4fbdbba07d18037d263f8c6425076526ec7b41f986ab7",
+          "reviewScope": "15-56 active조회와nextChargeOrder=max+1"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/vo/ParticipantAssignmentChargeStatusVo.java",
+          "sha256": "b7f207ddeccbda23d4f686b693220f42d46fae6d51423d59e1893b346cdebdf9",
+          "reviewScope": "전체 정확한14필드·금액nullable·action문자열"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/vo/ServiceAssignmentChargeResultVo.java",
+          "sha256": "3e455128ef2e057cb0194f87d0d127fc866d9ca74a0a7c84579aa7003139d9e6",
+          "reviewScope": "전체 transactionId만"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/param/ServiceAssignmentChargeParam.java",
+          "sha256": "01b467e0a78911a504920fb5f637ffed18e32bfdf65c6fb172bbdabcc6ec1fdb",
+          "reviewScope": "전체 amount long"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/param/ServiceAssignmentServiceFeeParam.java",
+          "sha256": "a40c99b8f7b0987885770459e9e28c48c52e96e65509b3f05fe4fd4b62622202",
+          "reviewScope": "전체 serviceFeeGross long"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/constants/ChargeOrigin.java",
+          "sha256": "18662b727646e13e98f36291376960be1a4693bc7e7e8cdabad265505e2873f6",
+          "reviewScope": "전체 PREPAID/POSTPAID"
+        },
+        {
+          "path": "community_app/lib/data/models/curated/participant_assignment_charge_status_vo.dart",
+          "sha256": "0ba603c8390cf5d44478c8180aaed5f9b8c0f0ce8ea9d76fd05394d6f666f4df",
+          "reviewScope": "전체 총액/상한/잔액·nextAction enum unknown·nullable금액"
+        },
+        {
+          "path": "community_app/lib/data/models/curated/service_assignment_charge_result_vo.dart",
+          "sha256": "3e18048d9a0133a25e1527dfe2d01f17131afe1757b2357b0e52fc0e593bc713",
+          "reviewScope": "전체 transactionId only"
+        },
+        {
+          "path": "community_app/lib/presentation/curated/screens/participant_service_fee_charge_screen.dart",
+          "sha256": "52633f4a1275593c287ceb9484a5199ef0c9e452e751c69c670bbc051d5e0683",
+          "reviewScope": "50-584 전체입력/중복방지/오류충전/성공pop·현재상태별행동·TOP_UP우선·cap만검사·0원/재산정안내차이"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+          "sha256": "a071d34fe7ecedc9b2d6d5d907222f335285d0fd7717eb2d86aef8b202928178",
+          "reviewScope": "173-178,266-346 GET/설정/세과금·키·MemberCommand종류·200transactionId"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentChargeService.java",
+          "sha256": "4920ed408685add96599e7be9db6b4e509720c3950734576d58890dbe7602904",
+          "reviewScope": "74-427 첫/추가publicscope·봉인/자격/상한·금전행·myshare/현황상세·outbox호출없음;434-486 cap 기존curated_subsidy 근거재사용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentService.java",
+          "sha256": "b14d20701ef3f8cb550f889158a6594102d0026f7b56f43726b6030f7e2d9224",
+          "reviewScope": "776-812 직접총액허용/자격/무료제외·기납부합계검사없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentActionPolicy.java",
+          "sha256": "6dcd3ff1a0ecdf2bfe19235c98a1aaa7b01d5b4a54f75a218dfcd02914ccd52c",
+          "reviewScope": "230-243 직접총액봉인/상태/권위/무료제외행동"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/CuratedChargeSplitCalculator.java",
+          "sha256": "0f7b78579fe7cd197db0084ef47a64fddbd79fccef913d771cac72a01973bccb",
+          "reviewScope": "31-62 전체cap ID오름차순분할·나머지앞ID·대상없음오류"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/port/CuratedEventAccessAdapter.java",
+          "sha256": "b4256ec4b2809c5cbbc8f0895044b4828a2fa3aa0add8fe3bd8d8e5337c2720f",
+          "reviewScope": "154-156 실제출석정책위임·177-190 참가자ATTENDING/신청APPROVED는curated_subsidy근거재사용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingAttendancePolicy.java",
+          "sha256": "8bd2fcb7158ac079ea0d6c2bcbf7dd8f11a08c4ac0d53c73cf23a1883ad75473",
+          "reviewScope": "39-59 FIXED체크인/일반ATTENDING 실제출석집합"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/model/ServiceAssignment.java",
+          "sha256": "0d11291a144cfa7b4d007a7c70003b6e6784764e4456ee439fd1920678983e5e",
+          "reviewScope": "curated_deposit 동일 SHA:190-222 terms최신수락·금전래치"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/CuratedSealPolicy.java",
+          "sha256": "bb0385b32d49cdf342b2c2c0d87b2c23349a280ca5d31b7bd1bf501b49f04180",
+          "reviewScope": "curated_deposit 동일 SHA:45-89 봉인잔여거래조건"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/port/CuratedProviderEarningAdapter.java",
+          "sha256": "e19e390d3a71e63fa8d1eaf8355d388c09427fb5a4dd48698cc47b41434cd8b1",
+          "reviewScope": "curated_subsidy 동일 SHA:84-112 과금별snapshot수수료/PENDING수익"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/PlatformFeePolicy.java",
+          "sha256": "50b61ee463b5c64d6fc4b70661f57d8d4a49878e3c4f4b89fdd5e936cbec0faf",
+          "reviewScope": "curated_deposit 동일 SHA:전체현재5%·nullrate0·건별HALF_UP"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/policy/SpendPolicyRegistry.java",
+          "sha256": "eb72d347f3b9f16df0a76e89db6faaadf00bf5d5b5b95a92f5f7d38b7bf32c9a",
+          "reviewScope": "curated_subsidy 동일 SHA:83 PAID_ONLY/SERVICE_ASSIGNMENT_CHARGE"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/policy/SpendCommand.java",
+          "sha256": "9b5c733f1e4e78a68ec97129f7a343e3846c3e90c4c3961b949ecccdd2ff336c",
+          "reviewScope": "curated_subsidy 동일 SHA:12-42 양수금액"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/idempotency/MemberCommandReceiptExecutor.java",
+          "sha256": "8ef6e6e975e54953e25df5150d171971420423c6d1989ea81f3ada91d3bf3ac2",
+          "reviewScope": "curated_deposit 동일 SHA:86-101,159-289 영구키/명령대상본문/결과재생"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/idempotency/MemberCommandType.java",
+          "sha256": "3c32fc39642a1ca348768b4b89a08f266da133802397570ffdeb3f5dabb8dffc",
+          "reviewScope": "curated_deposit 동일 SHA:377-413 세과금 확정거절저장"
+        },
+        {
+          "path": "community_app/lib/data/api/service_assignment_api.dart",
+          "sha256": "9367ccc03fd8974b6b59c75cefafd670f64848faee5cf57d6fd036a02135e769",
+          "reviewScope": "40-43,165-170,238-253 현황/세과금헤더·반환"
+        },
+        {
+          "path": "community_app/lib/data/repositories/service_assignment_repository.dart",
+          "sha256": "6909b2e13882d799c1c92bf47caa2adb7d82ecd1bca32d946cd8f5e3addaedd7",
+          "reviewScope": "37-43,241-264,340-365 현황·세과금/직접총액Result와키전달"
+        },
+        {
+          "path": "community_app/lib/domain/providers/curated/service_assignment_provider.dart",
+          "sha256": "6cfaaede57dd5cf9f73679c932e97149c44cc8c801df3e0fa5ab75751b113d51",
+          "reviewScope": "405-515 세명령body/키·본인상태/지갑무효화;공통memberMoney기존근거재사용"
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "sha256": "adf279be605d999e1f29b3b161e851c39313282f91e02a025dbe5a4b7d07da8b",
+          "reviewScope": "200,249-264,813-832,1958-2016 실제이벤트입구 필터·한건직행/여러건선택"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/event_host_routes.dart",
+          "sha256": "e29a26e2dd908252c5642354a0ed8b887915876e49d91e2c29c84a853c9b9015",
+          "reviewScope": "387-403 참가자 접근redirect와event/assignment 전달"
+        },
+        {
+          "path": "community_app/lib/core/router/route_guards.dart",
+          "sha256": "f29f53587a7650e60f9abc67a4b337ec0597425b11262039875b7497c0005d6a",
+          "reviewScope": "526-530 chargeParticipant 출석행/신청APPROVED 조건"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/member_money_command.dart",
+          "sha256": "2692e606ee316e147747691e4b3f92bea4b9e0c02a63babd5a81f1859c4c5c03",
+          "reviewScope": "curated_deposit 동일 SHA:18-277 계정/세션·동일의도공유·영속키/결과판정"
+        },
+        {
+          "path": "community_app/lib/core/storage/member_command_intent_store.dart",
+          "sha256": "d85e229469c90416470855e28ac8c4d6a14ab25736be4fd7b3cbaac56ebeeed3",
+          "reviewScope": "curated_deposit 동일 SHA:298-331,553-617 보관실패전송차단"
+        }
+      ],
+      "reuses": [
+        "curated_deposit_20261122",
+        "curated_refund_20261122",
+        "curated_subsidy_20261122",
+        "dispute_intake_20261122",
+        "event_prepayment_20261122",
+        "settlement_create_20261122",
+        "support_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/21_curated/F21-02_participant-fee-charge_prd.md",
+          "sha256": "838b5a7e3c1de24c8ecb49a41a2d24bef9f837c328c51605af10d20f9b7dfd88"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F21-02.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "다섯 Controller 계약 연결",
+        "units 미존재 유지"
+      ],
+      "followUpFindings": [
+        "현황 chargeable ACCEPTED도허용·모든활성coverage 첫납부차단",
+        "agreedGross/participantCap/remainingAmount/nextAction 앱모델및화면구현",
+        "TOP_UP우선·처리/차단상태직접경로결제버튼숨김",
+        "cap는배정전체·remainingAmount이하사전검사없음",
+        "my-share전액개인몫재산정·개인부족분자동추가없음·0원제안버튼가능",
+        "직접serviceFee수금이하변경차단없음·부분환불후myPaidAmount원금합계",
+        "영속키·본인현황/지갑갱신·성공pop·부족충전후자동재결제없음"
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 163개가 실제 소스와 일치합니다.",
+        "groupDigests": "34 source/canonical digests; 3 retained HTML IDs",
+        "derivedDocuments": "2 documents; shared batch verified 4 paths, 39 relative links/anchors and 0 derived-from digests",
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; source review only"

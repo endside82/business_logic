@@ -1,187 +1,125 @@
-# F21-05. 환불·회수 PRD
+# F21-05. 제공자 이용료 환불·정산 후 회수·배정 종료 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+2026-11-22 현재 서버·앱 소스 대조다. 새 제품 시험·브라우저·실기기 통과 기록이 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-<!-- source-first; updated: 2026-07-29; source: community_api curated/ + payment/ + community_app curated/ -->
+## 현재 범위와 입구
 
-## 1. 결론
+정산 전 전액환불, 호스트 부담 부분환불, 정산 후 회수, 노쇼 몫 귀속, 배정 취소 시 금전 종료를 다룬다. 각 경로의 수령자·부담자·수익 상태·분할납부 허용 범위가 다르다. 앱 이벤트 배정 카드에서 서버 actions가 허용한 행동을 선택하며, 대상 선택은 coverage 목록을 사용한다.
 
-정산 전 전액환불(refund), 정산 전 부분환불(partial-refund), 정산 잠금 후 회수(clawback), 노쇼 forfeit(noshow-forfeit) 네 경로 모두 서버와 Flutter 양쪽에서 구현돼 있다. 서버는 각 경로별로 다른 규칙을 적용한다: refund는 coverage 행을 삭제해 재커버를 허용하고, partial-refund는 coverage/earning을 유지한 채 **참가자에게 돌려준 금액과 같은 금액**을 호스트 지갑에서 부담하며, clawback은 아직 미지급인 APPROVED/PENDING earning이면 지급 없이 취소하고 이미 PAID면 제공자 지갑에서 원 net을 회수(부족분 미수금 처리), noshow-forfeit은 SELF_PAID coverage를 NOSHOW_FORFEIT으로 전환한다. partial-refund와 clawback만 Idempotency-Key 헤더가 필수이며, Flutter 앱은 Repository에서 자동 발급한다. refund와 noshow-forfeit에는 해당 헤더가 없다. 분할납부(top-up 다중행) beneficiary에 대한 partial-refund/clawback은 `ASSIGNMENT_REFUND_AMBIGUOUS`로 서버가 거부한다.
+현재 아래 다섯 명령은 모두 Idempotency-Key가 필수다. 전액환불/노쇼에는 키가 없고 Repository가 매번 자동 생성한다는 옛 설명을 폐기한다. 현재 앱은 계정별 영속 의도 보관함을 거쳐 키를 Repository에 명시적으로 전달한다.
 
-### 2026-07-29 현재 소스 델타
+## 현재 서버 계약
 
-- 전액환불은 원 charge의 플랫폼 수수료·원천징수·net 스냅샷을 함께 역분개하고 payer에게 gross를
-  복원한다. 따라서 신규 5% 계약도 환불 시 원래 수수료/세금 다리가 보존된다.
-- 부분환불(호스트 흡수)은 원 earning과 그 fee/tax/net을 바꾸지 않는다. 참가자 복원액만큼 호스트가
-  부담하므로 제공자 수령액은 유지된다.
-- clawback 시 earning이 APPROVED/PENDING이면 제공자에게 아직 준 돈이 없으므로 wallet 회수 없이
-  참가자 gross 복원·fee/tax 역분개·earning REFUNDED로 끝난다. PAID일 때만 원 provider net을 회수하고
-  잔액 부족분을 CREATOR_RECEIVABLE로 기록한다. 반환액을 임의 재계산하지 않고 원 스냅샷을 기준으로 한다.
-- 환불·취소·clawback은 조건이 stale이어도 열어 두는 unwind 경로다. 반대로 noshow-forfeit은 돈
-  진입 성격이어서 terms-managed 배정의 최신 수락을 요구한다.
-- 배정 취소는 별도 수동 호출 없이 기존 charge들을 `reverseChargesOnTermination`으로 자동 되감는다.
-  PAID 미적용 계약금만 제공자 귀속 예외다.
-- NOSHOW_FORFEIT은 irreversible 상태가 아니다. 정산 전 CONFIRMED 동안 전액환불 경로가 money-backed
-  row를 환불·삭제할 수 있다. noshow-forfeit 자체는 헤더 없이 같은 상태 재호출을 성공 no-op으로 끝낸다.
+경로의 공통 앞부분은 /api/v1/events/{eventId}/assignments/{assignmentId}다. 다섯 POST 모두 PROVIDER safetyExit 선언을 사용한다.
 
-## 2. 코드 위치
-
-계약의 정본은 코드다. 서버: `ServiceAssignmentController`, `ServiceAssignmentChargeService`, `ServiceAssignmentRefund`, `ServiceAssignmentCharge`, `AssignmentRefundType`, `CuratedProviderEarningPort`. 앱: `event_assignments_screen.dart`, `service_assignment_api.dart`, `service_assignment_repository.dart`.
-
-## 3. 전체 동작 흐름
-
-### 3-A. 정산 전 전액환불(refund)
-
-1. 호스트가 배정 카드 "환불" 버튼 → `CoverageBeneficiaryPickerSheet.show`에서 coverage 목록 조회 후 beneficiary 선택.
-2. `ServiceAssignmentRepository.refund(eventId, assignmentId, ServiceAssignmentRefundParam(beneficiaryUserId))`를 호출한다.
-3. 서버 `refundParticipantCharge`:
-   - 배정 `CONFIRMED`(LOCKED 아님) 검증
-   - money rows(FREE_EXCLUDED·미완 제외) 조회 — 없으면 `ASSIGNMENT_SETTLEMENT_INVALID_EARNING`
-   - 이미 부분환불 이력이 있는 charge면 `ASSIGNMENT_REFUND_AMBIGUOUS` (전액환불은 모호)
-   - clean 행마다: `providerEarningPort.refundServiceChargeEarning`(payer에게 복원 + earning REFUNDED) → coverage 행 `DELETE`
-4. 성공 시 coverage 행이 삭제되어 beneficiary는 재커버 가능 상태가 된다(F3 게이트 미통과 상태로 복귀).
-
-### 3-B. 정산 전 부분환불(partial-refund, 호스트 부담)
-
-1. 호스트가 "부분환불" 버튼 → `CoverageBeneficiaryPickerSheet.show(filter: selfPaidOnly)`로 SELF_PAID 대상만 선택, 금액 입력.
-2. `ServiceAssignmentRepository.partialRefund(eventId, assignmentId, param, idempotencyKey: ClientMessageId.generate())`
-3. 서버 `partialRefundHostAbsorbed`:
-   - CONFIRMED 배정·SELF_PAID coverage·분할납부(top-up 다중행) beneficiary면 `ASSIGNMENT_REFUND_AMBIGUOUS`
-   - over-refund 가드: 기존 부분환불 누적 + 이번 금액 ≤ charge.amount
-   - `providerEarningPort.partialHostAbsorbedRefund`: 참가자에게 partialAmount 복원, 호스트 지갑에서 partialAmount 차감
-   - `service_assignment_refund` 행 INSERT(`PARTIAL_HOST_ABSORBED`, `hostRecoveryTransactionId` 포함)
-4. coverage/earning은 불변 — 제공자 전액 수령 유지.
-5. 환불 처리 위임이 없는 공동 호스트는 부분 환불을 할 수 없다. 배정 응답의 행동 표지 `PARTIAL_REFUND` 가 「불가」(`EVENT_CO_HOST_PERMISSION_DENIED`, 「호스트에게 환불 처리 권한을 받은 공동 호스트만 할 수 있습니다.」)로 와서 앱 단추가 감춰지고, 명령도 같은 위임 판정으로 상태보다 먼저 거절한다. 돈은 부른 사람이 아니라 모임 호스트 지갑에서 나간다(2026-11-08). 배정 취소 시 `reverseChargesOnTermination`이 `hostAbsorbed` 역환불로 분할 처리.
-
-### 3-C. 정산 잠금 후 회수(clawback)
-
-1. 배정이 `SETTLEMENT_LOCKED`. 호스트가 "정산후 환불" 버튼 → coverage picker → confirm dialog.
-2. `ServiceAssignmentRepository.clawback(eventId, assignmentId, ServiceAssignmentClawbackParam(beneficiaryUserId), idempotencyKey: auto)`
-3. 서버 `clawbackAfterSettlement`:
-   - `SETTLEMENT_LOCKED` 검증 (정산 전이면 일반 환불 경로)
-   - 분할납부 beneficiary면 `ASSIGNMENT_REFUND_AMBIGUOUS`
-   - 기존 CLAWBACK audit 행 있으면 `ASSIGNMENT_REFUND_ALREADY_PROCESSED` (멱등)
-   - earning APPROVED/PENDING(주간 지급 전): 원 납부자에게 gross 복원, fee/tax 역분개,
-     earning REFUNDED, provider 회수액 0
-   - earning PAID(주간 지급 후): 원 납부자에게 gross 복원 + 제공자 지갑에서 원 net 회수
-     (가능분 clamp, 부족분 = 제공자 CREATOR_RECEIVABLE 미수금)
-   - `service_assignment_refund` 행 INSERT(`CLAWBACK`, `originalNet`, `recoveredAmount`, `refundTransactionId`)
-4. coverage는 보존(LOCKED terminal이라 재커버 불가), audit 행이 이력 증거.
-
-### 3-D. 노쇼 forfeit(noshow-forfeit)
-
-1. 회차 종료 후 호스트가 "노쇼 귀속" 버튼 → SELF_PAID picker → confirm dialog.
-2. `ServiceAssignmentRepository.noshowForfeit(eventId, assignmentId, ServiceAssignmentRefundParam(beneficiaryUserId))`
-3. 서버 `markNoShowForfeit`:
-   - CONFIRMED·회차 종료(`assertEventEnded`) 검증
-   - beneficiary가 실제 출석자면 `ASSIGNMENT_BENEFICIARY_ATTENDED` 거부
-   - SELF_PAID rows를 `NOSHOW_FORFEIT`으로 전환 (돈/earning 불변)
-4. F3 완납 게이트가 NOSHOW_FORFEIT beneficiary를 `expectedBeneficiaries`에 더해 "출석 면제·커버됨"으로 인정 → 정산 통과, 제공자 수령.
-
-## 6. 상태/권한 매트릭스
-
-| 사용자/상태 | 서버 근거 | 프론트 분기 | 사용자 결과 | 판단 |
-|---|---|---|---|---|
-| 호스트 + CONFIRMED + 전액환불 | `refundParticipantCharge` | "환불" 버튼 노출 | coverage 삭제·재커버 가능 | 일치 |
-| 호스트 + CONFIRMED + 부분환불(단일 row) | `partialRefundHostAbsorbed` | "부분환불" 버튼, SELF_PAID picker | 참가자 복원·호스트 차감·제공자 전액 유지 | 일치 |
-| 호스트 + CONFIRMED + 부분환불(분할납부 다중row) | `ASSIGNMENT_REFUND_AMBIGUOUS` | 서버 에러 | 거부 | 일치(서버 백스톱) |
-| 호스트 + SETTLEMENT_LOCKED + clawback | `clawbackAfterSettlement` | "정산후 환불" 버튼 노출 | 참가자 복원. 미지급은 earning 취소, PAID는 provider net 회수 | 일치 |
-| 호스트 + CONFIRMED + 노쇼 forfeit(출석자 대상) | `ASSIGNMENT_BENEFICIARY_ATTENDED` | 서버 에러 | 거부 | 일치 |
-| 호스트 + CONFIRMED + 노쇼 forfeit(회차 미종료) | `ASSIGNMENT_EVENT_NOT_ENDED` | 서버 에러 | 거부 | 일치 |
-| 재시도(이미 CLAWBACK된 coverage) | `ASSIGNMENT_REFUND_ALREADY_PROCESSED` | 서버 에러 | 거부 | 일치(멱등 가드) |
-
-## 7. 서버-프론트 정합성 판단
-
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| Idempotency-Key 범위 | partial-refund/clawback controller만 `@RequestHeader(required=true)` | 두 repository 메서드만 자동 생성 | 일치 |
-| `AssignmentRefundType` | `PARTIAL_HOST_ABSORBED`, `CLAWBACK` | `service_assignment_refund_vo.dart`에서 string 수신 | 일치 |
-| 분할납부 Ambiguous | `assertSingleMoneyRow` | 서버 에러 토스트 | 일치(프론트 사전 필터링 없음) |
-| noshow-forfeit 회차 종료 강제 | `assertEventEnded` | 서버 에러 토스트 | 일치(프론트 종료 여부 사전 체크 없음) |
-| clawback LOCKED 강제 | `SETTLEMENT_LOCKED` 상태 체크 | 버튼 `settlementLocked`일 때만 노출 | 일치 |
-| 부족분 미수금(shortfall) | `CREATOR_RECEIVABLE` 기록 | `ServiceAssignmentRefundVo`의 `recoveredAmount`만 노출 | Derived: shortfall 표시 없음 — UI 정보 제한 |
-
-## 8. Gap / Risk
-
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| P1 | 분할납부 beneficiary에 대한 clawback/partial-refund UI 사전 필터링 없음 | picker는 cover 목록을 그대로 노출, 서버가 `ASSIGNMENT_REFUND_AMBIGUOUS`로 거부 | 에러 후 재시도 UX | picker에 `charge_order > 1` 행 존재 시 경고 표시 |
-| P1 | noshow-forfeit 회차 종료 전 버튼 노출 | 서버가 `ASSIGNMENT_EVENT_NOT_ENDED`로 거부하지만 프론트는 별도 체크 없음 | 에러 후 재시도 UX | `isEventEnded` 조건으로 버튼 비활성화 |
-| P2 | clawback 부족분(shortfall) 표시 부재 | `ServiceAssignmentRefundVo`에 `recoveredAmount` 있으나 shortfall 계산값을 UI에 노출하지 않음 | 제공자 미수금 규모를 호스트가 파악 불가 | refund VO에 `shortfall` 필드 추가 + UI 표시 |
-| P3 | 배정 취소 시 `reverseChargesOnTermination`의 `hostRecoveryTransactionId` 누락 데이터 처리 | V1 DDL 기준이라 없는 데이터는 없어야 하지만, 방어 코드가 `ASSIGNMENT_SETTLEMENT_INVALID_EARNING`으로 차단 | 구버전 데이터 없음(V1 단일파일 정책) | 모니터링만 — 신규 데이터에서 발생 불가 |
-| Risk | refund/noshow-forfeit는 Idempotency-Key 계약이 아님 | refund는 성공 후 행 삭제, noshow는 상태 no-op으로 중복 돈 이동을 막지만 동일 응답 replay는 아님 | 모든 환불 API가 같은 멱등 의미라고 오해할 수 있음 | API 문서/클라이언트 재시도 정책을 경로별로 구분 |
-
-## 9. 수용 기준
-
-### AC-01. 정산 전 전액환불 정상 흐름
-
-Given 호스트가 CONFIRMED 배정, SELF_PAID coverage 보유 beneficiary를 선택한다.  
-When `POST .../refund`를 호출한다.  
-Then payer(참가자)에게 전액 복원, earning REFUNDED, coverage 행 삭제. Flutter는 "환불 처리되었습니다" 토스트를 표시한다.
-
-### AC-02. 부분환불 호스트 부담
-
-Given CONFIRMED 배정, 단일 SELF_PAID charge(10000원) 보유 beneficiary에게 3000원 부분환불.  
-When `POST .../partial-refund`(Idempotency-Key 포함)을 호출한다.  
-Then 참가자에게 3000원 복원, 호스트 지갑 3000원 차감, 제공자 earning 10000원 유지. `service_assignment_refund`에 `PARTIAL_HOST_ABSORBED` 행 INSERT.
-
-### AC-03. 부분환불 멱등키 재시도 차단
-
-Given 동일한 Idempotency-Key로 부분환불 요청이 재시도된다.  
-When `ApiIdempotencyExecutor`가 same key를 수신한다.  
-Then 첫 결과를 그대로 반환(이중환불 없음).
-
-### AC-04. 분할납부 beneficiary 부분환불 거부
-
-Given 동일 beneficiary에 SELF_PAID charge가 order=1, order=2 두 행 있다.  
-When `POST .../partial-refund`를 호출한다.  
-Then 서버가 `ASSIGNMENT_REFUND_AMBIGUOUS`를 반환. Flutter는 에러 토스트.
-
-### AC-05. 정산 후 clawback — 제공자 net 회수
-
-Given 신규 5% 카탈로그 배정이 SETTLEMENT_LOCKED이고 주간 지급까지 끝났으며, 참가자가 10000원
-납부했다(fee 500원, withholding 314원, provider net 9186원).
-When `POST .../clawback`(Idempotency-Key 포함)을 호출한다.
-Then 참가자에게 10000원 복원, 제공자 지갑에서 원 스냅샷 net 9186원 회수(충분할 때). 부족 시 부족분
-CREATOR_RECEIVABLE. `service_assignment_refund` CLAWBACK 행 INSERT.
-
-### AC-05-A. 정산 잠금 후·주간 지급 전 clawback
-
-Given 배정은 SETTLEMENT_LOCKED지만 원 earning이 APPROVED다.
-When 같은 clawback을 호출한다.
-Then 참가자에게 gross를 복원하고 fee/tax를 역분개하며 earning을 REFUNDED로 바꾼다.
-제공자 지갑 회수액과 미수금은 0이다.
-
-### AC-06. 동일 coverage 중복 clawback 차단
-
-Given 이미 CLAWBACK된 coverage에 대해 재clawback 시도.  
-When `POST .../clawback`을 재호출한다.  
-Then 서버가 `ASSIGNMENT_REFUND_ALREADY_PROCESSED`를 반환.
-
-### AC-07. 노쇼 forfeit — 제공자 귀속
-
-Given 회차 종료 후 SELF_PAID 예약금 납부 beneficiary가 실제 노쇼다.  
-When `POST .../noshow-forfeit`을 호출한다.  
-Then coverage_type이 NOSHOW_FORFEIT으로 전환(돈/earning 불변). F3 완납 게이트가 해당 beneficiary를 커버됨으로 인정.
-
-### AC-08. 노쇼 forfeit 실출석자 차단
-
-Given beneficiary가 실제 출석자다.  
-When `POST .../noshow-forfeit`을 호출한다.  
-Then `ASSIGNMENT_BENEFICIARY_ATTENDED` 반환. Flutter 에러 토스트.
-
-### AC-09. 노쇼 귀속 후 정산 전 전액환불
-
-Given CONFIRMED 배정의 money-backed coverage가 NOSHOW_FORFEIT으로 바뀌었지만 아직 정산 전이다.
-When 호스트가 같은 beneficiary에 `POST .../refund`를 호출한다.
-Then payer에게 gross를 복원하고 earning을 REFUNDED로 바꾼 뒤 coverage 행을 삭제한다.
-
-## 10. 미결정 / 후속
-
-| 분류 | 항목 | 결정/작업 |
+| 요청 | 본문 | 200 응답 |
 |---|---|---|
-| 구현 | 분할납부 beneficiary picker 경고 | picker에서 `charge_order > 1` 행 존재 여부 확인 후 경고 배너 |
-| 구현 | noshow-forfeit 버튼 회차 종료 조건부 활성 | `isEventEnded` 플래그 Flutter 노출 필요 |
-| 구현 | clawback shortfall 표시 | `ServiceAssignmentRefundVo`에 `shortfall` 추가 + UI |
-| 정책 | 분할납부 partial-refund 지원 여부 | multi-row refund는 복잡도 높음 — 정책 결정 필요 |
+| POST …/refund | beneficiaryUserId | 본문 없음 |
+| POST …/partial-refund | beneficiaryUserId, long partialAmount | ServiceAssignmentRefundVo |
+| POST …/clawback | beneficiaryUserId | ServiceAssignmentRefundVo |
+| POST …/noshow-forfeit | beneficiaryUserId | 본문 없음 |
+| POST …/cancel | 선택 reason | ServiceAssignmentVo |
+
+모든 서비스는 실제 배정 eventId와 URL의 일치를 검사한 뒤 이벤트 호스트/공동 주최자 권한을 확인한다. 부분환불은 HANDLE_REFUND_ISSUE 위임을 추가 검사하고, 비용을 낼 현재 이벤트 호스트를 결정한 뒤 배정 상태를 확인한다. 일반 공동 주최자 자격만으로 호스트 지갑을 차감할 수 없다.
+
+## 정산 전 전액환불
+
+CONFIRMED 배정의 해당 beneficiary에 연결된 취소되지 않은 금전 행들을 조회한다. FREE_EXCLUDED, 거래/수익/실제 payer 연결이 없는 행은 제외하며 유효 행이 없으면 ASSIGNMENT_SETTLEMENT_INVALID_EARNING이다. 분할 추가 납부가 여러 행이어도 전액환불은 각 행을 처리한다. 그중 어떤 행에든 기존 refund 감사 기록이 있으면 ASSIGNMENT_REFUND_AMBIGUOUS로 거절한다.
+
+실제 payer 계정과 지갑·수익 행을 잠그고, 각 수익이 같은 제공자의 SERVICE_ASSIGNMENT·해당 chargeId·PENDING인지 확인한다. 원 거래에서 gross를 payer에게 복원하고 수익을 REFUNDED로 전이한 뒤 charge 행을 삭제한다. 대납은 실제 납부한 호스트/공동 주최자가 반환받으며 beneficiary가 자동 수령자가 되는 것은 아니다.
+
+원 수수료·세금 스냅샷은 정산 전 원장 함수에 전달한다. 현재 이 함수는 지갑 복구와 CREATOR_PAYABLE 감소를 합계 gross로 기록한다. 아직 인식하지 않은 플랫폼 수수료 수익·원천세 예수금을 정산 후 방식으로 되돌린다고 쓰지 않는다.
+
+삭제한 사람은 수금 판정에서 빠지므로 필요하면 새로 납부/대납할 수 있다. NOSHOW_FORFEIT도 유효한 금전 행이고 아직 CONFIRMED이면 서버 전액환불 대상이 될 수 있다. 현재 앱 picker의 노출 범위는 아래와 다르다.
+
+## 호스트가 부담하는 부분환불
+
+CONFIRMED, 양수 partialAmount, 열린 배정 분쟁 없음이 필요하다. 동일 beneficiary의 취소되지 않은 금전 거래 행이 두 개 이상이면 ASSIGNMENT_REFUND_AMBIGUOUS다. 선택 행은 SELF_PAID이고 transactionId·payerUserId가 있어야 한다. 기존 refund 기록 금액 합계와 이번 금액이 charge.amount를 넘으면 ASSIGNMENT_REFUND_EXCEEDS_CHARGE다. 합계가 정확히 원금과 같아지는 것은 이 비교에서 허용한다.
+
+원 납부자에게 partialAmount를 복원하고 현재 이벤트 호스트의 유상 지갑에서 같은 금액을 차감한다. 참가자 복원·호스트 지출·원장은 하나의 트랜잭션이며 호스트 잔액 부족 등 뒤 실패가 있으면 앞 복원도 롤백된다. 호출자가 위임받은 공동 주최자여도 부담자는 이벤트 호스트다.
+
+coverage의 원금과 제공자 earning은 그대로 둔다. PARTIAL_HOST_ABSORBED 감사 행에는 수령자·환불액·환불 거래, 실제 부담자 hostRecoveryUserId와 지출 거래 hostRecoveryTransactionId를 남긴다. 제공자 수령 약정은 줄어들지 않는다. 이 감사 행의 originalGross/Fee/Tax/Net/recoveredAmount는 별도로 설정하지 않아 모델 기본값 0이며, 부분환불 영수증의 0을 원 제공자 수익이 없다는 의미로 읽지 않는다.
+
+## 정산 후 회수
+
+배정은 SETTLEMENT_LOCKED여야 하고 단일 금전 행만 허용한다. 무료 행·금전 연결 누락은 거절한다. 같은 charge에 CLAWBACK 감사 행이 있으면 ASSIGNMENT_REFUND_ALREADY_PROCESSED다. 새 키 재호출의 도메인 거절과 같은 키의 원 결과 재생은 다른 경로다.
+
+| 실제 수익 상태 | 원 납부자 반환·제공자 처리 |
+|---|---|
+| PENDING 또는 APPROVED | gross 반환, 지급 전 원장 복구, 수익 REFUNDED. 제공자 지갑 회수 없음 |
+| PAID, 제공자 계정 활성 | gross 반환 후 제공자 유상 잔액에서 원 net까지 회수. 부족분은 CREATOR_RECEIVABLE 원장, 수익 REVERSED·netAmount=부족분 |
+| 그 밖의 수익 상태 또는 원 제공자/charge 연결 불일치 | ASSIGNMENT_SETTLEMENT_INVALID_EARNING |
+| PAID, 제공자 계정 종료 | ASSIGNMENT_PROVIDER_CLOSED. 닫힌 지갑에서 회수하지 않음 |
+
+회수액은 현재 수수료율로 다시 계산하지 않고 원 수익 gross/fee/tax/net을 사용한다. 회수 가능한 유상 잔액을 0과 원 net 사이로 제한하며, 지갑이 없거나 유상 잔액이 없으면 실제 회수 0으로 부족분을 기록한다. 지급 전 취소는 제공자가 종료한 계정이어도 회수 분기를 타지 않는다. 실제 환불 수령자는 활성 계정이어야 한다.
+
+감사 행에는 원 금액 스냅샷, recoveredAmount, refundRecipientUserId, 환불 거래를 저장하고 charge 행은 보존한다. 응답에는 지급 전/후를 구분하는 필드나 확정 미수금 필드가 없다. 지급 전에도 originalNet은 양수이고 recoveredAmount는 0일 수 있으므로 두 값의 차이를 무조건 미수금이라고 표시해서는 안 된다. 내부 ClawbackResult.shortfall() 역시 단순 차이이므로 로그 값만으로 실제 미수금 발생을 판정하지 않는다.
+
+원 거래 환불은 남은 환불 가능액을 잠그고 검사한다. 부분환불을 이미 받은 뒤에는 clawback이 전체 charge.amount를 다시 요청하므로 REFUND_EXCEEDS_ORIGINAL로 막힐 수 있다. 부분환불 잔액을 자동 계산해 정산 후 반환하거나 이전 호스트 부담을 함께 되돌리는 기능으로 설명하지 않는다.
+
+## 노쇼 몫 귀속
+
+CONFIRMED·최신 조건 수락·열린 분쟁 없음·이벤트 CLOSED가 필요하다. 대상 활성 행이 없으면 NOT_FOUND다. 모든 행이 이미 NOSHOW_FORFEIT이면 성공 no-op으로 반환한다. 그 외에는 대상이 실제 출석자이면 ASSIGNMENT_BENEFICIARY_ATTENDED로 거절하고, 금전/수익 연결을 가진 SELF_PAID 행을 NOSHOW_FORFEIT으로 바꾼다. 분할 납부 여러 행도 이 전환은 처리한다.
+
+새 지갑 이동이나 수익 생성은 없다. 정산 때 노쇼 수혜자를 예상 수금 대상에 포함해 기존 돈을 유지한다. 이미 전환한 뒤 출석 상태가 바뀌면 재호출의 no-op과 별개로 정산 게이트가 노쇼/실출석 충돌을 다시 검사한다.
+
+서버 actions는 종료 전 노쇼 버튼을 거절하므로 ‘앱에 종료 조건이 없어 항상 노출한다’는 과거 결함은 현재 설명에서 뺀다. 다만 actions의 노쇼 조건에는 최신 terms 수락 검사가 없고 실제 명령에는 있어, 오래된 조건에서는 버튼이 허용돼도 서버가 거절할 수 있다.
+
+## 배정 종료와 부분환불 부담 되돌리기
+
+배정 취소는 범위·권한·열린 분쟁 없음·상태 전이를 검사해 CANCELED로 바꾸고 금전 종료 범위를 잠근다. PAID·미적용 계약금의 제공자 귀속은 [계약금의 처리 중 취소와 배정 취소](F21-06_engagement-prepayment_prd.md#처리-중-취소와-배정-취소)를 따른다. 그다음 취소되지 않은 유효 금전 charge마다 참가자 과금을 되돌린다.
+
+부분환불이 없으면 원 payer에게 charge 전액을 반환한다. 부분환불이 있으면 참가자에게는 charge.amount−누적 부분환불만 반환하고, 기록된 각 hostRecoveryUserId에게 해당 hostRecoveryTransactionId의 부담액을 되돌린다. 예를 들어 10,000원 중 3,000원을 먼저 부분환불했다면 종료 때 참가자는 7,000원, 당시 부담 호스트는 3,000원을 복원받는다. 제공자 수익은 REFUNDED로 바꾼다.
+
+부담액 총합과 실제 부담자·지출 거래를 모두 가진 감사 기록 합계가 다르면 ASSIGNMENT_SETTLEMENT_INVALID_EARNING으로 차단한다. 원천이 부족한 데이터를 임의의 현재 호스트에게 돌려주지 않는다. 세금 분해는 참가자 잔액/호스트 부담액과 각 부담 기록의 가중치로 나누며 잔여 원은 큰 나머지·원래 순서로 배분한다.
+
+이 종료 함수는 유효 금전 행을 되감지만 charge 행을 삭제하지 않는다. 개별 전액환불의 행 삭제와 다르다. 배정 취소 영수증에는 배정 ID를 저장하고, 응답은 커밋 뒤 현재 권한으로 배정을 다시 읽어 만든다. 응답 재조회가 실패해도 같은 키로 금전 종료를 다시 실행하지 않는 구조다.
+
+## 호스트 이전 뒤 반환 책임
+
+권한 판단은 현재 이벤트의 호스트/공동 주최자에 따르지만 돈의 원천은 기록된 실제 payer와 hostRecoveryUserId에 남는다. 새 호스트라는 이유로 과거 대납 반환이나 부분환불 부담 되돌리기를 새 호스트에게 바꾸지 않는다. 반대로 새로 실행하는 호스트 부담 부분환불은 실행 시점 이벤트 호스트 지갑을 사용한다.
+
+정기모임에서 이전 호스트에게 남은 회차를 새 호스트의 묶음 명령에서 제외하는 기준은 [대상 회차와 호스트 이전](F21-07_regular-meeting-bulk_prd.md#대상-회차와-호스트-이전)을 따른다. 소유권 변경 자체가 미해결 환불/회수 책임을 일괄 이전했다는 뜻은 아니다.
+
+## 앱의 선택·재시도·갱신
+
+전액환불·정산 후 회수 picker는 SELF_PAID/HOST_SUBSIDIZED만 선택 가능하고 부분환불·노쇼는 SELF_PAID만 고른다. 서버가 전액환불/회수 가능한 NOSHOW_FORFEIT은 현재 기본 picker에서 선택할 수 없다. 같은 사용자의 분할 행을 사전 합치거나 부분환불/회수 불가를 미리 경고하는 분기도 없다. 취소 이력과 payer 표시 한계는 [무료 제외 이력 조회와 남은 선택 한계](F21-04_free-invite-host-subsidy_prd.md#이력-조회와-남은-선택-한계)를 따른다.
+
+부분환불은 양수 금액 입력, 노쇼와 회수는 확인 대화상자를 거친다. 회수 안내는 현재 항상 제공자 지갑에서 지급액을 돌려받는다고 표현하지만 실제 지급 전 분기는 지갑 회수가 없다. 성공 시 _dispatch는 토스트만 표시하고 반환된 originalNet/recoveredAmount 등 상세 영수증을 화면에 펼치지 않는다. ‘회수액은 보이고 부족분만 없다’는 옛 설명과 다르다.
+
+다섯 명령은 계정·명령·배정·본문별 영속 키와 동일 의도 동시 요청 공유를 사용한다. 서버는 각각 다른 명령 종류로 대상/본문을 결박하고 최초 결과 또는 확정 거절을 보관한다. 상세 규칙은 [계약금 요청키와 앱의 결과 처리](F21-06_engagement-prepayment_prd.md#요청키와-앱의-결과-처리)를 따른다. 저장 실패 때 새 키로 임의 전송하거나 네트워크 실패마다 키를 바꾸는 흐름이 아니다.
+
+성공·커밋 가능 실패·저장 결과 불명에서는 배정 변경 신호를 보내고, 노쇼를 제외한 네 명령은 지갑 변경도 알린다. 화면 명령은 세션 범위에서 수행하며 입력 시트는 성공 후 닫고 실패 입력은 남긴다. 키와 서버 상태 방어가 실제 실기기 재시도 시험을 통과했다는 의미는 아니다.
+
+## 코드 위치
+
+<!-- source-references:start -->
+서버 창구: `ServiceAssignmentController#refund`, `ServiceAssignmentController#partialRefund`, `ServiceAssignmentController#clawback`, `ServiceAssignmentController#noShowForfeit`, `ServiceAssignmentController#cancel`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
+
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 경계 | 문서 처리 |
+|---|---|---|
+| Gap | 부분환불/회수의 분할 행 거절을 picker가 사전 구분하지 않는다. | 전액·노쇼의 다중 행 지원과 분리한다. |
+| Gap | 서버가 반환 가능한 NOSHOW_FORFEIT이 전액/회수 picker에서 제외된다. | API 가능과 앱 입구를 구분한다. |
+| Gap | 회수 안내가 지급 전 분기를 설명하지 않고 결과 금액은 토스트 뒤 별도 표시하지 않는다. | 원 net−회수액을 항상 미수금으로 간주하지 않는다. |
+| Risk | 부분환불 후 정산 잠금 회수는 원거래 남은 반환액을 넘겨 거절될 수 있다. | 자동 잔액 반환/부담자 복구를 보장하지 않는다. |
+| Risk | 노쇼 행동 표지에는 최신 terms 수락 검사가 없지만 명령에는 있다. | 버튼 허용과 최종 명령 거절 가능성을 명시한다. |
+| 미검증 | 실제 원장/잔액·닫힌 계정·부분환불 후 취소·동시 재시도·기기 복귀는 이번에 실행하지 않았다. | 소스 대조와 제품 실행을 구분한다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 요청키와 계약:** 다섯 POST의 필수 요청키·정확한 본문·무본문/영수증/배정 응답을 구분한다.
+- **AC-02 전액:** CONFIRMED의 유효 PENDING 금전 행을 각 payer에게 반환하고 감사 이력 충돌을 거절한 뒤 행을 삭제한다.
+- **AC-03 부분환불:** 위임·단일 SELF_PAID·누계/양수·분쟁을 검사하고 현재 이벤트 호스트가 부담하며 제공자 수익은 유지한다.
+- **AC-04 회수 상태:** 지급 전 REFUNDED·지급 후 REVERSED와 실제 유상 회수/미수금·계정 종료 조건을 구분한다.
+- **AC-05 반환 원천:** 원 거래 잔여 한도·원 스냅샷을 따르고 부분환불 후 잠금 회수를 자동 잔액 환불로 해석하지 않는다.
+- **AC-06 노쇼:** 종료·terms·분쟁·출석 검사와 이미 전환된 행의 no-op·정산 재검사를 구분한다.
+- **AC-07 배정 종료:** 계약금 귀속과 참가자/과거 부담 호스트 반환을 나누고 원천 누락은 차단하며 charge 행을 보존한다.
+- **AC-08 소유권과 돈:** 현재 권한과 과거 실제 납부자/부담자 원천을 분리한다.
+- **AC-09 앱 한계:** 타입별 picker·노쇼 환불 입구 누락·분할 경고 부재·회수 안내/결과 표시를 실제 구현대로 적는다.
+- **AC-10 결과 복구:** 계정별 영속 키·세션·배정/지갑 갱신과 취소 커밋 후 응답 재조회를 구분한다.
+
+근거는 현재 서버·앱 소스이며 새 제품 시험 통과 기록은 없다.
