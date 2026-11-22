@@ -263,7 +263,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F04-07 | 클럽 | [F04-07_my-clubs-stats_prd.md](02_feature_prds/04_club/F04-07_my-clubs-stats_prd.md) | `F04-07_my-clubs-stats` | 실사 기반 전환본 | 2 | 4 |
 | F04-08 | 클럽 | [F04-08_board-post-crud_prd.md](02_feature_prds/04_club/F04-08_board-post-crud_prd.md) | `F04-08_board-post-crud` | 실사 기반 전환본 | 0 | 3 |
 | F04-09 | 클럽 | [F04-09_post-comments_prd.md](02_feature_prds/04_club/F04-09_post-comments_prd.md) | `F04-09_post-comments` | 실사 기반 전환본 | 5 | 7 |
-| F04-10 | 클럽 | [F04-10_announcements_prd.md](02_feature_prds/04_club/F04-10_announcements_prd.md) | `F04-10_announcements` | 실사 기반 전환본 | 3 | 2 |
+| F04-10 | 클럽 | [F04-10_announcements_prd.md](02_feature_prds/04_club/F04-10_announcements_prd.md) | `F04-10_announcements` | 실사 기반 전환본 | 4 | 4 |
 | F04-11 | 클럽 | [F04-11_photo-album_prd.md](02_feature_prds/04_club/F04-11_photo-album_prd.md) | `F04-11_photo-album` | 실사 기반 전환본 | 8 | 1 |
 | F04-12 | 클럽 | [F04-12_club-events-calendar_prd.md](02_feature_prds/04_club/F04-12_club-events-calendar_prd.md) | `F04-12_club-events-calendar` | 실사 기반 전환본 | 15 | 7 |
 | F04-13 | 클럽 | [F04-13_fund-overview_prd.md](02_feature_prds/04_club/F04-13_fund-overview_prd.md) | `F04-13_fund-overview` | 실사 기반 전환본 | 1 | 2 |
