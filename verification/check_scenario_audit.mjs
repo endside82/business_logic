@@ -50,7 +50,7 @@ for (const feature of audit.features) {
     assert.equal(JSON.stringify(entry.endpoints), JSON.stringify(resolved.get(entry.id).endpoints));
     for (const endpoint of entry.endpoints) {
       const lines = fs.readFileSync(apiModules.fromRepoPath(endpoint.targetPath), 'utf8').split(/\r?\n/);
-      assert.match(lines[endpoint.targetLine - 1], /@(Get|Post|Put|Patch|Delete|Request)Mapping/);
+      assert.match(lines[endpoint.targetLine - 1], /@(?:org\.springframework\.web\.bind\.annotation\.)?(Get|Post|Put|Patch|Delete|Request)Mapping/);
       assert.ok(lines[endpoint.methodLine - 1].includes(endpoint.method + '('), '다른 함수 위치: ' + entry.id);
     }
   }
@@ -81,6 +81,22 @@ assert.doesNotMatch(rendered, /줄 링크 최신|현재 위치|동작 증거는 
 assert.doesNotMatch(rendered, /같은 기능인지는 미확인|문서에 적힌 옛 위치/);
 assert.match(rendered, /확인한 코드 보기/);
 assert.match(rendered, /철회된 기능/);
+assert.doesNotMatch(rendered, /(?:33|67|100)% · 문서 근거 연결/);
+for (const feature of sandbox.window.PRD_FEATURES) {
+  assert.ok(rendered.includes(feature.name.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;')), '현재 기능 이름 누락: ' + feature.id);
+}
+
+for (const [id, predicate] of [
+  ['f-no-journey', feature => !feature.journey.directlyLinked],
+  ['f-chain', feature => !(feature.automated.directlyLinked && feature.journey.directlyLinked)],
+]) {
+  elements.get(id).checked = true;
+  elements.get(id).listeners.change();
+  assert.equal((elements.get('rows').innerHTML.match(/<tr>/g) ?? []).length, audit.features.filter(predicate).length, id);
+  elements.get(id).checked = false;
+  elements.get(id).listeners.change();
+}
+assert.equal(elements.get('m-chain').textContent, audit.features.filter(feature => feature.automated.directlyLinked && feature.journey.directlyLinked).length + '/' + audit.features.length);
 
 elements.get('f-trace').checked = true;
 elements.get('f-trace').listeners.change();
@@ -90,7 +106,7 @@ const expected = audit.features.filter((feature) =>
 ).length;
 assert.equal((filtered.match(/<tr>/g) ?? []).length, expected);
 assert.doesNotMatch(filtered, /F10-05/);
-elements.get('q').value = '이메일 회원가입';
+elements.get('q').value = 'F01-01';
 elements.get('q').listeners.input();
 assert.match(elements.get('rows').innerHTML, /F01-01/);
 assert.equal((elements.get('rows').innerHTML.match(/<tr>/g) ?? []).length, 1);
@@ -123,8 +139,10 @@ for (const href of links) {
 }
 const retiredPage = fs.readFileSync(path.join(root, 'docs/features/F10-05.html'), 'utf8');
 assert.match(retiredPage, /id="retired-status"/);
-assert.match(retiredPage, /<details>\s*<summary>철회 전 설계 보기/);
-assert.match(retiredPage, /파일 두 개가 아니라/);
+assert.match(retiredPage, /폐기된 타 사용자 가능 시간 공개 조회의 추적 항목/);
+assert.match(retiredPage, /두 행도 retired이고 연결 함수가 없다/);
+assert.doesNotMatch(retiredPage, /여기서 등록한 공개 슬롯이 본 단위로 흘러간다|반복 규칙이 펼친 공개 슬롯도 동일하게 노출된다|상대 가용 시간을 조회한다/);
+assert.equal((retiredPage.match(/<details\b/g) ?? []).length, (retiredPage.match(/<\/details>/g) ?? []).length);
 console.log(JSON.stringify({
   result: 'PASS', features: audit.features.length, sourceRecords: entries.length,
   verifiedRecords: audit.totals.verifiedTraceRecords,

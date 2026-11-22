@@ -450,7 +450,8 @@
         "product_structure_20261122",
         "exceptions_current_20261122",
         "impact_current_20261122",
-        "release_sharing_current_20261122"
+        "release_sharing_current_20261122",
+        "scenario_current_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -3953,9 +3954,9 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "calendar_features_20261122"
+        "scenario_current_20261122"
       ],
-      "reviewedSha256": "d48956b2af160ce45b9006b96f73778314dbe4ee6c9576a3978561939430db64"
+      "reviewedSha256": "ec87d85c0c90d4a30f712235da949b23da415d7c50eeae8710d2287c381a5053"
     },
     {
       "path": "docs/features/F11-01.html",
@@ -5281,9 +5282,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "1d3151e83f6d3e9e39e645f86a93e89bc869e6bfc5207fb6c0e69dc14631d228",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "scenario_current_20261122"
+      ],
+      "reviewedSha256": "dc611fba29eee76151d322212ec6758af579960456b9a1457e4fd9b4961a8a3b"
     },
     {
       "path": "docs/qa/screen-review.html",
@@ -8361,10 +8365,12 @@
       "kind": "supporting_document_or_tool",
       "document": true,
       "baselineSha256": "5d5aa7ccdab8481930639e9b15aba2a5c5dd5b98886d8d37fe22b92a2fe48d94",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "scenario_current_20261122"
+      ],
+      "reviewedSha256": "e01fdab0c28f6b9d0fcabdb9964bb98e76cfe1b57e6a21bf5f61ca966813f473"
     },
     {
       "path": "prd/04_qa_acceptance/scenario_coverage_matrix.md",
@@ -8668,8 +8674,10 @@
       "document": false,
       "baselineSha256": "56603fd61c91d0c461006fc0e15588913ccddb3c95f4da7dd9618fe4511378d2",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [
+        "scenario_current_20261122"
+      ]
     },
     {
       "path": "verification/document-release-detail-2026-10-13.json",
@@ -51740,6 +51748,118 @@
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; canonical/digest/links only; no deployment, browser, device or store inspection"
+      },
+      "observedSourceVersions": {
+        "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
+        "community_app": "6020346db80c426e9bf62c63a9c380441ed46781"
+      }
+    },
+    "scenario_current_20261122": {
+      "kind": "source_review",
+      "scope": "시나리오 감사 MD·HTML의 전체 본문과 inline JS 전체 읽기. 175 기능·117 상세·1276 제목·1654 등록의 서로 다른 집계, 문서/코드위치/파일연결/실행/출시 의미 대조. 기존 문서 검사의 렌더·검색·철회·링크 확인 재사용. F10-05의 현재 정본 재사용, 하단 관련 카드의 폐기 전 공개 조회 설명과 고립된 details 닫힘 제거.",
+      "sources": [],
+      "reusedSources": [],
+      "reuses": [
+        "calendar_features_20261122",
+        "qa_acceptance_20261122",
+        "release_sharing_current_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/04_qa_acceptance/scenario_completeness_audit_2026-08-30.md",
+          "sha256": "e01fdab0c28f6b9d0fcabdb9964bb98e76cfe1b57e6a21bf5f61ca966813f473"
+        },
+        {
+          "path": "business_logic/prd/04_qa_acceptance/scenario_coverage_matrix.md",
+          "sha256": "2fa260f97f026e7023189a6281de747baaaac267a5098fbabaefd881acd9a600"
+        },
+        {
+          "path": "business_logic/prd/04_qa_acceptance/release_readiness_checklist.md",
+          "sha256": "db29c0ba5c9ea780850953b5ccc9e370c447047274be2b7741d743afdd7c91fe"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/10_calendar/F10-05_other-user-availability_prd.md",
+          "sha256": "9521674a5a966f949835c0c8a15b36b785d2fdc462bb9db6d96b2f8818f5328a"
+        },
+        {
+          "path": "business_logic/verification/check_scenario_audit.mjs",
+          "sha256": "69bfdcc7bcdb8faa9fd93a168c17a153b45c29968a3322701365d24109c63a3a",
+          "reviewScope": "전체 검사기 읽기; 현재 이름 검색·독립 파일 연결 필터·완전한 Mapping 이름과 철회 문서 하단 모순 검사"
+        },
+        {
+          "path": "business_logic/docs/assets/scenario-audit.js",
+          "sha256": "457809bb1c874b020e2286849f988c1e45f9859da740c9ac17aa87285da37966",
+          "reviewScope": "현재 생성 데이터의 집계·행 구조 읽기와 843개 함수/주소 연결 전수 자동 대조; 제품 실행 결과로 해석하지 않음"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/qa/scenario-completeness.html": [
+          "asof",
+          "c-auto",
+          "c-auto-markers",
+          "c-feature-auto",
+          "c-feature-local",
+          "c-feature-real",
+          "c-journey",
+          "c-journey-files-inline",
+          "c-journey-markers",
+          "c-test-files-inline",
+          "c-trace",
+          "c-trace-retired",
+          "c-trace-unresolved",
+          "c-trace-verified",
+          "completion-standard",
+          "count",
+          "domain-filter",
+          "domain-rows",
+          "f-chain",
+          "f-gap",
+          "f-no-auto",
+          "f-no-journey",
+          "f-trace",
+          "m-auto",
+          "m-chain",
+          "m-defined",
+          "m-feature-proof",
+          "m-journey",
+          "m-local",
+          "m-real",
+          "m-scenarios",
+          "m-test-files",
+          "q",
+          "rows",
+          "scope-filter",
+          "sidebar",
+          "source-reference-guide",
+          "trace-asof"
+        ],
+        "docs/features/F10-05.html": [
+          "sidebar",
+          "launch-strip",
+          "retired-status",
+          "current-2",
+          "current-3",
+          "current-limits",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "8월 감사의 문제 수·우선순위·실행 통과를 현재 결과로 복제하지 않음",
+        "3단계 합산 백분율을 제거하고 근거 종류를 독립 표시",
+        "과거 로컬 분류로 통합 파일 미연결을 숨기지 않음",
+        "미연결만으로 신규 시험·제품 재실행을 지시하지 않음",
+        "문서 검사기가 완전한 Spring 애너테이션 이름도 정확한 Mapping 위치로 인식하도록 수정",
+        "F10-05 하단의 폐기 전 공개 슬롯 설명과 고립된 details 닫힘 발견·수정; 전체 HTML details/summary 개수 불일치 없음"
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "6 source/canonical digests; 45 retained HTML IDs",
+        "derivedDocuments": "3 documents; shared batch verified 3 paths, 26 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; existing document VM/source-location/link checker only"
       },
       "observedSourceVersions": {
         "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
