@@ -264,7 +264,8 @@
         "club_discovery_20261122",
         "club_detail_20261122",
         "club_lifecycle_20261122",
-        "club_members_20261122"
+        "club_members_20261122",
+        "club_invitation_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -2902,9 +2903,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "899652e8ea0985c967b224b967f633c5a77e9731266dbc09e6c3a28f211f34a7",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_invitation_20261122"
+      ],
+      "reviewedSha256": "283305af7dedb25d1fe692d85de8f63871910d02a068f674975ce717dc297b9d"
     },
     {
       "path": "docs/features/F04-06.html",
@@ -4858,7 +4862,8 @@
         "club_discovery_20261122",
         "club_detail_20261122",
         "club_lifecycle_20261122",
-        "club_members_20261122"
+        "club_members_20261122",
+        "club_invitation_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -4918,7 +4923,8 @@
         "club_discovery_20261122",
         "club_detail_20261122",
         "club_lifecycle_20261122",
-        "club_members_20261122"
+        "club_members_20261122",
+        "club_invitation_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5001,7 +5007,8 @@
         "club_discovery_20261122",
         "club_detail_20261122",
         "club_lifecycle_20261122",
-        "club_members_20261122"
+        "club_members_20261122",
+        "club_invitation_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5838,10 +5845,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "3a1885512ae46f078606af0f5fc773c9ccbabbddef7e37f9cb5cb9650981a868",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_invitation_20261122"
+      ],
+      "reviewedSha256": "b6cbfcc196e0749c622c4458d6cd748ee30d3089fb070c9fe4028c9c2ab0e116"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-06_ban-management_prd.md",
@@ -7708,7 +7717,8 @@
         "club_discovery_20261122",
         "club_detail_20261122",
         "club_lifecycle_20261122",
-        "club_members_20261122"
+        "club_members_20261122",
+        "club_invitation_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -7916,7 +7926,8 @@
         "event_detail_complete_20261122",
         "club_detail_20261122",
         "club_lifecycle_20261122",
-        "club_members_20261122"
+        "club_members_20261122",
+        "club_invitation_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -9564,9 +9575,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "3e30e54a94b1ab8eb59d67d7ff932a1352be661e09575cbf587415437460b538",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_invitation_20261122"
+      ],
+      "reviewedSha256": "27aef6782b516ca120a3786673aa94b8098c3aa36f31b6b5f4c8d485e7c0d62e"
     },
     {
       "path": "units/04_club/F04-05_waitlist-invitation/diagrams.md",
@@ -9574,9 +9588,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "a52885f93b9f6d3ef195489ed4f29bb2566221e13a027a7da5449040479b3448",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_invitation_20261122"
+      ],
+      "reviewedSha256": "89d6655d1ccdc6ec0c6f76179b2acbd36d461270a272679a0587ddcdf99a528d"
     },
     {
       "path": "units/04_club/F04-05_waitlist-invitation/frontend.md",
@@ -9584,9 +9601,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "32df5a8f773d16b5278044e282b74baffaf88b5f2cb030956f3d591c552a513b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_invitation_20261122"
+      ],
+      "reviewedSha256": "97ff588d24ec3b2c1309aafd153fa224c31d30ced83706ab7899b20b2ab00057"
     },
     {
       "path": "units/04_club/F04-05_waitlist-invitation/scenarios.md",
@@ -9594,9 +9614,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "056b86825f3fd623ee79a9444132ff193e011b178c7bdf508339d21918037f8f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_invitation_20261122"
+      ],
+      "reviewedSha256": "bef29d15fc3aa69714c03923897a3f3c6ec076d3c05b80bea81a6d7ae78ef11d"
     },
     {
       "path": "units/04_club/F04-06_ban-management/backend.md",
@@ -15100,6 +15123,11 @@
       "command": "F04-04/F04-06 문서 묶음: 소스 참조·파서 시험·파생자료·경로/해시·HTML ID·과거 인용·diff 검사",
       "result": "코드 위치110개 일치; 파서11/11 통과; 상대경로2107개·파생 정본 해시243개 오류0; 현재 그룹 소스/정본58개 해시 일치; 기존 HTML ID7개 유지·과거 원문2개 인용 보존; scenario-audit 최신; diff 오류0",
       "scope": "회원·권한·강퇴·차단 문서 검사. 새 제품·돈 이동·기기·알림·만료 스케줄 실행 없음. ignored units8개 최종 원본 반영 대상."
+    },
+    {
+      "command": "F04-05 문서 묶음: 소스 참조·파서 시험·파생자료·경로/해시·HTML ID·과거 인용·diff 검사",
+      "result": "코드 위치110개 일치; 파서11/11 통과; 상대경로2130개·파생 정본 해시247개 오류0; 현재 그룹 소스/정본47개 해시 일치; 기존 HTML ID3개 유지·과거 원문1개 인용 보존; scenario-audit 최신; diff 오류0; 서버/앱 기준 HEAD 유지",
+      "scope": "가입 신청·초대 문서 검사. 새 제품·가입비·기기·알림·만료 스케줄 실행 없음. ignored units4개 최종 원본 반영 대상."
     }
   ],
   "evidenceGroups": {
@@ -24104,6 +24132,275 @@
           "path": "units/04_club/F04-06_ban-management/scenarios.md",
           "sha256": "d8d30623175b8948631220ce2a755b5747e86d9c6a9f1bf13fc66c2d64fde48c",
           "characters": 1080,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        }
+      ]
+    },
+    "club_invitation_20261122": {
+      "kind": "source_review",
+      "scope": "F04-05 신청 승인/거절·초대 후보/발송/취소·받은 초대/실제 종결·가입비 재확인/갱신·만료 이력과 알림 경로. 소스와 선택한 시험 단언만 대조; 새 제품 실행 없음.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/constants/ClubWaitStatus.java",
+          "sha256": "97d7907ac77d51c427ad46403245ea03535c6eb0f799899c3d9f1d7b6d4dacb7",
+          "reviewScope": "10–38 PENDING에서 종결값 전이·종결에서 재전이 없음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/model/ClubMemberWait.java",
+          "sha256": "12a90599efe6b1bbc171bcdada833945242aece18745f91de79ad759ae04b966",
+          "reviewScope": "90–138 기본 PENDING·전이/행위자/메시지/시각·BAN 효력·초대기한 생성+7일 fallback."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubSubscriptionGateService.java",
+          "sha256": "5f967a8cee985a858d4d508e651dfa82ae3e13812af12ed0b51e4c3bd98fa32d",
+          "reviewScope": "56–126 BUSINESS MEMBER_INVITE 구독 판단·현재차단 CLUB_SUBSCRIPTION_FEATURE_BLOCKED. 구독 전체 기능 재검수 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubInvitationVo.java",
+          "sha256": "5419ae7eb6772feb7c52a8c3c000eb281862254d0a78994341b8200db5c6e0b5",
+          "reviewScope": "14–35 수신 waitId·클럽소개/규칙/금액/초대자/시각·status/actionable/actionCode."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubInviteCandidateVo.java",
+          "sha256": "a28dc82bd948188e68b05807b34e9021ae8a52427d58dd3ff1aa8b94281ab8e9",
+          "reviewScope": "12–16 userId/nickname/actions.invite List 행."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/InviteParam.java",
+          "sha256": "1824a27fc0d51bfabf96a8e50af8534287f520ff27b6f412b17911ea82a3750e",
+          "reviewScope": "6–8 userId·message 요청."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/InvitationAcceptParam.java",
+          "sha256": "46a06b4c8937bb0a6d9679caa92f0636da95fc13f6ec750202c9c19aab86c144",
+          "reviewScope": "6–8 선택 expectedMemberFee 요청."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ApplicationRejectParam.java",
+          "sha256": "bc378386908aa4aed20c316f993218c3b3421fb06ce8755466e64d4204ac204b",
+          "reviewScope": "10–14 선택 reason 요청."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubInvitationExpiryService.java",
+          "sha256": "aeba4d038af044111cf9fa0cbad39b4e43e86169b67f60d18bc0e8b4e2b558a0",
+          "reviewScope": "27–57 별도 트랜잭션·잠금후 PENDING/기한 검사·EXPIRED 보존·수신자/초대자 알림 요청."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/InviteExpiryCleanupScheduler.java",
+          "sha256": "a77a9a69727da87becc8a5c6773d6baf2794d5953bddf9200f16aa0467a4ed61",
+          "reviewScope": "30–61 매일03시 cron/zone 명시없음·과거기한없는7일초대 포함·개별 실패 계속."
+        },
+        {
+          "path": "community_app/lib/presentation/club/screens/club_waitlist_screen.dart",
+          "sha256": "e3720ea4cad99ecba0ff11b528b20aecfe77f24a82a67fc296a457f79ba63f1f",
+          "reviewScope": "64–114 조회능력/서버총수/권한미확인;130–255 페이지/행별능력·승인 재확인/오류갱신·거절 세션/성공닫기/실패유지."
+        },
+        {
+          "path": "community_app/lib/presentation/club/widgets/waitlist_card.dart",
+          "sha256": "ad9fef70b944773bfe2a3c314b71e04c2935cbcacc69fa20aa8b3506350ad6b4",
+          "reviewScope": "15–95 PersonLink·신청일/메시지·승인/거절 능력별 버튼."
+        },
+        {
+          "path": "community_app/lib/presentation/club/widgets/reject_dialog.dart",
+          "sha256": "25ac8adb63a65cbba7fb994766415a8a52e06758a10c5930cd369b05fc2cb8fa",
+          "reviewScope": "17–51 전송잠금·성공닫기/실패입력유지;78–93 선택 사유 입력."
+        },
+        {
+          "path": "community_app/lib/presentation/club/widgets/club_invite_dialog.dart",
+          "sha256": "7f59925cd24237f935bf5ac335c0622e737d6ca2bff8c8594b830c395e615e25",
+          "reviewScope": "38–168 계정/세션/최신선택/검색/발송/실패입력/권한상실닫기;192–323 검색·거절행 설명/비활성·선택검증·메시지·전송잠금."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/club_invite_candidates_provider.dart",
+          "sha256": "df6c3871102ded753acb5643704d7acbc03df5ca469de3c15b5414e486f46944",
+          "reviewScope": "13–58 검색 세대·계정범위·현재권한·늦은결과 무시·빈검색/초기화."
+        },
+        {
+          "path": "community_app/lib/presentation/club/widgets/club_pending_invitations_tab.dart",
+          "sha256": "5a23705a7ca8f9ef08260a4c1acf66ae774b2118a96a80a9936537ac0f4877c4",
+          "reviewScope": "54–229 현재취소권한/행상태 재확인·20개 페이지/재시도·사람/초대자/기한·확인 뒤 계정범위·STAFF_CANCELLED 실제결과."
+        },
+        {
+          "path": "community_app/lib/presentation/club/screens/club_invitation_inbox_screen.dart",
+          "sha256": "c93376c7a153a638a2e1da3393c676122e23fa4982db68bccd7ac02811e44e4c",
+          "reviewScope": "37–99 받은 초대함·첫/추가오류 재시도·행waitId 상세이동."
+        },
+        {
+          "path": "community_app/lib/presentation/club/screens/club_invitation_detail_screen.dart",
+          "sha256": "005b884b7c3f41598d35ff086f184de0293b54db27ef042201dc0520b7763373",
+          "reviewScope": "47–100 계정/세션/현재경로·자기확인창 정리·actionable;102–158 소개/규칙/메시지/비용/기한·응답버튼;174–294 비용확인후 현재값 비교·실제status/actionCode·ACCEPTED replace·늦은응답/오류."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/club_waitlist_provider.dart",
+          "sha256": "686e36a274c7c2c86ae01c88abbbf618bed9c6540dd4b5657f5e2da2972210af",
+          "reviewScope": "23–110 운영목록20·승인/거절 회원/기금 갱신·반영가능오류;118–167 진행초대20·취소 실제종결행 제거/갱신."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/club_invitation_provider.dart",
+          "sha256": "8753f3779047e9f435ddf2984a4e2fb4953b2662ad613f73f56a03ad6c080805",
+          "reviewScope": "27–169 받은초대50·계정/클럽신호·현재가입비전송·ACCEPTED/오류 뒤 회원/지갑/기금/초대함·거절의실제ACCEPTED 결과 처리."
+        },
+        {
+          "path": "community_app/lib/data/api/club_waitlist_api.dart",
+          "sha256": "e3bbc167dc410ef1c58f9a77a72140bf15c76f270e096b0c33aa106421b7ea4c",
+          "reviewScope": "18–69 대기Page/승인회원/거절void·초대수신Page/단건/수락typed·거절typed·취소대기typed 계약."
+        },
+        {
+          "path": "community_app/lib/data/models/club/club_waitlist_item.dart",
+          "sha256": "2fa00c6ab5ff944b4f122f02e371db8c70b3f4b9d4e6ff781305b5e1f80b218a",
+          "reviewScope": "10–31 id·종류/상태·사유/처리자/시각·초대자·기한 모델."
+        },
+        {
+          "path": "community_app/lib/data/models/club/club_invitation.dart",
+          "sha256": "f563e9b8a491fa94df46c28109ce94b16fc4cda0834e2e1ac9842917de0bd496",
+          "reviewScope": "9–34 waitId·클럽소개/규칙/금액/상태·초대자/시각·기본false actionable."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/club_admin_routes.dart",
+          "sha256": "e7aca559ef5fee5430540e0c4446afd47f9cf2081cfa9939f222a1c2e13a7507",
+          "reviewScope": "548–560 /club-invitations·invitationId 상세라우트."
+        },
+        {
+          "path": "community_app/test/widget/club/club_waitlist_paging_refusal_test.dart",
+          "sha256": "eed363b24bdab0f82597d0988bd942f365273fde47568fc6f4d487d6f4b6619f",
+          "reviewScope": "148–187 총수21/다음페이지·승인 CLUB_FULL 거절후 능력/목록 재조회 단언을 읽음. 실행 없음."
+        },
+        {
+          "path": "community_app/test/widget/club/club_member_invitations_tab_test.dart",
+          "sha256": "b133e26e1030710d85881f19f4c4c647dd3c38e1867727bd74ae2602b2b860f0",
+          "reviewScope": "217–234 취소와 수락 경합 ACCEPTED를 취소성공으로 표시하지않는 단언을 읽음. 실행 없음."
+        },
+        {
+          "path": "community_app/test/audit/entry_paths_club_invitation_received_test.dart",
+          "sha256": "0faed06e648f138cf1354f2ddb6e954f2428f1a0c504c87947aaf2e149ca0bf4",
+          "reviewScope": "370–382 확인중 금액변경 명령0;422–466 실제종결/홈복귀·금액거절 재조회/재동의;487–502 만료 응답의거짓성공방지 단언을 읽음. 실행/이미지검수 없음."
+        },
+        {
+          "path": "community_app/test/domain/providers/club/club_invitation_money_refresh_test.dart",
+          "sha256": "920c2ab0d7868a8414592ca5cd6949c16c7f512469956ffddd10063cbd6b5b81",
+          "reviewScope": "250–280 유료수락/응답유실 뒤 지갑/거래 재조회·명령1건 단언을 읽음. 실제 돈 이동 시험 없음."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+          "sha256": "693ed53eb39f4c6ab35e29090389edbe4a444a31df6db2176c81a387044c9455",
+          "reviewScope": "205–210 후보 List/nickname;305–390 받은 초대 Page/단건·대기 Page·승인200회원·거절200빈본문·초대201대기·수락/거절200초대·취소200대기 계약."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubWaitlistService.java",
+          "sha256": "3405fbd29addd871f1266ee9f1bc97c02954f18fed21d4df6ad1c29825841f2b",
+          "reviewScope": "92–93 한도500/기한7일;140–198 기본신청/명시종류/진행초대 필터;204–258 본인초대 이력/단건;261–358 승인 잠금/계정/정원/비용/이력;361–406 거절 사유/알림;408–543 초대 발송/프라이버시/차단/기존초대/후보actions;546–702 수락 비용기대값/종결·거절/취소의 실제결과;885–1019 현재 actionCode·조회 만료 표현·만료 알림."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubWaitTransitions.java",
+          "sha256": "3af6f8cb8120adcd46c2b720b8f6e3d662471acf78501da7f84e8ead40624240",
+          "reviewScope": "39–79 APPLY/INVITE 생성;123–173 승인/거절/수락/불가취소/거절/만료/운영취소 상태·사유·행보존."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/policy/ClubAbilityPolicy.java",
+          "sha256": "c511277e077fdc16091e01351d974b4bbe8a8b195b6a854cd0a39f24b7ae0192",
+          "reviewScope": "71–113 조회/거절/승인/취소의 유효운영진·승인 ACTIVE/정원·발송 구독;453–492 후보/기존회원/개인차단/중복/비공개/BAN 오류."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/policy/ClubRowActions.java",
+          "sha256": "dcc74e6c57e0413169d0e0c07123e8b5e30cf1cd082c7859bfd6767ccd835ad5",
+          "reviewScope": "88–89 후보 행 invite에 현재 초대/대상 조건 결합."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/security/ClubMemberPermissionChecker.java",
+          "sha256": "86c807bf78390e1a44e19962e9f963cac3fe3c6d5dba0faff62b3114fe3f436d",
+          "reviewScope": "club_members_20261122 동일 SHA의 현재 소유자/유효운영진 범위 재사용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubWaitlistVo.java",
+          "sha256": "59a0e66e65a91561b436ab9b10d605bb92f3e0ca846ea21a97fb3fde8e42c170",
+          "reviewScope": "club_members_20261122 동일 SHA의 id·userId·message/decisionMessage·상태·시각/초대자 대기 응답 범위 재사용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubMembershipService.java",
+          "sha256": "472689eb53a515c598f78fef260d488fa63ab20d51f2237dc6de083fabc0ed19",
+          "reviewScope": "club_detail_20261122 동일 SHA의 327–394 신규회원/납부정보 저장·가입비 처리 호출 범위 재사용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubService.java",
+          "sha256": "2041dde801e93a569af0aea45c933816b1a8169b882731fe47d339c822722f34",
+          "reviewScope": "club_detail_20261122 동일 SHA의 217–282 최신 APPLY 본인 처리 메시지·상태 노출 범위 재사용."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/club_member_provider.dart",
+          "sha256": "badbd6cdca93fe7003c56a2800e309b34df73a2dbe6fdb47fb8a6a0d5b9ecac9",
+          "reviewScope": "351–361 초대 발송 성공/반영가능오류 클럽변경;club_members_20261122 동일 SHA의 목록/입구 관련 범위 재사용."
+        },
+        {
+          "path": "community_app/lib/data/api/club_member_api.dart",
+          "sha256": "c791deeb30ab6faa7729b62bcd6731748f80381417973871634fbd33dfab0757",
+          "reviewScope": "58–68 후보List/nickname·발송typed요청/void 소비."
+        },
+        {
+          "path": "community_app/lib/data/repositories/club_member_repository.dart",
+          "sha256": "2ce3ee0a85e746af6a61277cfc22b8078ed47ce36786c727ca7238132fe5e059",
+          "reviewScope": "117–254 후보/발송·expectedMemberFee·수신Page/단건/거절·기본대기와INVITE쿼리·취소/승인/거절 Result."
+        },
+        {
+          "path": "community_app/lib/presentation/club/screens/club_member_list_screen.dart",
+          "sha256": "f04c58bd0deab51f0f4eeb04d59817ddcde4fb0d09f355d3b7312f40f48a0652",
+          "reviewScope": "club_members_20261122 동일 SHA의 123–200/244–269/414–462 권한별탭·초대대화상자·별도승인대기 이동 범위 재사용."
+        },
+        {
+          "path": "community_app/lib/presentation/club/screens/club_management_screen.dart",
+          "sha256": "45c7fe4ea6154d00a90603e4fb6c0ea1c6954eb1bcdc35d2d83720a27e43deef",
+          "reviewScope": "club_members_20261122 동일 SHA의 88–118 회원/초대입구·능력값 범위 재사용."
+        },
+        {
+          "path": "community_app/lib/presentation/club/widgets/gathering_tab_sections.dart",
+          "sha256": "9ead89bd023b0440fe54b920b3df54ab87c4e7494beacdcd80f20d923043ee4b",
+          "reviewScope": "165–181 받은클럽초대 요청행과 tally 구독;나머지 탐색입구는 club_discovery_20261122 동일 SHA 범위 재사용."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/club_branch_routes.dart",
+          "sha256": "648c40ee84823118fae9e22f7a7ee83dae3bbabe822944683817b895947bc363",
+          "reviewScope": "215–245 invitations query 초기탭·waitlist 운영권한 라우트."
+        },
+        {
+          "path": "community_app/lib/core/utils/notification_router.dart",
+          "sha256": "b855b662852561c0229007c825d4f5d261eb0f20252ae2ae1316a51362bccc67",
+          "reviewScope": "404–411 신청/승인/거절;422–438 초대/수락/거절/만료;755–765 만료알림 수신자와초대자의이동경로 분리."
+        },
+        {
+          "path": "community_app/lib/presentation/club/screens/club_detail_screen.dart",
+          "sha256": "7fb6b94389c130295ede88a9ad591da4cdae43a960a2ff0083d23295daf773cc",
+          "reviewScope": "270–271 본인처리메시지 조건·671–704 표시;앞선 club_detail_20261122 동일 SHA 범위 재사용."
+        }
+      ],
+      "reuses": [
+        "club_detail_20261122",
+        "club_discovery_20261122",
+        "club_lifecycle_20261122",
+        "club_members_20261122",
+        "event_prepayment_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-05_waitlist-invitation_prd.md",
+          "sha256": "b6cbfcc196e0749c622c4458d6cd748ee30d3089fb070c9fe4028c9c2ab0e116"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F04-05.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "F04-05 기존6개 유지·후보/받은목록/받은단건/운영취소4개 연결 추가"
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "units/04_club/F04-05_waitlist-invitation/scenarios.md",
+          "sha256": "8ef4fdae61ec5618edd298eaef6afb22432eed27bfd2029fdb4baa3187154da4",
+          "characters": 1647,
           "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
         }
       ]

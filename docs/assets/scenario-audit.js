@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,189개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,195개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1189,
+    "documentedScenarioItems": 1195,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 39,
     "partialEvidenceChain": 53,
     "definitionOnlyEvidence": 83,
-    "traceMarkers": 490,
-    "verifiedTraceRecords": 488,
+    "traceMarkers": 494,
+    "verifiedTraceRecords": 492,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -5232,19 +5232,19 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F04-05",
       "domain": "클럽",
-      "name": "가입 대기열 승인/거절 & 초대",
-      "scenarioCount": 12,
+      "name": "가입 신청 처리·초대 발송과 받은 초대",
+      "scenarioCount": 18,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-05_waitlist-invitation/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-05_waitlist-invitation_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12
+        "documentScenarioCount": 18
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-05_waitlist-invitation/backend.md",
-        "total": 6,
-        "verified": 6,
+        "total": 10,
+        "verified": 10,
         "retired": 0,
         "entries": [
           {
@@ -5348,17 +5348,89 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 373
               }
             ]
+          },
+          {
+            "id": "F04-05:7",
+            "label": "GET /api/v1/clubs/{id}/invite-candidates — 초대 후보/수신/취소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "controller": "ClubController",
+                "method": "getInviteCandidates",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{id}/invite-candidates",
+                "targetLine": 205,
+                "methodLine": 206
+              }
+            ]
+          },
+          {
+            "id": "F04-05:8",
+            "label": "GET /api/v1/clubs/invitations/me — 초대 후보/수신/취소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "controller": "ClubController",
+                "method": "getMyInvitations",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/invitations/me",
+                "targetLine": 305,
+                "methodLine": 306
+              }
+            ]
+          },
+          {
+            "id": "F04-05:9",
+            "label": "GET /api/v1/clubs/invitations/{invitationId} — 초대 후보/수신/취소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "controller": "ClubController",
+                "method": "getMyInvitation",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/invitations/{invitationId}",
+                "targetLine": 313,
+                "methodLine": 314
+              }
+            ]
+          },
+          {
+            "id": "F04-05:10",
+            "label": "POST /api/v1/clubs/{id}/invitations/{invitationId}/cancel — 초대 후보/수신/취소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "controller": "ClubController",
+                "method": "cancelInvitation",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/clubs/{id}/invitations/{invitationId}/cancel",
+                "targetLine": 385,
+                "methodLine": 386
+              }
+            ]
           }
         ]
       },
       "automated": {
         "directlyLinked": true,
-        "count": 2,
+        "count": 6,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 2,
+        "scenarioReferenceCount": 6,
         "files": [
           "community_app/integration_test/seed_club_list_settings_surface_test.dart",
-          "community_app/integration_test/seed_club_membership_controls_test.dart"
+          "community_app/integration_test/seed_club_membership_controls_test.dart",
+          "community_app/test/audit/entry_paths_club_invitation_received_test.dart",
+          "community_app/test/domain/providers/club/club_invitation_money_refresh_test.dart",
+          "community_app/test/widget/club/club_member_invitations_tab_test.dart",
+          "community_app/test/widget/club/club_waitlist_paging_refusal_test.dart"
         ],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_club_mutation_test.dart"

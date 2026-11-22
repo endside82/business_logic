@@ -258,7 +258,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F04-02 | 클럽 | [F04-02_club-detail-join_prd.md](02_feature_prds/04_club/F04-02_club-detail-join_prd.md) | `F04-02_club-detail-join` | 실사 기반 전환본 | 6 | 4 |
 | F04-03 | 클럽 | [F04-03_club-crud-transfer_prd.md](02_feature_prds/04_club/F04-03_club-crud-transfer_prd.md) | `F04-03_club-crud-transfer` | 실사 기반 전환본 | 10 | 4 |
 | F04-04 | 클럽 | [F04-04_member-management_prd.md](02_feature_prds/04_club/F04-04_member-management_prd.md) | `F04-04_member-management` | 실사 기반 전환본 | 6 | 4 |
-| F04-05 | 클럽 | [F04-05_waitlist-invitation_prd.md](02_feature_prds/04_club/F04-05_waitlist-invitation_prd.md) | `F04-05_waitlist-invitation` | 실사 기반 전환본 | 6 | 1 |
+| F04-05 | 클럽 | [F04-05_waitlist-invitation_prd.md](02_feature_prds/04_club/F04-05_waitlist-invitation_prd.md) | `F04-05_waitlist-invitation` | 실사 기반 전환본 | 10 | 4 |
 | F04-06 | 클럽 | [F04-06_ban-management_prd.md](02_feature_prds/04_club/F04-06_ban-management_prd.md) | `F04-06_ban-management` | 실사 기반 전환본 | 4 | 4 |
 | F04-07 | 클럽 | [F04-07_my-clubs-stats_prd.md](02_feature_prds/04_club/F04-07_my-clubs-stats_prd.md) | `F04-07_my-clubs-stats` | 실사 기반 전환본 | 2 | 6 |
 | F04-08 | 클럽 | [F04-08_board-post-crud_prd.md](02_feature_prds/04_club/F04-08_board-post-crud_prd.md) | `F04-08_board-post-crud` | 실사 기반 전환본 | 0 | 3 |
