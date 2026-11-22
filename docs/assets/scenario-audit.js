@@ -6,17 +6,17 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,295개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,298개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1295,
+    "documentedScenarioItems": 1298,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4965,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 71,
+    "directlyLinkedAutomatedTests": 72,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 71,
+    "automatedScenarioReferences": 72,
     "directlyLinkedJourneys": 26,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 26,
@@ -25,10 +25,10 @@ window.SCENARIO_AUDIT = {
     "localRealAccountProof": 34,
     "featureLevelChecked": 174,
     "completeEvidenceChain": 44,
-    "partialEvidenceChain": 52,
-    "definitionOnlyEvidence": 79,
-    "traceMarkers": 562,
-    "verifiedTraceRecords": 560,
+    "partialEvidenceChain": 53,
+    "definitionOnlyEvidence": 78,
+    "traceMarkers": 568,
+    "verifiedTraceRecords": 566,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -11224,28 +11224,134 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F08-05",
       "domain": "플랜 마켓",
-      "name": "플랜 발행",
-      "scenarioCount": 10,
+      "name": "플랜 공개와 예약 공개",
+      "scenarioCount": 13,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/08_plan_market/F08-05_plan-publish/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-05_plan-publish_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10
+        "documentScenarioCount": 13
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-05_plan-publish/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 6,
+        "verified": 6,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F08-05:1",
+            "label": "GET /api/v1/plans/{planId}/publish-readiness",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java",
+                "controller": "PlanController",
+                "method": "getPublishReadiness",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/plans/{planId}/publish-readiness",
+                "targetLine": 111,
+                "methodLine": 112
+              }
+            ]
+          },
+          {
+            "id": "F08-05:2",
+            "label": "POST /api/v1/plans/{planId}/publish",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java",
+                "controller": "PlanController",
+                "method": "publishPlan",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/plans/{planId}/publish",
+                "targetLine": 119,
+                "methodLine": 120
+              }
+            ]
+          },
+          {
+            "id": "F08-05:3",
+            "label": "PATCH /api/v1/plans/{planId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java",
+                "controller": "PlanController",
+                "method": "updatePlan",
+                "httpMethod": "PATCH",
+                "httpPath": "/api/v1/plans/{planId}",
+                "targetLine": 82,
+                "methodLine": 83
+              }
+            ]
+          },
+          {
+            "id": "F08-05:4",
+            "label": "POST /api/v1/authoring/schedules",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/authoring/controller/ScheduledPublishController.java",
+                "controller": "ScheduledPublishController",
+                "method": "schedule",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/authoring/schedules",
+                "targetLine": 37,
+                "methodLine": 38
+              }
+            ]
+          },
+          {
+            "id": "F08-05:5",
+            "label": "GET /api/v1/authoring/schedules",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/authoring/controller/ScheduledPublishController.java",
+                "controller": "ScheduledPublishController",
+                "method": "list",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/authoring/schedules",
+                "targetLine": 45,
+                "methodLine": 46
+              }
+            ]
+          },
+          {
+            "id": "F08-05:6",
+            "label": "DELETE /api/v1/authoring/schedules/{scheduleId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/authoring/controller/ScheduledPublishController.java",
+                "controller": "ScheduledPublishController",
+                "method": "cancel",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/authoring/schedules/{scheduleId}",
+                "targetLine": 52,
+                "methodLine": 53
+              }
+            ]
+          }
+        ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 2,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 2,
+        "files": [
+          "community_app/test/presentation/plan/screens/plan_publish_operation_lock_test.dart",
+          "community_app/test/presentation/plan/screens/plan_publish_readiness_test.dart"
+        ],
         "markerCandidateFiles": []
       },
       "journey": {
@@ -11256,7 +11362,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,

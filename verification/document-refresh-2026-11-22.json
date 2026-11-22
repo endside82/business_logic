@@ -287,7 +287,8 @@
         "settlement_account_20261122",
         "plan_list_20261122",
         "plan_detail_20261122",
-        "plan_reorder_20261122"
+        "plan_reorder_20261122",
+        "plan_publish_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -3500,9 +3501,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "c878a38fac15b515243afb5f35f9794dbd12b7d1e49fc3e93c5e4b00c33cd357",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "plan_publish_20261122"
+      ],
+      "reviewedSha256": "70ee51f3e823700e813287fec90000eee309a511bb32748b7a3e2ccc23e85feb"
     },
     {
       "path": "docs/features/F08-06.html",
@@ -4999,7 +5003,8 @@
         "settlement_account_20261122",
         "plan_list_20261122",
         "plan_detail_20261122",
-        "plan_reorder_20261122"
+        "plan_reorder_20261122",
+        "plan_publish_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5081,7 +5086,8 @@
         "settlement_account_20261122",
         "plan_list_20261122",
         "plan_detail_20261122",
-        "plan_reorder_20261122"
+        "plan_reorder_20261122",
+        "plan_publish_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5187,7 +5193,8 @@
         "settlement_account_20261122",
         "plan_list_20261122",
         "plan_detail_20261122",
-        "plan_reorder_20261122"
+        "plan_reorder_20261122",
+        "plan_publish_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -6591,10 +6598,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "3332232f34e7407e6128726a295cf78964ee64f6bd7c22b004ae901b7256f879",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "plan_publish_20261122"
+      ],
+      "reviewedSha256": "d4a7be815eb9c495f918d097a5dd74c25746dc9926100443b956ca989bfe8fba"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-06_market-item-management_prd.md",
@@ -7979,7 +7988,8 @@
         "settlement_account_20261122",
         "plan_list_20261122",
         "plan_detail_20261122",
-        "plan_reorder_20261122"
+        "plan_reorder_20261122",
+        "plan_publish_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8213,7 +8223,8 @@
         "settlement_account_20261122",
         "plan_list_20261122",
         "plan_detail_20261122",
-        "plan_reorder_20261122"
+        "plan_reorder_20261122",
+        "plan_publish_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -12057,9 +12068,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "2d5f8e90b3dffd00c8d65017582335a89b7926442c0c01f16e2f57e798a90f95",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "plan_publish_20261122"
+      ],
+      "reviewedSha256": "fbf296c07d821752ff88c448be2a7f7e6480ad81b1037f37e4ae935385deb6af"
     },
     {
       "path": "units/08_plan_market/F08-05_plan-publish/diagrams.md",
@@ -12067,9 +12081,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "15dba62bfe748f819ce7de18924673ec2f5dfaa21ea0a4392273e4839e055f0b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "plan_publish_20261122"
+      ],
+      "reviewedSha256": "b07c9e3a65b525e81a26f75dd08472b5719565b3b6f3552c49994ae142d13223"
     },
     {
       "path": "units/08_plan_market/F08-05_plan-publish/frontend.md",
@@ -12077,9 +12094,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "04b17015906af048585d86dde56a1e45a48dcc6bf8f1c1c7215e6ca1aa8d0379",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "plan_publish_20261122"
+      ],
+      "reviewedSha256": "7cfa073c87e87a9a86b10a0b670d7658df082739b0afdf196e500702161d27f4"
     },
     {
       "path": "units/08_plan_market/F08-05_plan-publish/scenarios.md",
@@ -12087,9 +12107,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "29bbfdb469c42bbc98848099aeed5d9ee02694f403ec2cd20bbd4e67ae9a8cb9",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "plan_publish_20261122"
+      ],
+      "reviewedSha256": "7602713ed21c8fe7567b11511e4dfa43f1932fd748842207e4b325f7c88c00b3"
     },
     {
       "path": "units/08_plan_market/F08-06_market-item-management/backend.md",
@@ -31128,6 +31151,229 @@
         "groupDigestsAndAnchors": "23 source/canonical hashes and 3 retained HTML IDs match",
         "scenarioAudit": "--write and --check pass",
         "relativeLinksAndDerivedDigests": "2891 relative paths and 341 derived digests checked; global checker still fails only recorded my_profile source drift",
+        "productTests": "not executed; selected existing assertions read only",
+        "releaseScope": "known global date discrepancy remains; unchanged checker not rerun"
+      }
+    },
+    "plan_publish_20261122": {
+      "kind": "source_review",
+      "scope": "플랜 준비도 9개·공개와 카탈로그 READY·기기 입력 복원/선저장/잠금·HIDDEN 편집 한계·예약 생성의 검증 경계·현재내용 실행/차수/실패알림 큐/고착복구를 서버 및 앱 소스로 대조. 제품 시험·운영 설정·기기·예약 실행·단말 알림은 새 검증 아님.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/PlanPublishReadinessService.java",
+          "sha256": "3bc5637eb4e7a5c4cc8250202fd56ab738d593cdc60e5ff7db80ae7842ec9d97",
+          "reviewScope": "35–210: 현재 9개 항목·BLOCKER/WARNING·조건과 수치"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/vo/PlanPublishReadinessVo.java",
+          "sha256": "49736bba0dd31f7eec5bc570393cc40b2893f670c4af734d1d2ea19b940c8372",
+          "reviewScope": "16–34: targetType/id/publishable/checkedAt/items"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/PlanCatalogService.java",
+          "sha256": "383ec282165f158f4868c9b7ca7a1216105395ff9fb8182c503f605f15eac8a0",
+          "reviewScope": "31–50,70–89: 기존 상품 유지·없으면 READY 생성·숨김 시 판매중지"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/authoring/controller/ScheduledPublishController.java",
+          "sha256": "d5c412cdac2c86af1ded1b67444b72f92a8a4e867219ed07818303d2f46f5ee8",
+          "reviewScope": "28–57: P0·생성201·Page목록·취소 응답"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/authoring/model/ScheduledPublishAction.java",
+          "sha256": "73c56e977c12125bf871229c9904cf143b6b1e376293e7187c3fdc484e452d9c",
+          "reviewScope": "93–112: 최대 복구재큐잉3·상태/횟수 변경"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/authoring/param/ScheduledPublishCreateParam.java",
+          "sha256": "af8e493499aa52c4646c7370fe872f05a0720b864840fef4ed39631ac193815f",
+          "reviewScope": "16–19: enum target/action·targetId·KST LocalDateTime"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/screens/plan_publish_screen.dart",
+          "sha256": "f1de94f0811461429599314fae5d0ffc1d80f2d90cdd2bb726f252128ac4a49f",
+          "reviewScope": "51–341,450–656,660–898: 복원/충돌·임시체크리스트·공유입력잠금·선저장·성공복귀·업로드·예약"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/editing/plan_publish_draft.dart",
+          "sha256": "1aa14cb88270ed04c460e563407e2507234729d3af303efa0bddbd60e11ba832",
+          "reviewScope": "39–187: 계정/플랜별 보관·필드3방향복원·충돌선택·디스크실패·saved/discard"
+        },
+        {
+          "path": "community_app/lib/domain/providers/plan/plan_publish_readiness_provider.dart",
+          "sha256": "3d8b44d704284718a27cfed2f1b253b35d6f0ceaaf710e66e7018c6f384213d7",
+          "reviewScope": "12–22: 준비도 Repository 조회/오류전달"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/transition/editor_transition_coordinator.dart",
+          "sha256": "db03d9a62281eeaf39031efe66d1bc2dbe33793f2aece4f90a8c65fade63b5a0",
+          "reviewScope": "126–165: flush·큐barrier·실패/보류/대기·트리준비·화면복귀까지 전환잠금"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/widgets/schedule_publish_sheet.dart",
+          "sha256": "c87a128646548c24d96a7e4c942824931826389ace4f0ec536cbbbe6e2bb11cb",
+          "reviewScope": "47–184: 서울 날짜선택·1분 초과·typed 예약·성공복귀·오류분기"
+        },
+        {
+          "path": "community_app/lib/data/models/authoring/scheduled_publish_create_param.dart",
+          "sha256": "3b556bc78eaa470d4c746f4e50040c84647a04dbbeada8e7c3ecf62bdedb330d",
+          "reviewScope": "13–24: KST벽시계 직렬화"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/screens/scheduled_publish_list_screen.dart",
+          "sha256": "c49193fe293ee27caed316064a5ec6397f16f56135f3b3f8cef65e5c81fcebc3",
+          "reviewScope": "41–161,228–249: 전체 본인예약 추가조회·상태별취소·결과/실패 표시"
+        },
+        {
+          "path": "community_app/lib/data/api/authoring_api.dart",
+          "sha256": "a1351866105cd655dcd2afd307ddf60a6cf4956e0d73b0ee130cd74446603f39",
+          "reviewScope": "16–36: 예약생성/목록/취소 typed 요청과 PageResponse"
+        },
+        {
+          "path": "community_app/lib/data/repositories/authoring_repository.dart",
+          "sha256": "0462fcb3ef7981bb1e011e84b52c49250bbc8a2f82da09bff03393242e2507d0",
+          "reviewScope": "16–48: 예약생성/목록/취소 Result 전달"
+        },
+        {
+          "path": "community_app/lib/domain/providers/authoring/authoring_providers.dart",
+          "sha256": "4b426dd501719bf5019b01c3c0cd4b67943fbef99c84be00c3cbc9c7c3e9f394",
+          "reviewScope": "33–105: 세션 명령·예약 생성·50개씩 목록·취소 후 재조회"
+        },
+        {
+          "path": "community_app/test/presentation/plan/screens/plan_publish_readiness_test.dart",
+          "sha256": "b47f8452962996ec2c97c162116011a09cc5c7d37e99335173104a5af57b6973",
+          "reviewScope": "318–367: 수정 설명 PATCH 인자와 공개 호출 단언 읽음; 미실행"
+        },
+        {
+          "path": "community_app/test/presentation/plan/screens/plan_publish_operation_lock_test.dart",
+          "sha256": "aeaff3e2cecff334c8ad0487d8517d26b8b35b4c4a2995380a4bbfbc5349ddd3",
+          "reviewScope": "418–478: 확인부터 메타/공개 응답까지 입력잠금·실패입력유지·예약 중복저장/즉시공개 경합 방지 단언 읽음; 미실행"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java",
+          "sha256": "ae66890928117bcbffb4bc88fb1f0a78ffa7595e637e8b812bf6e5610e60cb94",
+          "reviewScope": "36,111–124: P0·준비도/공개 endpoint·응답; updatePlan 이전 상세 근거 동일 SHA 재사용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/PlanService.java",
+          "sha256": "16616bfb18da0a9bbb7ff422b1f47a716581288a1a6c0b3640b9df5aa3c0c1c8",
+          "reviewScope": "470–547,661–676,739–758: DRAFT 전용 PATCH·가격 교차검증·작성자 준비도·DRAFT/HIDDEN 공개와 카탈로그 확보"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/authoring/service/ScheduledPublishService.java",
+          "sha256": "37ca1bbc12a79b0cf1a8ac0acbe6b0f5f9aaca3f4be4e053c107c990d37e4b88",
+          "reviewScope": "58–118,121–139,192–204,233–267: 1분·중복검사/DB충돌·작성자/상태검사·준비도검사없음·소유취소/목록; 공통 부분 이전 검토와 동일 SHA"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/authoring/service/ScheduledPublishScheduler.java",
+          "sha256": "c9bf967ee15e11ea8c7229fb8df7332af6838041151726472eb61ee696b120da",
+          "reviewScope": "53–91,121–158: 기본60초 fixedDelay·100개·5분고착·시장상품봉인과 PLAN 분리"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/authoring/service/ScheduledPublishItemWorker.java",
+          "sha256": "3d5dc4b1c957ede985baa09df2857915d422fc896142f395d32ef0f8176357e2",
+          "reviewScope": "82–171,304–411: PLAN 실행현재준비도·차수소유권·실패알림·플랜상태별 복구"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/authoring/service/ScheduledPublishStateWriter.java",
+          "sha256": "32878a58ec52b6ad9c4ddec305ef0b5c77ba49f6e74569e0869b032916e14776",
+          "reviewScope": "94–108,158–174,218–260: 차수확인·실행/실패전이·REQUIRES_NEW 실패/내구성 알림 의도·재큐잉"
+        },
+        {
+          "path": "community_app/lib/domain/providers/plan/plan_block_provider.dart",
+          "sha256": "3dc4c9dcbe312cbc34a927c2eb8cf7b2a74a0eccc9f1cd250519536b9c4f4c16",
+          "reviewScope": "1913–1959: 공개 성공/반영불명 상세·플랜카드 갱신; 동일 SHA 이전 검토 재사용"
+        },
+        {
+          "path": "community_app/lib/data/api/plan_api.dart",
+          "sha256": "d40dec6c4583634185f5bc7c18c25d920578aa9c4fabdf9fed6d89c5d305781a",
+          "reviewScope": "이전 상세 근거와 동일 SHA: 준비도/공개/부분변경 typed 요청"
+        },
+        {
+          "path": "community_app/lib/data/repositories/plan_repository.dart",
+          "sha256": "339fc30b3c78d85e5829cda8cc2f390ee2cb9b4ffe44a46724bc621ac44bc53a",
+          "reviewScope": "이전 상세 근거와 동일 SHA: 준비도/공개/부분변경 Repository Result"
+        },
+        {
+          "path": "community_app/lib/domain/providers/plan/plan_editor_provider.dart",
+          "sha256": "f9647be11480d642be59ba002bd820019aea11b3dec83ef80b16061be797bbfa",
+          "reviewScope": "이전 상세 근거와 동일 SHA: 메타 수정 및 목록 갱신·실패 전달"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/plan_market_routes.dart",
+          "sha256": "96c441331aa2d2ca654ffe72e29a50dcdae6440f3816a1a711ba0b43fb6dc6ae",
+          "reviewScope": "280–289: 작성자 공개 라우트; 동일 SHA 이전 경로 검토 재사용"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/screens/plan_list_screen.dart",
+          "sha256": "462f6b90936d11619153155687a38a8e6e1b11d42dca4ed613862144bd72e9ad",
+          "reviewScope": "497–553,700–768: 시장설정에 따른 판매시작 준비화면 경로; 이전 목록 검토 동일 SHA"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/screens/plan_detail_screen.dart",
+          "sha256": "a32156ee26484ed76272dabab54ca1332dc6411eeda0b00cdff7f829401257d1",
+          "reviewScope": "75–128,685–812: 시장설정·운영제한·DRAFT/HIDDEN 공개입구; 이전 상세 검토 동일 SHA"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/screens/block_editor_screen.dart",
+          "sha256": "10e447a38d09853b78311796821c8683302855eb94ece0cb445ae6ac2c4363ef",
+          "reviewScope": "723,838–856,1011–1099: 시장설정/초안 공개버튼·전환저장·큐/저장상태/트리 준비 검사"
+        }
+      ],
+      "reuses": [
+        "club_announcements_20261122",
+        "club_posts_20261122",
+        "plan_detail_20261122",
+        "plan_list_20261122",
+        "plan_reorder_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-05_plan-publish_prd.md",
+          "sha256": "d4a7be815eb9c495f918d097a5dd74c25746dc9926100443b956ca989bfe8fba"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F08-05.html": [
+          "sidebar",
+          "launch-strip",
+          "publication-and-ownership-current",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "즉시 공개·준비도·메타변경 및 예약 생성/목록/취소 연결 추가",
+        "카탈로그 없음/즉시판매, 예약생성 준비도 검사, 최대2분 지연 보장, 기기 알림수신 확정 설명 교정"
+      ],
+      "followUpFindings": [
+        {
+          "kind": "document_contract_correction",
+          "finding": "공개 시 상품 READY 확보, 9개 준비도, 예약 생성과 실행의 검사 구분 및 내구성 알림 큐 반영",
+          "disposition": "현재 계약으로 문서 교정; 제품을 새로 구현한 것으로 기록하지 않음"
+        },
+        {
+          "kind": "product_gap",
+          "finding": "HIDDEN 재공개는 허용하지만 화면 메타/커버 변경은 DRAFT 전용 PATCH에서 거절될 수 있음",
+          "disposition": "현재 제한에 기록; 제품 코드 수정 없음"
+        },
+        {
+          "kind": "product_risk",
+          "finding": "준비도 응답이 없으면 로컬 설명/가격만 표시; 예약 생성은 전체 준비도를 검사하지 않음",
+          "disposition": "실제 서버 실행 게이트와 구분하여 명시"
+        }
+      ],
+      "retainedHistoricalQuotes": [],
+      "observedSourceVersions": {
+        "community_app": "0552ff22b84b68aa83bed8a40c6f4c1cea4a40d9",
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
+      },
+      "checks": {
+        "sourceReferences": "117 tables match",
+        "groupDigestsAndAnchors": "33 source/canonical hashes and 4 retained HTML IDs match",
+        "scenarioAudit": "--write and --check pass",
+        "relativeLinksAndDerivedDigests": "2915 relative paths and 345 derived digests checked; global checker still fails only recorded my_profile source drift",
         "productTests": "not executed; selected existing assertions read only",
         "releaseScope": "known global date discrepancy remains; unchanged checker not rerun"
       }

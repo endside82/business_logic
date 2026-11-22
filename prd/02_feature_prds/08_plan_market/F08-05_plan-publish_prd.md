@@ -1,123 +1,123 @@
-# F08-05. 플랜 발행 PRD
+# F08-05. 플랜 공개와 예약 공개 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 1. 결론
+> 2026-11-22 서버와 앱 소스 대조. 공개 준비도, 입력 보관·선저장, 즉시 공개와 예약 실행의 실제 경계를 설명한다. 이번 기록은 제품 시험·기기 조작·예약 실행·알림 수신을 새로 확인한 결과가 아니다.
 
-DRAFT/HIDDEN 상태의 플랜을 PUBLISHED로 전환하여 마켓에 노출 가능하게 만든다. AUTH-01(게시 준비도 서버 검증)·AUTH-06(예약 발행)이 추가되어 발행 경로가 세 가지로 확장되었다.
+## 진입과 공개 범위
 
-**현재 발행 진입 경로:**
-1. 플랜 상세(F08-02) ▶ DRAFT/HIDDEN 상태에서 "발행하기" 버튼 ▶ `/plan/:planId/publish`
-2. `/plan/:planId/publish` 화면 내 "예약 발행" ▶ `SchedulePublishSheet` ▶ `POST /api/v1/authoring/schedules` (AUTH-06)
-3. ~~플랜 목록(F08-01) ▶ 카드 인라인 "판매 시작" 버튼 직접 publish 호출~~ (AUTH-01 이후 제거됨 — 발행 준비 화면 우회 경로 폐쇄)
+작성자는 [내 플랜 목록](F08-01_my-plan-list_prd.md)의 판매 시작, [플랜 상세](F08-02_plan-detail_prd.md)의 공개 입구, 초안 편집기의 공개 버튼을 통해 `/plan/:planId/publish`로 들어간다. 목록에서 준비 화면을 생략하고 직접 공개하지 않는다. 이 일반 입구들은 앱의 `MARKET` 공개 범위 설정에 영향을 받는다. 해당 화면의 직접 라우트는 작성자를 확인하며, 서버의 공개·준비도와 예약 Controller는 `P0`로 선언되어 있다. 따라서 입구 숨김을 서버의 플랜 공개 API 전체 차단과 동일하게 설명하지 않는다.
 
-**AUTH-01 핵심 변경점:**
-- `publishPlan`이 내부적으로 `PlanPublishReadinessService.evaluate(planId).isPublishable()`를 재검사하여 BLOCKER 있으면 `PLAN_NOT_READY_TO_PUBLISH(400/1500020)` 반환 — 체크리스트 우회 불가 (`PlanService.java:313`).
-- 신규 엔드포인트 `GET /api/v1/plans/{planId}/publish-readiness`로 사전 readiness 조회 가능 (`PlanController.java:102`).
-- 앱 발행 화면 체크리스트는 서버 readiness 결과를 렌더링하는 presentation layer로 재구성됨 (`plan_publish_screen.dart:374`). ~~클라이언트 전용 검증~~ 은 더 이상 최종 게이트가 아님.
+서버 공개는 작성자의 `DRAFT` 또는 `HIDDEN` 플랜만 허용한다. `PUBLISHED`를 다시 공개하는 호출은 성공 재생이 아니라 잘못된 상태 전환 오류다. 운영팀의 공개 제한도 준비도에서 막는다. 공개 후 본문 블록은 쓰기 가능한 초안 상태가 아니며, 판매 중지와 복제는 상세 문서의 별도 행동이다.
 
-**AUTH-06 핵심 변경점:**
-- 미래 KST 시각을 지정해 플랜을 예약 발행. 폴러가 readiness를 재검사 후 `publishPlan` 실행. 실패 시 `NotificationType.SCHEDULED_PUBLISH_FAILED`(코드 97) 알림 발송.
-- 상태 기계: `SCHEDULED → EXECUTING → EXECUTED / FAILED / CANCELLED`. stuck EXECUTING 복구 스캔(`recoverStuck`) 존재.
+편집기에서 공개 화면으로 이동할 때는 활성 입력 저장, 변경 큐 대기, 실패·보류·미저장 상태 검사, 트리 준비 확인을 거친다. 실패하면 이동을 멈추고 해당 원인을 안내한다. 발행 화면이 떠 있는 동안 뒤의 편집기에서 늦은 변경이 계속 발송되지 않도록 전환 잠금을 유지한다.
 
-**AUTH-06 Slice 3 (초안 미리보기 로그인 게이트):**
-- `GET /api/v1/plans/{planId}/preview` **서비스 레이어** 게이트: DRAFT/HIDDEN 익명 요청은 UNAUTHORIZED, PUBLISHED는 익명 허용(의도), DELETED는 PLAN_NOT_FOUND (`PlanService.java:169`). **단 preview 경로가 전역 보안 permitAll 미선언이라 익명 HTTP 요청은 보안 필터에서 먼저 차단됨 — 익명 분기는 실제 미도달(상세 caveat: F08-02 §8).** (cross-ref: F08-02)
+## 서버 공개 조건과 상품 등록
 
-## 2. 코드 위치
+`GET /api/v1/plans/{planId}/publish-readiness`는 작성자만 조회한다. 응답 `PlanPublishReadinessVo`에는 `targetType`, `targetId`, `publishable`, `checkedAt`, `items`가 있다. 항목의 `severity=null`은 통과, `BLOCKER`는 공개 불가, `WARNING`은 권장 사항이다. 현재 준비도는 **9개 항목**이다.
 
-계약의 정본은 코드다. 서버: `PlanController`, `ScheduledPublishController`, `PlanPublishReadinessService`, `PlanService`, `ScheduledPublishStatus`, `ScheduledPublishTargetType`, `ScheduledPublishActionType`, `PlanPublishReadinessVo`, `ScheduledPublishScheduler`, `PlanModParam`. 앱: `plan_publish_screen.dart`, `block_editor_screen.dart`, `schedule_publish_sheet.dart`.
+| 항목 | 기준 | 미충족 결과 |
+| --- | --- | --- |
+| 운영팀 공개 제한 | `publicationBlocked=false` | BLOCKER |
+| 제목 | 공백 제거 후 2~50자 | BLOCKER |
+| 설명 | 공백 제거 후 10~500자 | BLOCKER |
+| 본문 | 살아 있는 블록 1개 이상 | BLOCKER |
+| 커버 | 비어 있지 않은 이미지 값 | WARNING |
+| 가격 | null이 아니며 0 이상 | BLOCKER |
+| 필수 분류 | category가 비어 있지 않음; summary는 필수 아님 | BLOCKER |
+| 깊이 | 최대 깊이 3 이하 | BLOCKER |
+| 블록 수 | 200개 이하 | BLOCKER |
 
-## 3. 전체 동작 흐름
+`POST /api/v1/plans/{planId}/publish`는 플랜 행 잠금 아래 작성자·상태·현재 준비도를 다시 확인한다. 하나라도 BLOCKER이면 `PLAN_NOT_READY_TO_PUBLISH`로 거절한다. 사전 체크 통과는 실제 공개의 보장이 아니다. 성공하면 `PUBLISHED`로 바꾸고 `PlanCatalogService.ensureForPublishedPlan`을 함께 호출하여 `PlanVo`를 반환한다.
 
-1. 진입 시:
-   - `planDetailNotifierProvider(planId)` ▶ `GET /api/v1/plans/{planId}` (플랜 메타)
-   - `planPublishReadinessNotifierProvider(planId)` ▶ `GET /api/v1/plans/{planId}/publish-readiness` (AUTH-01) ▶ `PlanPublishReadinessVo` → 체크리스트 렌더링 (`plan_publish_screen.dart:78`)
-2. 커버 업로드 시: 파일 업로드 (`uploadImageFile`) → `planCreateNotifier.updatePlan(planId, PlanModParam(thumbnailUrl:fileKey))` → `PATCH /api/v1/plans/{id}` → `ref.invalidate(planPublishReadinessNotifierProvider(planId))`
-3. 발행 시 (즉시 발행):
-   - 가격/설명/무료 포인트 설정 변경이 있으면 `planCreateNotifier.updatePlan(planId, PlanModParam(price, description, allowFreePoints, freePointPrice))` → `PATCH`
-   - `planRepository.publishPlan(planId)` → `POST /api/v1/plans/{planId}/publish` → 서버가 readiness 재검사 후 발행 또는 `PLAN_NOT_READY_TO_PUBLISH(400)` 반환
-   - 실패 시: `ref.invalidate(planPublishReadinessNotifierProvider(planId))`; `PLAN_NOT_READY_TO_PUBLISH`이면 체크리스트 확인 안내, 그 밖의 오류면 일반 실패 안내
-   - 성공 시: `ref.invalidate(planDetailNotifierProvider)` + `ref.invalidate(myCreatedPlansNotifierProvider)` → `Navigator.pop`
-4. 예약 발행 시 (AUTH-06):
-   - 가격/설명/무료 포인트 설정 변경이 있으면 먼저 PATCH 저장 (위와 동일). `updatePlan`은 실패 시 예외를 던지므로 시트를 열지 않고 저장 실패 토스트를 표시한다.
-   - `SchedulePublishSheet.show(context, targetType:'PLAN', targetId: planId)` 표시 → 날짜/시간 선택
-   - `POST /api/v1/authoring/schedules` (`ScheduledPublishCreateParam(targetType:PLAN, targetId, actionType:PUBLISH, scheduledAt)`) → `ScheduledPublishActionVo` 반환
-   - 성공 시 `ref.invalidate(planDetailNotifierProvider(planId))`
+이때 연결된 플랜 상품이 없으면 소유자·제목·설명·가격·무료 포인트 조건·커버를 복사하여 **READY 상태의 상품**을 만든다. 기존 상품이 있으면 그대로 사용한다. 즉 공개를 단순 상태 변경만으로 설명하는 것도, 마켓에서 즉시 `ON_SALE`로 판매되는 것으로 설명하는 것도 맞지 않는다. `HIDDEN` 플랜의 재공개가 기존 중지 상품을 자동 재판매하거나 상품 메타를 새로 덮어쓰는 동작도 아니다. 실제 상품 판매와 구매는 해당 마켓 기능의 조건을 따로 충족해야 한다.
 
-## 4. 제품 규칙
+## 화면 체크리스트와 입력 보관
 
-- 발행은 DRAFT 와 HIDDEN 에서만 된다. PUBLISHED, DELETED 에서 부르면 PLAN_INVALID_STATUS_TRANSITION 이다. 발행 뒤 본문 블록은 읽기 전용이다.
-- 서버가 발행 때 준비도를 다시 검사해 막는 항목이 하나라도 있으면 PLAN_NOT_READY_TO_PUBLISH 로 거절한다. 앱은 체크리스트를 새로 읽는다.
+화면은 플랜 기본 정보·준비도·본문을 별도로 읽는다. 설명과 가격 항목은 저장 전 입력값으로 다시 계산하고, 나머지 항목은 서버 항목을 표시한다. 운영팀 제한은 별도로 즉시·예약 공개를 막는다. 커버는 권장 사항이므로 다른 조건이 맞으면 없어도 공개할 수 있다.
 
-| 준비도 항목 | 기준 | 막는가 |
-|---|---|---|
-| 운영팀 숨김 | 운영팀이 숨기지 않음 | 막음 |
-| 제목 | 2~50자 | 막음 |
-| 설명 | 10~500자 | 막음 |
-| 블록 | 1개 이상 | 막음 |
-| 커버 이미지 | 있음 | 경고만 |
-| 가격 | 0 이상 | 막음 |
-| 카테고리 | 비어 있지 않음 | 막음 |
-| 깊이 | 3 이하 | 막음 |
-| 블록 수 | 200 이하 | 막음 |
+**준비도 응답이 아직 없으면 설명·가격 두 항목만으로 임시 목록을 만든다.** 준비도 로딩·조회 실패가 모든 공개 요청을 항상 막는 구조는 아니다. 즉시 공개의 최종 판정은 서버에서 다시 이루어지며, 예약 생성과 예약 실행의 검증 범위도 아래처럼 다르다. 준비도 조회 결과가 없는데 전체 조건을 검증한 것으로 기록하지 않는다.
 
-- 제목, 블록, 깊이, 수, 카테고리 항목은 에디터로 가서 고치고, 설명, 가격, 커버는 발행 화면에서 고친다.
-- 가격은 정수 원이고 0 이면 무료 플랜이다. 무료 포인트 가격은 서버에서 값이 있을 때 1 이상이어야 하고, 비워 두면 기본 가격을 쓴다. 앱은 켜면 1 이상을 반드시 입력하게 해 서버보다 엄격하다. 수정 때 비운 값은 "기존값 유지"이므로 저장된 무료 포인트 가격을 지우는 방법은 없다.
-- 입력 저장과 발행은 따로 일어나, 저장 뒤 발행이 실패해도 고친 값은 남는다.
-- 에디터에서 발행 화면으로 가기 전 진행 중인 저장을 모두 끝내고 트리를 다시 읽는다. 하나라도 실패하면 이동을 멈추고 원인을 알린다. 저장 안 된 본문이 발행 판정에서 빠지지 않게 하기 위해서다.
-- 예약 발행은 작성자만 할 수 있고 준비도를 충족해야 시작할 수 있다. 시각은 지금부터 1분 뒤 이후여야 한다. 같은 대상에 SCHEDULED, EXECUTING 예약이 있으면 거절(409)한다. 취소는 SCHEDULED 일 때만 된다.
-- 예약 대상은 플랜 외에 마켓 아이템, 클럽 글, 클럽 공지도 있다. 실행 때 준비도를 다시 보고 실패하면 FAILED 와 알림으로 끝난다.
+가격·설명·무료 포인트 허용·무료 포인트 가격은 계정과 플랜별 기기 입력에 보관한다. 재진입 시 저장 당시 기준, 기기 입력, 현재 서버값을 필드별로 비교한다. 겹치지 않는 변경은 합치고 같은 필드가 서로 달라지면 내 입력 또는 저장된 내용을 고르게 한다. 해결 전에는 공개와 예약을 막는다. 복원 실패와 보관 실패는 재시도 안내를 제공하며, 보관 실패를 영구 저장 성공으로 표시하지 않는다. 커버 파일 자체는 이 입력 복원 대상이 아니다.
 
-## 6. 상태/권한/시나리오 매트릭스
+복원·폐기·업로드·즉시 공개·예약 준비 중에는 입력과 서로 경합하는 버튼을 잠근다. 즉시 공개는 확인창부터 응답까지 잠금을 유지한다. 미저장 입력과 진행 중 작업은 `UnsavedLeaveGuard`로 이탈을 제어한다. 세션 종료 후 도착한 응답으로 다음 계정의 공개·예약 단계를 계속하지 않는다.
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 첫 발행 Happy Path | DRAFT 플랜, 제목 28자, 블록 8개, 설명 10~500자 및 나머지 BLOCKER 조건 충족 | 플랜이 PUBLISHED, 마켓 노출 시작 |
-| S2 | HIDDEN에서 재발행 | 이전에 한 번 발행했다가 hide한 플랜 (status=HIDDEN, 모든 메타 충족) | 다시 PUBLISHED |
-| S3 | 잘못된 상태에서 발행 시도 | 어떤 이유로 화면이 PUBLISHED 상태인 플랜에서 발행 호출 | 변경 없음 |
-| S4 | 비작성자 발행 시도 | 다른 사용자가 직접 API 호출 (앱 UI는 노출되지 않음) | 차단 |
-| S5 | 가격/설명 PATCH 성공, publish 실패 (부분 성공) | 시나리오 본문 참조 | 가격/설명은 저장됨, 발행은 실패. 사용자가 다시 "발행하기" 탭하면 publish만 재시도됨 (PATCH는 변경 감지에서 skip) |
-| S6 | 커버 업로드 실패 | 시나리오 본문 참조 | 커버 미등록 상태 유지 |
-| S7 | 발행 후 마켓 노출 (다른 단위 의존) | 시나리오 본문 참조 | 마켓에서 발견 가능 |
-| S8 | readiness BLOCKER 있는 상태에서 발행 시도 (AUTH-01) | 설명 미입력(PLAN_DESCRIPTION_LENGTH BLOCKER) 상태에서 발행 버튼 탭 | UI allPassed==false → 토스트. 서버 호출 시 `PLAN_NOT_READY_TO_PUBLISH(400/1500020)`. 체크리스트 자동 갱신. |
-| S9 | 커버 없이 발행 (AUTH-01 이후 정책 변경) | 커버 이미지 없이 나머지 조건 충족 | `PLAN_HAS_COVER`가 WARNING이므로 발행 허용. 커버 없음을 경고 표시만. (기존 "커버 필수" 동작 변경됨) |
-| S10 | 예약 발행 — 성공 (AUTH-06) | DRAFT 플랜, 조건 모두 충족, 미래 시각 선택 | `POST /api/v1/authoring/schedules` → 201. 폴러가 도달 시 `publishPlan` 실행 → PUBLISHED |
-| S11 | 예약 발행 — 취소 (AUTH-06) | SCHEDULED 예약 존재 | `DELETE /api/v1/authoring/schedules/{id}` → CANCELLED 상태. EXECUTING 이후는 취소 불가(`SCHEDULED_PUBLISH_INVALID_STATUS`) |
-| S12 | 예약 실행 시 readiness 실패 (AUTH-06) | 예약 후 설명을 삭제해 readiness BLOCKER 발생 | 폴러가 readiness 재검사 → FAILED. `SCHEDULED_PUBLISH_FAILED(97)` 알림 발송 |
-| S13 | stuck EXECUTING 복구 (AUTH-06) | JVM 재시작으로 EXECUTING 고착 | `recoverStuck` 스캔 → 실제 플랜 상태가 PUBLISHED면 markExecuted, DRAFT/HIDDEN면 재큐잉(최대 N회), DELETED면 FAILED + 알림 |
-| S14 | 유료 플랜의 무료 포인트 가격 미입력/0 | `price > 0`, 무료 포인트 허용 스위치 ON | 앱이 발행·예약 전에 차단하고 “무료 포인트 가격은 1 이상이어야 합니다” 표시 |
+## 메타데이터 선저장과 즉시 공개
 
-## 8. Gap / Risk
+앱 가격 입력은 숫자만 받으며 빈 값은 0으로 계산한다. 유료 플랜에서 무료 포인트 구매를 켜면 앱은 무료 포인트 가격 1 이상을 요구한다. 서버는 이 경우 지정값이 1 미만이면 거절하지만 null은 기본 가격을 쓰는 분기로 남겨 둔다. PATCH에서 null은 기존값 유지이므로 null 전송으로 기존 무료 포인트 가격을 지우는 동작은 없다.
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 확정됨(소스 대조) | `PlanController.java:110` | 즉시 발행 후 사이드 이펙트(FCM/이메일/마켓 자동 등록) 없음 — `publishPlan`은 상태 전환만 수행. 구매자 알림 등은 별도 도메인에서 처리. | 현재 설계 의도적 — 추가 필요 시 신규 슬라이스 |
-| Risk(미해소) | `plan_publish_screen.dart:165` | SCR-PE-005 스펙은 "발행 후 마켓 아이템 상세로 이동"을 명시하지만 현재 코드는 `Navigator.pop`만 수행. | Decision Needed: 스펙 갱신 또는 라우팅 수정 |
-| Risk(AUTH-06) | `ScheduledPublishService.java:53` | 예약 시각 최소 리드타임이 1분이어서 폴링 주기(기본 60초) 내 실행이 보장되지 않음. 실제 발행은 최대 2분 지연 가능. | 허용 범위 여부 UX 결정 필요 |
-| 확인된 차이 | `PlanService.validateFreePointPriceCrossField`, `plan_publish_screen.dart:93` | 서버는 `freePointPrice=null` 기본가 폴백을 허용하지만 앱 발행 화면은 허용 스위치 ON 시 값을 필수화한다. | 앱의 엄격한 UX를 유지할지 정책 결정 |
+즉시 공개 흐름은 다음과 같다.
 
-## 9. 수용 기준
+1. 입력 잠금·복원 충돌·체크리스트와 무료 포인트 가격을 확인한다.
+2. 공개 후 본문을 고칠 수 없다는 확인창에서 동의를 받는다.
+3. 가격·설명·무료 포인트 설정이 달라졌으면 `PlanModParam`으로 PATCH한다. 성공한 입력을 기기 기준에도 반영한다.
+4. `publishPlan`을 호출한다. 성공 또는 서버 반영 가능성이 있는 실패는 상세와 플랜 카드 자료를 다시 읽도록 갱신한다.
+5. 성공이면 공개 안내 후 완료 상태로 화면을 떠난다. 마켓 상품 상세로 자동 이동하지 않는다. 실패이면 화면에 남고, 준비도 거절은 체크리스트를 다시 읽어 안내한다.
 
-- **AC-01. 첫 발행 Happy Path**: Given DRAFT 플랜, 제목 28자, 블록 8개, 설명 10~500자 및 나머지 BLOCKER 조건 충족 When 사용자가 발행을 확정하면 Then 플랜이 PUBLISHED, 마켓 노출 시작
-- **AC-02. HIDDEN에서 재발행**: Given 이전에 한 번 발행했다가 hide한 플랜 (status=HIDDEN, 모든 메타 충족) When 사용자가 해당 흐름을 실행하면 Then 다시 PUBLISHED
-- **AC-03. 잘못된 상태에서 발행 시도**: Given 어떤 이유로 화면이 PUBLISHED 상태인 플랜에서 발행 호출 When 사용자가 해당 흐름을 실행하면 Then 변경 없음
-- **AC-04. 비작성자 발행 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 차단
-- **AC-05. 가격/설명 PATCH 성공, publish 실패 (부분 성공)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 가격/설명은 저장됨, 발행은 실패. 사용자가 다시 "발행하기" 탭하면 publish만 재시도됨 (PATCH는 변경 감지에서 skip)
-- **AC-06. 커버 업로드 실패**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 커버 미등록 상태 유지
-- **AC-07. 발행 후 마켓 노출 (다른 단위 의존)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 마켓에서 발견 가능
-- **AC-08. readiness BLOCKER 있는 상태에서 발행 거부 (AUTH-01)**: Given 설명 미입력 상태 When "발행하기" 탭 Then UI가 먼저 토스트로 막고, 서버 호출 시 `PLAN_NOT_READY_TO_PUBLISH(400)`. 체크리스트 갱신.
-- **AC-09. 커버 없이도 발행 허용 (AUTH-01 정책 변경)**: Given 커버 이미지 없고 나머지 BLOCKER 없는 DRAFT 플랜 When "발행하기" 탭 Then 발행 성공 (`PLAN_HAS_COVER`는 WARNING)
-- **AC-10. 예약 발행 성공 (AUTH-06)**: Given DRAFT 플랜 + 조건 충족 When 미래 시각 선택 후 "확인" Then `SCHEDULED_PUBLISH_ACTION` 생성. 지정 시각 폴러 실행 후 플랜 PUBLISHED.
-- **AC-11. 예약 발행 취소 (AUTH-06)**: Given SCHEDULED 예약 When "취소" Then CANCELLED 상태 전환. EXECUTING 이후 취소 시 `SCHEDULED_PUBLISH_INVALID_STATUS(400)`.
-- **AC-12. 예약 실행 실패 시 알림 (AUTH-06)**: Given readiness BLOCKER 발생 When 폴러 실행 Then `SCHEDULED_PUBLISH_FAILED(97)` FCM 알림 수신 + 체크리스트 blockers 포함 메시지.
-- **AC-13. 무료 포인트 메타 선저장**: Given 가격·설명·무료 포인트 설정을 변경 When 즉시 발행 또는 예약 발행 Then 해당 `PlanModParam` PATCH가 성공한 뒤에만 publish/schedule 단계로 진행.
-- **AC-14. 무료 포인트 가격 앱 검증**: Given `price > 0`이고 무료 포인트 구매 허용 When 가격이 비었거나 1 미만 Then API 호출 전에 오류 토스트로 차단.
+입력 저장과 공개는 별도 요청이다. PATCH 성공 후 공개가 실패해도 메타데이터 변경은 남는다. 명확한 실패 이후 재시도와 응답 유실로 결과를 모르는 경우를 구분하며, 후자는 최신 플랜 상태를 확인해야 한다.
 
-## 10. 미결정 / 후속
+커버는 이미지 선택·업로드 후 반환된 파일 키를 `thumbnailUrl`에 PATCH한다. 업로드만 성공하고 플랜 PATCH가 실패할 수 있으며, 이때 플랜 커버 등록이 완료된 것으로 취급하지 않는다. 성공 후 상세와 준비도를 다시 읽는다.
 
-- **발행 후 라우팅**: SCR-PE-005 스펙의 "마켓 아이템 상세로 이동" vs 현재 코드의 `Navigator.pop`(단순 상세로 복귀) — 어떤 UX가 맞는지 결정 필요.
-- **예약 발행 리드타임 UX**: 최소 1분 리드타임 + 폴링 주기(60초) = 실제 발행 최대 2분 지연. 사용자에게 이를 고지할 방법(시트 내 안내 문구 등) 결정 필요.
-- **클럽 글/공지 예약 발행(AUTH-06 Slice 2b) — 구현됨**: `CLUB_POST`/`CLUB_ANNOUNCEMENT` targetType 예약 생성·폴러 실행(서버)에 더해, 앱 작성 화면이 `scheduledAt`을 전달해 `SCHEDULED` 상태로 생성하는 경로까지 구현됨(`schedule_publish_section.dart` → `post_create_screen.dart`/`announcement_create_screen.dart`). 상세는 F04-08·F04-10 참조.
-- **무료 포인트 폴백 정책 정렬**: 서버는 `freePointPrice=null`이면 기본가 FREE 결제를 허용하지만 앱 발행 화면은 가격 입력을 필수화한다. 어느 계약을 제품 표준으로 삼을지 결정한다.
-- **예약 목록 화면 — 구현됨**: `GET /api/v1/authoring/schedules` 서버 조회 + 앱 내 예약 목록 화면(`scheduled_publish_list_screen.dart`, 라우트 `/authoring/schedules`, `app_router.dart` 배선)으로 작성자가 자기 예약을 조회·취소할 수 있다.
+**HIDDEN 재공개와 편집은 다르다.** 서버는 HIDDEN의 공개를 허용하지만 메타데이터 PATCH는 DRAFT만 허용한다. 발행 화면에서 HIDDEN 플랜의 값을 바꾸거나 커버를 교체하면 선저장 단계에서 거절될 수 있다. 기존 조건을 충족한 HIDDEN 플랜을 값 변경 없이 다시 공개하는 경우와 구분한다.
+
+## 예약 생성과 내 예약 관리
+
+예약 공개도 변경된 메타데이터를 먼저 저장하며, 실패하면 시간 선택 시트를 열지 않는다. 성공 후 `SchedulePublishSheet`에서 서울 기준 날짜·시각을 고른다. 앱은 오늘부터 365일 범위의 날짜 선택과 현재보다 1분 뒤를 넘는 시각을 요구하며, 선택값을 서버의 KST `LocalDateTime` 형식으로 보낸다. 기기의 다른 시간대를 기준으로 임의 환산하지 않는다.
+
+| API | 현재 의미 |
+| --- | --- |
+| `POST /api/v1/authoring/schedules` | `{targetType: PLAN, targetId, actionType: PUBLISH, scheduledAt}`로 예약 생성. 성공은 201과 `ScheduledPublishActionVo`이며 아직 플랜 공개 성공은 아니다. |
+| `GET /api/v1/authoring/schedules` | 본인의 예약을 페이지로 조회. 서버는 `Page<ScheduledPublishActionVo>`, 앱은 `PageResponse`로 받는다. |
+| `DELETE /api/v1/authoring/schedules/{scheduleId}` | 본인 소유이며 SCHEDULED인 예약만 취소하고 변경된 예약을 반환한다. |
+
+서버 예약 생성은 필수 입력·PUBLISH 동작·최소 1분의 미래 시각·작성자·DRAFT/HIDDEN 상태를 확인한다. 같은 대상·동작의 SCHEDULED 또는 EXECUTING 예약은 중복 거절하며 DB 저장 충돌도 중복 오류로 바꾼다. **생성 단계는 공개 준비도 9개 항목을 평가하지 않는다.** 앱의 사전 목록과 실행 시의 최종 검증을 대신하는 승인으로 해석하지 않는다.
+
+화면의 내 예약 목록 보기는 전체 본인 예약 관리로 이동한다. 목록은 50개씩 추가 조회하고, 실패·빈 상태와 재시도를 제공한다. SCHEDULED 예약만 취소 버튼이 있으며 확인 후 취소하고 목록을 다시 읽는다. 서버가 이미 EXECUTING으로 가져간 경우 취소는 거절될 수 있다. 예약 시트 성공은 시트를 닫고 플랜 상세를 갱신하며, 플랜이 공개됐다는 완료 화면을 표시하지 않는다.
+
+## 예약 실행과 복구
+
+기본 폴러는 60초의 고정 지연으로 기한이 지난 SCHEDULED 예약을 최대 100개씩 조회한다. 기본값은 실행 시간의 상한 보장이 아니며 처리량·작업 시간·장애로 더 늦어질 수 있다. “최대 2분 안에 반드시 공개”라는 보장은 없다. MARKET_ITEM 봉인 검사와 PLAN 예약 실행은 별도 분기다.
+
+예약 상태는 SCHEDULED에서 EXECUTING을 거쳐 EXECUTED 또는 FAILED로 바뀐다. 작성자 자격 등에 따라 CANCELLED로 끝나는 분기도 있다. 실행기는 현재 준비도를 다시 확인하고, 통과해도 `PlanService.publishPlan`이 잠금 아래 조건을 다시 판단한다. 실행 권한과 재시도 차수를 확인하여 이미 취소되거나 소유한 실행 차수를 잃은 오래된 작업이 뒤늦게 완료·실패를 기록하지 않도록 한다.
+
+준비도 미달 또는 예외로 실패할 때는 실패 상태와 `SCHEDULED_PUBLISH_FAILED` 알림 발송 의도를 내구성 큐에 기록한다. 이 코드는 실제 단말의 FCM 수신 성공을 증명하지 않는다.
+
+5분 이상 갱신되지 않은 EXECUTING의 복구에서는 플랜이 이미 PUBLISHED면 실행 완료로 정리한다. DRAFT/HIDDEN이면 최대 3회 재큐잉하고 한도 후 실패 처리한다. 삭제·대상 소실도 실패와 알림 의도로 정리한다. 예약 시 저장한 플랜 내용의 스냅샷을 공개하는 방식이 아니라 실행 시점의 현재 플랜을 판정한다.
+
+## 현재 제한과 확인 범위
+
+| 구분 | 현재 판단 | 문서 처리 |
+| --- | --- | --- |
+| Gap | HIDDEN 공개는 허용하지만 이 화면의 메타데이터 변경은 DRAFT 전용 PATCH에 걸린다. | 값 변경 없는 재공개와 수정 후 공개를 구분한다. |
+| Risk | 준비도 미수신 상태의 앱 임시 목록은 전체 조건을 나타내지 않으며 예약 생성도 전체 준비도를 검사하지 않는다. | 즉시 공개·예약 실행 시 서버 판정을 별도로 명시한다. |
+| Risk | 메타데이터 저장, 이미지 업로드, 공개·예약 생성은 여러 요청이다. 응답 실패가 곧 서버 미반영을 뜻하지 않는다. | 선저장 잔존과 결과 불명 상태의 재조회를 설명한다. |
+| Risk | 예약은 정시 실행·단말 알림 수신을 보장하는 API가 아니다. | 기한·큐·복구와 실제 전달 검증을 구분한다. |
+| 미검증 | 실제 업로드·예약 생성·폴러 실행·운영 설정·알림 수신·기기 복원은 이번에 실행하지 않았다. | 소스와 기존 선택 단언 대조만 기록한다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 공개 진입:** 목록의 바로 공개 우회를 두지 않고 준비 화면으로 들어간다. 일반 입구의 공개 범위 설정, 작성자 라우트, 서버 권한을 구분한다.
+- **AC-02 편집기 전환:** 활성 입력 저장·큐 대기·실패/보류/미저장 검사·트리 준비 이후에 공개 화면으로 이동한다.
+- **AC-03 준비도:** 9개 항목의 BLOCKER와 커버 WARNING을 구분하며 즉시 공개에서 서버가 현재 조건을 다시 검사한다.
+- **AC-04 상품 상태:** 플랜 PUBLISHED와 상품 READY 생성을 구분한다. 기존 상품을 자동 재판매하거나 새 메타로 덮어쓴다고 설명하지 않는다.
+- **AC-05 입력 복원:** 계정·플랜별 입력을 현재 서버값과 합치고 충돌을 해결한 뒤 공개·예약한다. 보관 실패와 커버 업로드를 구분한다.
+- **AC-06 선저장과 실패:** 메타 PATCH 성공 후에만 공개·예약 단계로 넘어간다. 후속 실패가 이미 저장된 메타를 롤백하지 않는다.
+- **AC-07 상태별 수정:** DRAFT 전용 메타 PATCH와 DRAFT/HIDDEN 공개를 구분하고 운영팀 제한을 우회하지 않는다.
+- **AC-08 가격과 커버:** 유료 무료 포인트 조건의 앱 필수값과 서버 null 분기를 구분하며 커버 업로드와 플랜 반영의 성공을 따로 판정한다.
+- **AC-09 예약 생성:** KST 시각·최소 리드타임·본인 대상 상태·중복 예약을 검증한다. 예약 생성 응답을 공개 완료나 전체 준비도 통과로 표시하지 않는다.
+- **AC-10 예약 목록과 취소:** 본인 예약을 추가 조회하고 SCHEDULED에서만 취소한다. 실행 시작과 경합하면 최신 상태를 확인한다.
+- **AC-11 예약 실행과 알림:** 실행 시 현재 준비도를 재검사하고 실행 차수 소유권을 확인한다. 실패 알림 큐 기록과 단말 수신을 구분한다.
+- **AC-12 복구와 시간:** 고착 상태를 실제 플랜 상태로 복구하고 최대 재큐잉 횟수를 적용한다. 폴링 기본값을 실행 지연의 상한으로 쓰지 않는다.
+- **AC-13 성공 후 복귀:** 즉시 공개는 완료 안내와 함께 화면을 떠나고 예약 생성은 시트를 닫는다. 자동 마켓 상세 이동이나 상품 즉시 판매를 약속하지 않는다.
+
+서버 공개·준비도·카탈로그·예약 생성/취소·실행/복구와 앱의 입구·입력 복원·작업 잠금·선저장·결과·예약 목록을 소스로 대조했다. 기존 `plan_publish_readiness_test.dart`의 수정 설명 전송과 공개 호출 단언, `plan_publish_operation_lock_test.dart`의 확인창부터 응답까지 입력 잠금·예약 중 중복 저장 방지·실패 후 입력 유지 단언을 읽었다. 제품 시험은 이번에 새로 실행하지 않았다.
+
+## 코드 위치
+
+- 서버: `PlanController`, `PlanService`, `PlanPublishReadinessService`, `PlanPublishReadinessVo`, `PlanCatalogService`; `ScheduledPublishController`, `ScheduledPublishService`, `ScheduledPublishItemWorker`, `ScheduledPublishScheduler`, `ScheduledPublishStateWriter`, `ScheduledPublishAction`.
+- 앱: `plan_publish_screen.dart`, `plan_publish_draft.dart`, `plan_publish_readiness_provider.dart`, `plan_block_provider.dart`, `block_editor_screen.dart`, `editor_transition_coordinator.dart`; `schedule_publish_sheet.dart`, `scheduled_publish_list_screen.dart`, `authoring_api.dart`, `authoring_repository.dart`, `authoring_providers.dart`.
+
+<!-- source-references:start -->
+서버 창구: `PlanController#getPublishReadiness`, `PlanController#publishPlan`, `PlanController#updatePlan`, `ScheduledPublishController#schedule`, `ScheduledPublishController#list`, `ScheduledPublishController#cancel`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
