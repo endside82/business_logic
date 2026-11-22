@@ -2293,9 +2293,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "e3d4402f1581ff885a5b28713c4f6dc6ab4a6733266b1b55a67b0fdce49a479c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "settlement_domain_rollup_20261122"
+      ],
+      "reviewedSha256": "ff196b76f249cf8acda19f01d4aa50d31346c2cbcaedab2a39e885a1cac5a10b"
     },
     {
       "path": "docs/domains/08-plan-market.html",
@@ -5350,10 +5353,12 @@
       "kind": "domain_prd",
       "document": true,
       "baselineSha256": "b35ae236ab608ba0372b2d816544874302a36e564ec1af3b3caa6f8e1b211141",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "settlement_domain_rollup_20261122"
+      ],
+      "reviewedSha256": "908d8b4f69867c732244f61ad3c74d4474db6f05397fa86340c0fe9a24f4c9be"
     },
     {
       "path": "prd/01_domain_prds/08_플랜_마켓_prd.md",
@@ -11280,9 +11285,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "b21a34b0fd0b49e69d4bfb42725be1d10a2c87153d9405ad97bbd498fda1a4c5",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "settlement_domain_rollup_20261122"
+      ],
+      "reviewedSha256": "a7e5e68a76e34260a24edef5e28c59eb02a185ad34d501b92f65701dcae49874"
     },
     {
       "path": "units/07_meeting_settlement/F07-01_create-settlement/backend.md",
@@ -30489,6 +30497,92 @@
         "scripts/run-money-gap-journey-server.sh"
       ],
       "affectedEvidencePaths": []
+    },
+    "settlement_domain_rollup_20261122": {
+      "kind": "reviewed_feature_rollup",
+      "scope": "기능PRD10개 검토정본을 사용한 영역요약3개 최신화; 소스/제품시험 반복 없음",
+      "sources": [],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-01_create-settlement_prd.md",
+          "sha256": "56bcd265e61e23981c6adfd7d60c8bc66f55f7a33d925af375756985d693efbe",
+          "reviewScope": "기존 검토 정본의 결론·현재 제한과 관련 흐름 요약; 제품 재실행 없음"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-02_settlement-items_prd.md",
+          "sha256": "635ce40d274eb63667b627e8a737c107a654c412f8faba73dc0562ec4b6cb35b",
+          "reviewScope": "기존 검토 정본의 결론·현재 제한과 관련 흐름 요약; 제품 재실행 없음"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-03_activate-cancel_prd.md",
+          "sha256": "ad4a9f42105069708dfe08819f2f3598693c6e0f5769b0caee835401e5dc831f",
+          "reviewScope": "기존 검토 정본의 결론·현재 제한과 관련 흐름 요약; 제품 재실행 없음"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-04_status-summary-receipt_prd.md",
+          "sha256": "ca2acb16e8c5272021cace08cbe7f8dd7952f6a19d66e456ea535f7d00d7d972",
+          "reviewScope": "기존 검토 정본의 결론·현재 제한과 관련 흐름 요약; 제품 재실행 없음"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-05_pay-share_prd.md",
+          "sha256": "dadd08a219cc995978c53128297d73cee677b1cd15d77f038962395ba201c1e4",
+          "reviewScope": "기존 검토 정본의 결론·현재 제한과 관련 흐름 요약; 제품 재실행 없음"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md",
+          "sha256": "312e842ddc53946b9d652b590f023942871925c6ac8106ceac83539b03bf52f7",
+          "reviewScope": "기존 검토 정본의 결론·현재 제한과 관련 흐름 요약; 제품 재실행 없음"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-07_remind-extend_prd.md",
+          "sha256": "873c35bc59a419b02f7a0e9e67eb1a7987a80d28f54fbf1765b594dcf780d411",
+          "reviewScope": "기존 검토 정본의 결론·현재 제한과 관련 흐름 요약; 제품 재실행 없음"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-08_appeal-audit_prd.md",
+          "sha256": "71f8f69cc2b5a587fa969a28eefd6d4ef867788be493995bea71c116f50c1aa1",
+          "reviewScope": "기존 검토 정본의 결론·현재 제한과 관련 흐름 요약; 제품 재실행 없음"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-09_prepayment-refund_prd.md",
+          "sha256": "8319a11d5d9cc34d09df368f325d62b512f16a8baec507779036fb6508d180e2",
+          "reviewScope": "기존 검토 정본의 결론·현재 제한과 관련 흐름 요약; 제품 재실행 없음"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-10_account-history-reputation_prd.md",
+          "sha256": "6a9b2d51994bd545511ca13235bdc170069e4c9709e8d72cd8d9b4c77162e781",
+          "reviewScope": "기존 검토 정본의 결론·현재 제한과 관련 흐름 요약; 제품 재실행 없음"
+        }
+      ],
+      "reuses": [
+        "settlement_account_20261122",
+        "settlement_activate_cancel_20261122",
+        "settlement_appeal_20261122",
+        "settlement_confirm_20261122",
+        "settlement_create_20261122",
+        "settlement_items_20261122",
+        "settlement_pay_20261122",
+        "settlement_prepayment_20261122",
+        "settlement_remind_20261122",
+        "settlement_status_summary_20261122"
+      ],
+      "retainedHtmlIds": {
+        "docs/domains/07-settlement.html": [
+          "sidebar",
+          "wallet-reversal-completed",
+          "launch-strip",
+          "remittance-convenience-2026-10-12",
+          "personal-settlement",
+          "settlement-recovery"
+        ]
+      },
+      "checks": {
+        "reviewedArtifacts": "2816 relative links; 329 derived source digests; no errors",
+        "canonicalSources": "10 verified feature document hashes match",
+        "retainedHtmlIds": "6 retained and unique",
+        "scenarioAudit": "--check pass",
+        "scope": "documentation rollup only; no new product execution or full release checker pass"
+      }
     }
   },
   "currentSourceVersions": {

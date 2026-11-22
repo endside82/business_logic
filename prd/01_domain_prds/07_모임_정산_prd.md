@@ -1,375 +1,98 @@
 # 07. 모임 정산 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 현재 기능 설명과 확인 범위.** 2026-11-22 대조한 기능 PRD 열 개를 모은다. 문서 검토 완료와 제품 결함 해결·새 시험·실제 은행 거래·기기 검수 완료는 다르다. 현재 작업 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따른다.
 
+## 영역과 현재 공개 범위
 
-<!-- generated: domain-source-first-rollup; updated: 2026-07-29 (혼합결제 은행분 확인 source-of-truth 재실측); unit: business_logic/units/07_meeting_settlement -->
+모임 정산은 함께 쓴 비용과 공동 수입을 기록하고 실제 지급 방향에 따라 돈을 주고받는 기능이다. 항목별로 납부하거나 이미 낸 돈을 반영한 차액만 직접 송금한다. 참가비 결제, 플랫폼의 호스트 수익 지급, 별도 정산 선입금은 각각 계약과 공개 조건이 다르다.
 
-> 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/07_meeting_settlement/00_overview.md`와 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
+정산 본체는 준비 중·진행 중·완료·취소 네 상태를 사용한다. 플랫폼 수익 지급의 대기·승인·지급 중·지급 완료 상태를 같은 정산 상태로 바꾸어 적지 않는다. 포인트·혼합 납부·가상계좌는 서버 금전 기능과 공급자 허용 조건에 따라 달라지며 코드가 있다는 이유로 모두 운영 중이라고 소개하지 않는다.
 
-> **2026-06-05 DRAFT 미리보기 정식화(D-OPEN-2 해소).** 준비 중(DRAFT) 정산의 참가자 노출이 "설계되지 않은 노출"에서 **공식 미리보기 기능**으로 확정됐다 (결정 DEC-V1~V9, canonical: `community_api/docs/plan/DRAFT_SETTLEMENT_VISIBILITY_PLAN.md`). 핵심: ① **차등 노출(서버 강제)** — DRAFT && 비호스트는 총액·상태·내 분담금만(note 마스킹/summary 본인 행만/items 빈 목록/영수증 URL 거부), ② **DRAFT 이의제기 차단** — 유일하게 잠기지 않았던 문을 닫아 "확정 전 무행동" 완성, ③ **열람 자격 확장** — ATTENDING ∪ 해당 정산 share/transfer 당사자 ∪ 호스트(`validateSettlementReadAccess` 신설, 기존 술어 보존), ④ **호스트 평판 집계에서 DRAFT 제외**, ⑤ **지갑 모임정산 목록 DRAFT 포함+마스킹** — 같은 날 후속 슬라이스로 지갑 모임정산 목록 화면(SCR-PA-005)까지 완성, ⑥ **이벤트 상세 "모임 정산" 입구 신설**(호스트‖ATTENDING 항상 노출, 정산 없으면 빈 상태/생성 CTA — 발견 경로는 이 입구와 지갑 목록 둘). 알림은 현행대로 "정산 신청" 시점에만(준비 중 알림 신설 없음). 상세: [F07-04 §7-A](../02_feature_prds/07_meeting_settlement/F07-04_status-summary-receipt_prd.md), [F07-08 §7-A](../02_feature_prds/07_meeting_settlement/F07-08_appeal-audit_prd.md), [F07-10 §7-A](../02_feature_prds/07_meeting_settlement/F07-10_account-history-reputation_prd.md).
+F07-09 정산 선입금은 서버와 앱에서 출시 제한을 유지한다. 이벤트 참가비를 먼저 받는 [참가비 선입금](../02_feature_prds/03_event/F03-13_event-prepayment_prd.md)의 직접 송금 이용 근거를 닫힌 정산 선입금에 옮기지 않는다.
 
-> **2026-07-29 혼합결제 은행분 확인 재실측.** `pay-mixed`에서 은행분이 1원 이상이면 transfer는 즉시 완료되지 않고 `BANK_AWAITING_CONFIRM`에 머문다. `POST .../transfers/{transferId}/confirm-bank-portion`은 **수취자(`toUserId`) 또는 정산 생성자(`creatorUserId`)**만 호출할 수 있고, 송금자(`fromUserId`)는 정산 생성자이기도 해도 self-confirm 가드에 먼저 차단된다. Flutter도 `bankAwaitingConfirm && !sender && (recipient || settlement creator)`일 때만 `받았어요` CTA를 넘긴다. 이 확인은 요청 body·영수증·은행 조회가 없는 수기 신뢰 선언이므로 화면은 “시스템이 실제 입금을 검증하지 않는다”는 경고를 노출한다.
+## 기능별 정본과 읽는 순서
 
-> **2026-07-29 이체 화면·일괄 처리 추가 실측.** `bulkConfirmBankTransfers`는 같은 service bean의 `@Transactional` method를 self-invocation하므로 주석과 달리 건별 Spring transaction을 만들지 않는다. Flutter의 “미납자 알림”은 실제 API 호출 없이 성공 토스트만 표시하고, “대기 금액”은 `BANK_AWAITING_CONFIRM`을 제외한다. 일반 BANK 확인은 서버가 수취자/정산 생성자를 허용하지만 화면 CTA는 정산 생성자에게만 보이며, 완료된 정산에서도 하단 액션이 남을 수 있다. 상세와 조치는 [F07-06 Gap / Risk](../02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md)를 우선한다.
-
-> **2026-05-28 RM 도메인 신설 영향(cross-ref).** `Settlement` 엔티티 확장: `event_id` `long`→`Long` nullable + `regular_meeting_id` Long + `reserved_refund` BigDecimal 신규. DDL `uk_settlement_rm(regular_meeting_id)` UNIQUE + `CHECK ((event_id IS NULL) <> (regular_meeting_id IS NULL))`로 양립 불가. `failed_refund.event_id` nullable + `regular_meeting_id` 추가(결정 K). **flow-through 정산 모델**: RM은 `retainedPaid`만 호스트 수익(gross), `retainedFree`는 `freePointSubsidy`로 분리(플랫폼 보조, payout 비대상). close→**afterCommit**→`tryCreateSettlement(REQUIRES_NEW)` 다층 방어 + 1h failsafe 스케줄러. `SettlementService.completeSettlement` 재사용 + `reservedRefund.signum() > 0` 게이트 추가. 자세한 내용은 [17 정기모임 F17-10](../02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md).
-
-## 1. 결론
-
-호스트가 종료된 오프라인 모임의 회비/비용을 참가자들에게 분담시키고, 참가자가 포인트(지갑) 또는 계좌이체로 납부하여 정산을 완료하는 사용자 흐름.
-정산 상태 모델: **DRAFT(생성) → ACTIVE(활성/PAYING) → COMPLETED(PAID)** 또는 **CANCELLED**.
-Settlement 도메인의 정산 단계와 별개로, 정산은 항목/이체/선입금/이의제기/감사로그/리마인드 등 다층 흐름을 가진다.
-종료된 이벤트에 대해 호스트가 균등 분할 / 항목별 분할 / 비율 분할 등 정산 모드를 선택하고 메모를 작성해 정산을 **DRAFT 상태로 생성**한다.
-항목별 분할 모드일 때 항목명·금액·카테고리·참여자를 추가/수정/삭제하여 분담금을 산출한다. 호스트는 본인이 과거 입력한 최근 항목을 칩(chip)으로 빠르게 재사용할 수 있다.
-호스트가 DRAFT 정산을 **ACTIVE**로 활성화하면 모든 참가자에게 납부 알림이 발송되고, 분담금 결제가 가능해진다. 활성화된 정산은 호스트 권한으로 취소(CANCEL)할 수 있다.
-정산 본체·요약(총액/1인당/납부진척률)·참여자 상태 리스트·항목별 영수증 이미지를 조회한다. 열람 자격은 ATTENDING 참가자 ∪ 해당 정산 share/transfer 당사자 ∪ 호스트(2026-06-05 확장). DRAFT 단계는 참가자에게 미리보기 수위(총액·상태·내 분담금만)로 차등 노출된다.
-참가자가 본인에게 할당된 분담금을 **포인트(지갑) 또는 계좌이체**로 납부한다. 포인트는 즉시 차감 처리되고, 계좌이체는 수동 확인이 필요하다. 포인트+계좌이체 혼합 결제에서 은행분이 있으면 `BANK_AWAITING_CONFIRM`에 머물며, 수취자 또는 정산 생성자가 실제 입금 내역을 확인한 뒤에만 transfer가 `COMPLETED`가 된다.
-일반 계좌이체의 단건·일괄 확인과 회수 불가 분담금의 상각(write-off)을 지원한다. 혼합결제 은행분 확인은 송금자 self-confirm과 제3자 호출을 서버와 Flutter 양쪽에서 막는다. 유효 transfer(취소·대체 원본 제외)가 모두 `COMPLETED`이고 모든 share도 완료된 경우에만 정산 상태가 자동 **COMPLETED**로 전이한다.
-호스트가 미납 참가자에게 푸시 리마인드를 발송하거나, 정산 마감 기한을 연장한다. 리마인드 이력도 조회 가능 (E-02 푸시 리마인드 기능).
-참가자는 자신의 분담금 산정에 이의를 제기할 수 있고, 호스트는 이의를 검토해 수락/기각 처리한다. 정산 변경 내역은 감사 로그(audit log)로 페이지네이션 조회된다.
-이벤트 시작 전 참가확정의 조건으로 선입금을 받는다. 참가자는 포인트/계좌이체로 선입금하고, 호스트는 계좌이체 입금을 수동 확인 또는 환불 처리한다. 호스트는 이벤트 시점 기준 N일 전 환불률을 정의하는 환불 규칙을 설정한다.
-정산 수령용 계좌 등록·기본계좌 설정, 본인의 정산 참여 이력 및 월별 요약 조회, 다른 호스트의 정산 신뢰도(완료율·평균 완료시간·취소율·이의율) 조회를 위한 개인 영역 기능들.
-백엔드 Settlement 도메인의 `PENDING → APPROVED → PAYING → PAID/FAILED/REJECTED` 5단계와는 별개로,
-Meeting Settlement(모임 정산)은 사용자에게 노출되는 **DRAFT/ACTIVE/COMPLETED/CANCELLED** 4단계 모델을 따른다 (UI/UX 21번 문서 기준).
-
-이 도메인은 기능 PRD 10개로 구성된다. 현재 기능별 trace source는 총 39개이고, risk 후보는 총 24개다. 도메인 수준의 판단은 아래 기능별 PRD와 unit 근거를 따라가며 확정한다.
-
-## 2. 실사 근거 맵
-
-| ID | 기능 | PRD | Unit 근거 | 상태 | Trace | Risk 후보 |
-|---|---|---|---|---|---:|---:|
-| F07-01 | F07-01. 모임 정산 생성 (Create Settlement) | [F07-01_create-settlement_prd.md](../02_feature_prds/07_meeting_settlement/F07-01_create-settlement_prd.md) | [F07-01_create-settlement](../../units/07_meeting_settlement/F07-01_create-settlement) | 전환 완료 | 3 | 2 |
-| F07-02 | F07-02. 정산 항목 관리 (Settlement Items CRUD) | [F07-02_settlement-items_prd.md](../02_feature_prds/07_meeting_settlement/F07-02_settlement-items_prd.md) | [F07-02_settlement-items](../../units/07_meeting_settlement/F07-02_settlement-items) | 전환 완료 | 4 | 2 |
-| F07-03 | F07-03. 정산 활성화/취소 (Activate / Cancel) | [F07-03_activate-cancel_prd.md](../02_feature_prds/07_meeting_settlement/F07-03_activate-cancel_prd.md) | [F07-03_activate-cancel](../../units/07_meeting_settlement/F07-03_activate-cancel) | 전환 완료 | 2 | 1 |
-| F07-04 | F07-04. 정산 현황 / 요약 / 영수증 (Status & Summary & Receipt) | [F07-04_status-summary-receipt_prd.md](../02_feature_prds/07_meeting_settlement/F07-04_status-summary-receipt_prd.md) | [F07-04_status-summary-receipt](../../units/07_meeting_settlement/F07-04_status-summary-receipt) | 전환 완료 | 3 | 2 |
-| F07-05 | F07-05. 분담금 납부 (Pay Share / Transfer) | [F07-05_pay-share_prd.md](../02_feature_prds/07_meeting_settlement/F07-05_pay-share_prd.md) | [F07-05_pay-share](../../units/07_meeting_settlement/F07-05_pay-share) | 전환 완료 | 7 | 2 |
-| F07-06 | F07-06. 이체 확인 / 일괄 확인 / 상각 (Host Confirm Transfers) | [F07-06_host-confirm-transfers_prd.md](../02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md) | [F07-06_host-confirm-transfers](../../units/07_meeting_settlement/F07-06_host-confirm-transfers) | 전환 완료 | 6 | 2 |
-| F07-07 | F07-07. 미납자 리마인드 / 마감 연장 (Remind Unpaid & Extend Deadline) | [F07-07_remind-extend_prd.md](../02_feature_prds/07_meeting_settlement/F07-07_remind-extend_prd.md) | [F07-07_remind-extend](../../units/07_meeting_settlement/F07-07_remind-extend) | 전환 완료 | 3 | 3 |
-| F07-08 | F07-08. 정산 이의제기 / 처리 / 감사로그 (Appeal & Audit Log) | [F07-08_appeal-audit_prd.md](../02_feature_prds/07_meeting_settlement/F07-08_appeal-audit_prd.md) | [F07-08_appeal-audit](../../units/07_meeting_settlement/F07-08_appeal-audit) | 전환 완료 | 4 | 0 |
-| F07-09 | F07-09. 선입금 결제 / 확인 / 환불 / 환불규정 (Prepayment & Refund Rules) | [F07-09_prepayment-refund_prd.md](../02_feature_prds/07_meeting_settlement/F07-09_prepayment-refund_prd.md) | [F07-09_prepayment-refund](../../units/07_meeting_settlement/F07-09_prepayment-refund) | 전환 완료 | 7 | 7 |
-| F07-10 | F07-10. 정산 계좌 / 내 정산 이력 / 호스트 신뢰도 (Account, History, Reputation) | [F07-10_account-history-reputation_prd.md](../02_feature_prds/07_meeting_settlement/F07-10_account-history-reputation_prd.md) | [F07-10_account-history-reputation](../../units/07_meeting_settlement/F07-10_account-history-reputation) | 전환 완료 | 0 | 3 |
-
-## 3. 먼저 볼 기능
-
-| 먼저 볼 기능 | 기능 | 이유 |
+| 기능 | 현재 역할 | 정본 |
 |---|---|---|
-| [F07-09](../02_feature_prds/07_meeting_settlement/F07-09_prepayment-refund_prd.md) | F07-09. 선입금 결제 / 확인 / 환불 / 환불규정 (Prepayment & Refund Rules) | Risk 후보 7 |
-| [F07-10](../02_feature_prds/07_meeting_settlement/F07-10_account-history-reputation_prd.md) | F07-10. 정산 계좌 / 내 정산 이력 / 호스트 신뢰도 (Account, History, Reputation) | Risk 후보 3, trace 없음 |
-| [F07-07](../02_feature_prds/07_meeting_settlement/F07-07_remind-extend_prd.md) | F07-07. 미납자 리마인드 / 마감 연장 (Remind Unpaid & Extend Deadline) | Risk 후보 3 |
-| [F07-01](../02_feature_prds/07_meeting_settlement/F07-01_create-settlement_prd.md) | F07-01. 모임 정산 생성 (Create Settlement) | Risk 후보 2 |
-| [F07-04](../02_feature_prds/07_meeting_settlement/F07-04_status-summary-receipt_prd.md) | F07-04. 정산 현황 / 요약 / 영수증 (Status & Summary & Receipt) | Risk 후보 2 |
-| [F07-02](../02_feature_prds/07_meeting_settlement/F07-02_settlement-items_prd.md) | F07-02. 정산 항목 관리 (Settlement Items CRUD) | Risk 후보 2 |
-| [F07-06](../02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md) | F07-06. 이체 확인 / 일괄 확인 / 상각 (Host Confirm Transfers) | Risk 후보 2 |
-| [F07-05](../02_feature_prds/07_meeting_settlement/F07-05_pay-share_prd.md) | F07-05. 분담금 납부 (Pay Share / Transfer) | Risk 후보 2 |
-| [F07-03](../02_feature_prds/07_meeting_settlement/F07-03_activate-cancel_prd.md) | F07-03. 정산 활성화/취소 (Activate / Cancel) | Risk 후보 1 |
-
-## 4. 도메인 기능 목록
-
-### 관점별 기능 분리
-
-이 단위는 두 사용자 관점을 명확히 분리한다.
-
-- **호스트(Host) 관점**: 정산 생성·항목 관리·활성화·독촉·확인·취소·환불 규정 운영
-- **참가자(Participant) 관점**: 분담금 확인·납부·이의제기·이력 조회
-
-정산 상태(DRAFT/ACTIVE/COMPLETED/CANCELLED)에 따라 노출/허용 액션이 달라지는 부분은 각 기능 설명에 명시한다.
-
----
-
-### 핵심 기능 목록 (M=10)
-
-### F07-01. 모임 정산 생성 (Create Settlement) — 호스트
-> 종료된 이벤트에 대해 호스트가 균등 분할 / 항목별 분할 / 비율 분할 등 정산 모드를 선택하고 메모를 작성해 정산을 **DRAFT 상태로 생성**한다.
-
-- **관점**: 호스트
-- **상태**: 신규 → **DRAFT (PENDING)**
-- **UI/UX**: SCR-MS-001 (모임 정산 생성), Quick-add (settlement_quick_add_screen)
-- **API**:
-  - `POST /api/v1/events/{eventId}/settlement` — `MeetingSettlementAddParam(note, settlementMode)`로 정산 본체 생성
-  - `POST /api/v1/events/{eventId}/settlement/clone` — `MeetingSettlementCloneParam(sourceSettlementId, copyNote)` 기존 정산 복제
-  - `GET /api/v1/events/{eventId}/settlement/participant-suggestions` — 이벤트 참석자 기반 참여자 추천
-- **Frontend**: `screens/settlement_create_screen.dart`, `screens/settlement_quick_add_screen.dart`, `widgets/settlement_mode_selector_widget.dart`, `widgets/equal_split_form_widget.dart`, `widgets/custom_split_form_widget.dart`, `widgets/ratio_split_form_widget.dart`, `widgets/split_type_selector_widget.dart`, `widgets/clone_settlement_sheet.dart`, `widgets/participant_selector_widget.dart`
-
----
-
-### F07-02. 정산 항목 관리 (Settlement Items CRUD) — 호스트
-> 항목별 분할 모드일 때 항목명·금액·카테고리·참여자를 추가/수정/삭제하여 분담금을 산출한다. 호스트는 본인이 과거 입력한 최근 항목을 칩(chip)으로 빠르게 재사용할 수 있다.
-
-- **관점**: 호스트
-- **상태**: DRAFT 상태에서만 자유 편집 (활성화 후엔 감사로그가 변경 추적)
-- **UI/UX**: SCR-MS-003 (정산 항목 관리)
-- **API**:
-  - `POST /api/v1/events/{eventId}/settlement/items` — `MeetingSettlementItemParam` 항목 추가
-  - `PUT /api/v1/events/{eventId}/settlement/items/{itemId}` — 항목 수정
-  - `DELETE /api/v1/events/{eventId}/settlement/items/{itemId}` — 항목 삭제
-  - `GET /api/v1/users/me/settlement-items/recent?limit=&category=` — 호스트 본인 최근 항목 자동완성 (E-01 옵션 D)
-- **Frontend**: `screens/settlement_items_screen.dart`, `widgets/settlement_item_card_widget.dart`, `widgets/settlement_item_form_dialog.dart`, `widgets/item_type_selector_widget.dart`
-
----
-
-### F07-03. 정산 활성화/취소 (Activate / Cancel) — 호스트
-> 호스트가 DRAFT 정산을 **ACTIVE**로 활성화하면 모든 참가자에게 납부 알림이 발송되고, 분담금 결제가 가능해진다. 활성화된 정산은 호스트 권한으로 취소(CANCEL)할 수 있다.
-
-- **관점**: 호스트
-- **상태 전이**: DRAFT → **ACTIVE** / ACTIVE → **CANCELLED** (이미 납부된 금액은 환불 처리)
-- **UI/UX**: SCR-MS-002 (정산 현황) 액션 영역
-- **API**:
-  - `PATCH /api/v1/events/{eventId}/settlement/activate` — `MeetingSettlementActivateParam` (옵션, `required=false`)
-  - `PATCH /api/v1/events/{eventId}/settlement/cancel` — 정산 취소
-  - 권한: `validateSettlementCreatorOrHost` (정산 생성자 또는 이벤트 호스트)
-- **Frontend**: `screens/settlement_status_screen.dart`, `widgets/settlement_action_bar_widget.dart`, `widgets/settlement_summary_card_widget.dart`
-
----
-
-### F07-04. 정산 현황 / 요약 / 영수증 조회 (Status & Summary & Receipt) — 호스트 + 참가자
-> 정산 본체·요약(총액/1인당/납부진척률)·참여자 상태 리스트·항목별 영수증 이미지를 조회한다. 열람 자격은 `validateSettlementReadAccess`(ATTENDING ∪ 해당 정산 share/transfer 당사자 ∪ 호스트, 2026-06-05).
-
-- **관점**: 호스트 + 참가자 (공통 조회)
-- **상태**: 모든 상태 (DRAFT/ACTIVE/COMPLETED/CANCELLED) — 단 DRAFT && 비호스트는 차등 노출(note 마스킹·summary 본인 행만·items 빈 목록·영수증 URL 거부, DEC-V6)
-- **UI/UX**: SCR-MS-002 (정산 현황) — DRAFT 참가자는 "정산자가 작성 중이에요" 미리보기 배너, 정산 부재 시 빈 상태/생성 CTA. 이벤트 상세 "모임 정산" 입구로 진입(2026-06-05 신설)
-- **API**:
-  - `GET /api/v1/events/{eventId}/settlement` — 정산 본체 조회 (`validateSettlementReadAccess`)
-  - `GET /api/v1/events/{eventId}/settlement/summary` — 정산 요약 (총액·납부 현황)
-  - `GET /api/v1/events/{eventId}/settlement/receipts/{fileId}/download-url` — 영수증 presigned URL
-- **Frontend**: `screens/settlement_status_screen.dart`, `screens/settlement_receipt_viewer_screen.dart`, `widgets/settlement_summary_card_widget.dart`, `widgets/participant_status_list_widget.dart`, `widgets/participant_share_card_widget.dart`, `widgets/settlement_receipt_gallery_widget.dart`
-
----
-
-### F07-05. 분담금 납부 (Pay Share / Transfer) — 참가자
-> 참가자가 본인에게 할당된 분담금을 **포인트(지갑) 또는 계좌이체**로 납부한다. 포인트는 즉시 완료되고, 은행분이 포함된 혼합 결제는 `BANK_AWAITING_CONFIRM`에서 수취자/정산 생성자의 수기 입금 확인을 기다린다. 자기환불·재발행도 지원한다.
-
-- **관점**: 참가자
-- **상태**: ACTIVE 정산에서만 동작
-- **UI/UX**: SCR-MS-005 (이체 내역) 참가자 뷰
-- **API** (Share 단위):
-  - `POST /api/v1/events/{eventId}/settlement/shares/{shareId}/pay` — 포인트로 분담금 결제
-  - `PATCH /api/v1/events/{eventId}/settlement/shares/{shareId}/confirm` — 계좌이체 후 확인 요청
-  - `GET /api/v1/events/{eventId}/settlement/my-shares` — 내 분담금 리스트
-- **API** (Transfer 단위):
-  - `GET /api/v1/events/{eventId}/settlement/transfers/me` — 내 이체 리스트
-  - `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/pay` — 포인트 결제
-  - `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/pay-mixed` — 포인트+계좌이체 혼합 (`MeetingSettlementMixedPayParam(pointAmount, bankTransferAmount)`); 은행분 `> 0`이면 `BANK_AWAITING_CONFIRM`, `== 0`이면 즉시 `COMPLETED`
-  - `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/self-refund` — 본인 결제 자체 환불
-  - `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/reissue` — 이체 재발행
-- **Frontend**: `screens/my_settlement_shares_screen.dart`, `screens/transfer_list_screen.dart`, `widgets/my_share_row_card.dart`, `widgets/transfer_card_widget.dart`, `widgets/transfer_status_badge_widget.dart`, `utils/remit_url_builder.dart`
-
----
-
-### F07-06. 이체 확인 / 일괄 확인 / 상각 (Host Confirm Transfers) — 호스트 + 혼합 이체 수취자
-> 일반 계좌이체는 정산 생성자가 수동 확인하고, 혼합결제의 은행분은 수취자 또는 정산 생성자가 확인한다. 다건 일괄 확인과 회수 불가 분담금의 상각(write-off)을 지원하며, 모든 유효 transfer와 모든 share가 완료돼야 정산이 자동 **COMPLETED**로 전이한다.
-
-- **관점**: 정산 생성자(일반/혼합 확인·일괄 처리) + 혼합 이체 수취자(`BANK_AWAITING_CONFIRM` 단건 확인)
-- **상태 전이**: ACTIVE → (모든 transfer 확인 시) **COMPLETED**
-- **UI/UX**: SCR-MS-005 (이체 내역) 호스트 뷰
-- **API**:
-  - `GET /api/v1/events/{eventId}/settlement/transfers` — 전체 이체 리스트 (호스트/참가자 공통)
-  - `PATCH /api/v1/events/{eventId}/settlement/shares/{shareId}/confirm` — 분담금 단위 계좌이체 확인 (호스트가 클릭)
-  - `PATCH /api/v1/events/{eventId}/settlement/transfers/{transferId}/confirm` — 이체 단위 확인
-  - `PATCH /api/v1/events/{eventId}/settlement/transfers/bulk-confirm` — `MeetingSettlementBulkConfirmParam(transferIds[])` 일괄 확인 (호스트 권한)
-  - `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/confirm-bank-portion` — body 없음, 혼합결제 은행분 확인. `BANK_AWAITING_CONFIRM` + ACTIVE + PENDING appeal 없음 + (`toUserId` 또는 `creatorUserId`) 조건이며 `fromUserId`는 항상 차단
-  - `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/writeoff` — `MeetingSettlementTransferWriteoffParam(reason)` 회수 불가 상각
-- **Frontend**: `screens/transfer_list_screen.dart`, `widgets/transfer_card_widget.dart`, `widgets/settlement_action_bar_widget.dart`
-
----
-
-### F07-07. 미납자 리마인드 / 마감 연장 (Remind Unpaid & Extend Deadline) — 호스트
-> 호스트가 미납 참가자에게 푸시 리마인드를 발송하거나, 정산 마감 기한을 연장한다. 리마인드 이력도 조회 가능 (E-02 푸시 리마인드 기능).
-
-- **관점**: 호스트
-- **상태**: ACTIVE 상태에서 사용
-- **UI/UX**: SCR-MS-002 "독촉" 버튼
-- **API**:
-  - `POST /api/v1/events/{eventId}/settlement/remind` — `MeetingSettlementRemindParam` (옵션, `required=false`) 미납자 리마인드 발송
-  - `PATCH /api/v1/events/{eventId}/settlement/extend-deadline` — `MeetingSettlementExtendDeadlineParam` 마감 연장
-  - `GET /api/v1/events/{eventId}/settlement/remind-history` — `List<MeetingSettlementRemindLogVo>` 리마인드 이력
-- **Frontend**: `screens/settlement_status_screen.dart`, `widgets/settlement_action_bar_widget.dart`
-
----
-
-### F07-08. 정산 이의제기 / 처리 / 감사로그 (Appeal & Audit Log) — 참가자 + 호스트
-> 참가자는 자신의 분담금 산정에 이의를 제기할 수 있고, 호스트는 이의를 검토해 수락/기각 처리한다. 정산 변경 내역은 감사 로그(audit log)로 페이지네이션 조회된다.
-
-- **관점**: 참가자(생성), 호스트(처리), 양쪽(조회)
-- **상태**: ACTIVE/COMPLETED에서만 생성 가능 — **DRAFT는 서버가 거부**(2026-06-05, DEC-V4. 그 전까지는 유일하게 잠기지 않은 문이었다)
-- **UI/UX**: SCR-MS-002 보조 (이의제기 버튼) — `settlement_appeals_screen`, `settlement_audit_log_screen`
-- **API**:
-  - `POST /api/v1/events/{eventId}/settlement/appeals` — `MeetingSettlementAppealCreateParam` 이의 생성 (참가자/호스트)
-  - `GET /api/v1/events/{eventId}/settlement/appeals` — 이의 리스트
-  - `PATCH /api/v1/events/{eventId}/settlement/appeals/{appealId}/resolve` — `MeetingSettlementAppealResolveParam` 이의 처리 (호스트)
-  - `GET /api/v1/events/{eventId}/settlement/audit-log?page=&size=` — `Page<MeetingSettlementAuditLogVo>` 감사 로그
-- **Frontend**: `screens/settlement_appeals_screen.dart`, `screens/settlement_audit_log_screen.dart`
-
----
-
-### F07-09. 선입금 결제 / 확인 / 환불 / 환불규정 (Prepayment & Refund Rules) — 호스트 + 참가자
-> 이벤트 시작 전 참가확정의 조건으로 선입금을 받는다. 참가자는 포인트/계좌이체로 선입금하고, 호스트는 계좌이체 입금을 수동 확인 또는 환불 처리한다. 호스트는 이벤트 시점 기준 N일 전 환불률을 정의하는 환불 규칙을 설정한다.
-
-- **관점**: 호스트(규정 설정/확인/환불), 참가자(결제/조회)
-- **상태**: 정산 본체와 독립된 prepayment 흐름 (이벤트 사전 단계)
-- **UI/UX**: SCR-MS-004 (선입금 관리), SCR-MS-006 (환불 규정)
-- **API** (선입금):
-  - `GET /api/v1/events/{eventId}/prepayments` — 선입금 리스트 (이벤트 참가자/호스트)
-  - `POST /api/v1/events/{eventId}/prepayments/pay` — `MeetingPrepaymentPayParam` 선입금 결제 (참가자)
-  - `PATCH /api/v1/events/{eventId}/prepayments/{id}/confirm` — 호스트 수동 확인 (계좌이체)
-  - `POST /api/v1/events/{eventId}/prepayments/{id}/refund` — 환불 처리
-- **API** (환불 규칙):
-  - `GET /api/v1/events/{eventId}/prepayments/refund-rules` — 환불 규칙 조회
-  - `POST /api/v1/events/{eventId}/prepayments/refund-rules` — `List<MeetingRefundRuleParam>` 환불 규칙 저장 (호스트 권한)
-- **외부 시스템 (참고)**: 가상계좌 입금은 PG 측 webhook을 통해 인입되어 prepayment 상태를 자동 업데이트 (사용자 직접 호출 아님)
-- **Frontend**: `screens/prepayment_screen.dart`, `screens/refund_rules_screen.dart`, `widgets/prepayment_card_widget.dart`, `widgets/prepayment_pay_dialog.dart`, `widgets/refund_rule_card_widget.dart`, `widgets/refund_timeline_widget.dart`, `widgets/refund_confirm_dialog.dart`
-
----
-
-### F07-10. 정산 계좌 / 내 정산 이력 / 호스트 신뢰도 (Account, History, Reputation) — 횡단(개인 영역)
-> 정산 수령용 계좌 등록·기본계좌 설정, 본인의 정산 참여 이력 및 월별 요약 조회, 다른 호스트의 정산 신뢰도(완료율·평균 완료시간·취소율·이의율) 조회를 위한 개인 영역 기능들.
-
-- **관점**: 호스트(계좌 등록/이력) + 참가자(이력) + 모두(타 호스트 신뢰도)
-- **상태**: 정산 상태와 무관 (개인/메타데이터)
-- **UI/UX**: 프로필/세팅 영역에서 진입 (SCR-MS 본 화면 외 보조 화면)
-- **API** (정산 계좌):
-  - `GET /api/v1/users/me/bank-accounts` — 내 정산 계좌 리스트
-  - `POST /api/v1/users/me/bank-accounts` — `SettlementBankAccountParam` 계좌 등록
-  - `PUT /api/v1/users/me/bank-accounts/{id}` — 계좌 수정
-  - `DELETE /api/v1/users/me/bank-accounts/{id}` — 계좌 삭제
-  - `PATCH /api/v1/users/me/bank-accounts/{id}/default` — 기본 계좌 설정
-- **API** (내 정산 이력):
-  - `GET /api/v1/users/me/meeting-settlements` — 내 정산 참여 이력 (transfer 기반 집계 — DRAFT 미유입)
-  - `GET /api/v1/users/me/meeting-settlements/monthly-summary?months=` — 월별 요약 (최대 24개월)
-  - `GET /api/v1/wallet/meeting-settlements` — 내가 참여한 모임 정산 목록. 2026-06-05부터 "DRAFT && 본인 share" 포함 + 비생성자 DRAFT 행 마스킹(DEC-V9) + 행 `eventTitle` enrich. 소비처: 지갑 모임정산 목록 화면(SCR-PA-005, 같은 날 후속 완료 — [F07-10 §7-A](../02_feature_prds/07_meeting_settlement/F07-10_account-history-reputation_prd.md))
-- **API** (호스트 신뢰도):
-  - `GET /api/v1/users/{userId}/meeting-settlement-reputation` — `HostSettlementReputationVo` (완료율·평균 완료시간·취소율·이의율). "진행 중 건수"는 ACTIVE만 집계 — DRAFT 제외(2026-06-05, DEC-V5)
-- **Frontend**: `screens/bank_account_screen.dart`, `screens/my_settlement_history_screen.dart`, `widgets/bank_account_card_widget.dart`, `widgets/bank_account_form_dialog.dart`, `widgets/host_reputation_badge.dart`
-
----
-
-## 4-A. TransferStatus 전체값 및 limbo SLA 운영 정책 (2026-06-05 추가)
-
-### TransferStatus 전체값 (Fact)
-
-> 소스: `payment/meeting/constants/TransferStatus.java` (2026-06-04). 상세 계약은 [F07-06](../02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md) §4 참조.
-
-| 값 | 의미 |
-|---|---|
-| `PENDING` | 결제/이체 대기 |
-| `BANK_AWAITING_CONFIRM` | 혼합결제 은행 확인 대기 (limbo 대상) |
-| `COMPLETED` | 완료 |
-| `CANCELLED` | 취소됨 |
-| `EXPIRED` | 만료 |
-| `SUPERSEDED` | 재발급으로 대체된 원본 — 정산 완료 판정 제외 |
-| `REVERSAL_FAILED` | 역분개 실패 |
-| `PENDING_MANUAL_REFUND` | 역분개 실패 후 수동 환불 대기 (limbo 대상) |
-
-> **DDL 정정 (해소)**: `status` 컬럼 varchar(20) → varchar(32). `BANK_AWAITING_CONFIRM`/`PENDING_MANUAL_REFUND` 모두 21자라 구 스키마에서 strict mode 영속 실패 잠재 버그 → 정정 완료.
-
-### limbo SLA 운영 정책 요약
-
-`BANK_AWAITING_CONFIRM` / `PENDING_MANUAL_REFUND` 상태가 **3일(기본값, `meeting-settlement.limbo-escalation-days`)** 이상 지속되면:
-
-1. 관련 행위자(수취자/호스트)에게 자동 재알림 발화 (`MeetingSettlementExpirationScheduler`, 05:10 cron)
-2. 2회 이상 미해소 시 `OperatorAlertType.SETTLEMENT_TRANSFER_LIMBO HIGH` 운영알림 자동 승급
-3. 자동 만료(EXPIRED 전이) **없음** — 실제 돈이 움직였을 수 있어 자동 상태 전이 위험
-
-상세: [F07-06 §4 limbo SLA 정책](../02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md), [F07-06 §4 limbo 재알림](../02_feature_prds/07_meeting_settlement/F07-07_remind-extend_prd.md).
-
-## 4-B. 접근권한 감사 교정 (2026-07-02)
-
-> 감사 원본: `docs/audit/access-control-2026-06-30/categories/F07_F06_money.md`
-
-- **정산 이의 목록 — 생성자/호스트 전용(F07C4-01, S2 수정 완료)**: `GET /api/v1/events/{eventId}/settlement/appeals` 이의 목록 조회 권한이 **정산 생성자 또는 이벤트 호스트**로 제한됨. 이전에는 `validateSettlementReadAccess`(참가자 누구나)로 열려 있어 다른 참가자의 이의 사유·이름·호스트 답변이 전원에게 노출됐음. 이제 `validateSettlementCreatorOrHost` 게이트로 교정.
-- **이체 매트릭스(who-owes-whom) — 참가자 전체 투명성 유지(D-F07-1 확정)**: ACTIVE/COMPLETED 정산의 전체 납부 매트릭스가 참가자 전원에게 노출되는 것은 **n빵 투명성 의도 설계**임(2026-07-01 확정). 결함 아님, 수정 불요.
-- **정산 관리 게이팅 — 실측 경계(F07C1-01/02)**: 서버 `validateSettlementCreatorOrHost`는 정산 생성자 또는 이벤트 호스트를 허용하지만, 현재 이체 화면의 `isHost`는 `settlementDetail.creatorUserId == currentUserId`만 본다. 따라서 이벤트 호스트가 정산 생성자와 다른 경우 서버 권한보다 Flutter 관리 CTA가 좁다.
-- **TransferStatus 클라이언트 교정(F07C3-01/02)**: `BANK_AWAITING_CONFIRM`·`SUPERSEDED` 두 값이 클라이언트 enum에 누락되어 `PENDING` 폴백 및 오배지·오버튼이 발생했음. 두 값 추가 및 4개 switch 처리 교정 완료. 서버 정의(§4-A)는 원래 정확했음.
-
-## 4-C. 혼합결제 은행분 확인 계약 (2026-07-29 소스 재실측)
-
-| 구분 | 현재 구현 |
-|---|---|
-| 진입 상태 | `TransferStatus.BANK_AWAITING_CONFIRM`만 허용. 다른 상태는 `MEETING_SETTLEMENT_TRANSFER_NOT_AWAITING_CONFIRM`(400) |
-| 호출 계약 | `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/confirm-bank-portion`, 요청 body 없음, 성공 `200 Void` |
-| 확인 권한 | 수취자(`toUserId`) 또는 정산 생성자(`creatorUserId`). 단 송금자(`fromUserId`) 검사를 먼저 하므로 송금자이면서 생성자인 경우도 `MEETING_SETTLEMENT_TRANSFER_SELF_CONFIRM`(403) |
-| 기타 차단 | 무관한 사용자는 `MEETING_TRANSFER_NOT_AUTHORIZED`(403), 비ACTIVE 정산은 `MEETING_SETTLEMENT_NOT_ACTIVE`(400), PENDING appeal은 `MEETING_SETTLEMENT_SUBJECT_UNDER_APPEAL`(409) |
-| 성공 효과 | transfer `COMPLETED`, `completedAt=now`, `TRANSFER_BANK_PORTION_CONFIRMED` 감사로그, 송금자 알림, 정산 완료 재평가 |
-| 정산 완료 | `CANCELLED`/`SUPERSEDED`를 제외한 transfer가 모두 `COMPLETED`이고 모든 item share가 완료됐을 때 ACTIVE settlement만 `COMPLETED`로 전이 |
-| Flutter CTA | `TransferListScreen`: `status == bankAwaitingConfirm && !isSender && (isRecipient || settlementDetail.creatorUserId == currentUserId)`. 이때만 `TransferCardWidget`에 callback을 전달하고 카드가 `받았어요` 버튼 노출 |
-| 신뢰 경계 | 서버 endpoint에는 영수증·입금증·은행 검증 body가 없다. Flutter 안내 카드/확인 다이얼로그가 실제 입금을 시스템이 검증하지 않는다고 경고하며, 사용자가 입금 내역을 직접 확인해야 한다 |
-
-> **표시 금액 한계.** `MeetingSettlementTransferVo`에는 `amount`(transfer 총액)만 있고 혼합 결제의 `pointAmount`/`bankTransferAmount`는 없다. 현재 `받았어요` 확인 다이얼로그는 이 총액을 “계좌이체 부분” 확인 금액으로 표시한다. 은행분만의 정확한 금액 표시는 현 DTO로 불가능하므로 총액을 은행분으로 오인하지 않도록 후속 계약 보강이 필요하다.
-
-## 4-D. 일괄 처리·이체 화면 구현 경계 (2026-07-29 소스 재실측)
-
-- **건별 transaction 불성립 Risk**: bulk method는 비트랜잭션이고 같은 bean의 `confirmTransferBankTransfer`를 직접 호출한다. 응답은 부분 성공을 집계하지만 한 건 내부 side effect의 원자성은 주석대로 보장되지 않는다.
-- **가짜 성공 Gap**: `_notifyUnpaid`는 서버/알림 호출 없이 “보냈습니다” 토스트를 띄운다.
-- **표시/CTA Gap**: 대기 합계가 입금 확인 대기를 제외하고, 일반 BANK 수취자 CTA가 없으며, 완료 후 하단 관리 액션이 남을 수 있다.
-- **재발행 상태**: EXPIRED 원본은 그대로 남지 않고 `SUPERSEDED`로 전환되며 새 PENDING row가 `parentTransferId`로 원본을 가리킨다.
-
-## 5. 상태/권한/의존성
-
-### 정산 상태 전이 요약 (참고)
-
-```
-DRAFT (생성 직후)
-  │  POST /settlement                — 호스트 정산 생성
-  │  POST /settlement/items          — 항목 추가/수정/삭제
-  │  (참가자: 미리보기 read만 — 총액·상태·내 분담금.
-  │   결제·이의 등 모든 행동 차단, 알림 0건)
-  │
-  ▼  PATCH /settlement/activate
-ACTIVE (=PAYING, 납부 진행)
-  │  POST /transfers/{id}/pay        — 참가자 포인트 결제
-  │  POST /transfers/{id}/pay-mixed  — 은행분 > 0이면 transfer BANK_AWAITING_CONFIRM
-  │  POST /transfers/{id}/confirm-bank-portion
-  │                                  — 수취자/정산 생성자 확인 후 transfer COMPLETED
-  │  PATCH /shares/{id}/confirm      — 호스트 계좌이체 확인
-  │  PATCH /transfers/bulk-confirm   — 호스트 일괄 확인
-  │  POST /remind                    — 호스트 미납 리마인드
-  │  POST /appeals                   — 참가자 이의제기
-  │
-  ├──── 모든 transfer 확인 완료 ────▶  COMPLETED (=PAID)
-  │
-  └──── PATCH /settlement/cancel ───▶  CANCELLED
-                                       (납부분 자동 환불)
-```
-
-> 백엔드 Settlement 도메인의 `PENDING → APPROVED → PAYING → PAID/FAILED/REJECTED` 5단계와는 별개로,
-> Meeting Settlement(모임 정산)은 사용자에게 노출되는 **DRAFT/ACTIVE/COMPLETED/CANCELLED** 4단계 모델을 따른다 (UI/UX 21번 문서 기준).
-
-### 유료/무료 포인트 분리정산 — 모임 정산은 PAID_ONLY
-
-> 2026-05-24: 포인트 분리정산 반영. 정본은 `03_policy_prds/payment_settlement_policy_prd.md` §2.5.
-
-모임 정산 송금·회수·선입금은 참가자→호스트로 흐르는 **순수 P2P 채무 정산**이므로 사용처 분류상 **PAID_ONLY**다. 분담금·선입금 결제는 **유료(paid) 잔액만** 차감되고 무료 포인트로는 납부할 수 없다(실제 채무를 프로모션 포인트로 갚게 두지 않는다). 호스트에게 흘러간 정산금도 유료/무료 split이 보존되며, 호스트 외부 출금은 유료분만 현금화된다. flow-through/free-burn 등 다른 사용처는 06/08/04 도메인 PRD 참조.
-
-### 외부 의존 (Cross-cutting / 단위 외)
-
-- **Wallet (Unit 06)**: 포인트 결제 시 잔액 차감/충전 흐름 의존 (모임 정산은 PAID_ONLY — 유료 잔액만 차감)
-- **Notification (Unit 12)**: 활성화·납부완료·확인·이의·리마인드 푸시 발송
-- **Event (Unit 03)**: 정산 대상 이벤트와 참석자 목록 (참여자 추천에 사용)
-- **File (인프라)**: 영수증 이미지 업로드 / presigned URL
-- **외부 PG (가상계좌 webhook)**: prepayment 자동 입금 인입 — 사용자 직접 호출 아님 (별도 webhook controller)
-
-## 6. 화면/API 매핑
-
-> 이 overview에는 별도 요약 섹션이 없다. 이 도메인의 세부 판단은 위 실사 근거 맵의 기능 PRD와 unit 문서를 기준으로 확인한다.
-
-## 7. Gap / Risk Rollup
-
-| 기능 | 제목 | 후보 수 | 처리 기준 |
-|---|---|---:|---|
-| [F07-09](../02_feature_prds/07_meeting_settlement/F07-09_prepayment-refund_prd.md) | F07-09. 선입금 결제 / 확인 / 환불 / 환불규정 (Prepayment & Refund Rules) | 7 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F07-07](../02_feature_prds/07_meeting_settlement/F07-07_remind-extend_prd.md) | F07-07. 미납자 리마인드 / 마감 연장 (Remind Unpaid & Extend Deadline) | 3 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F07-10](../02_feature_prds/07_meeting_settlement/F07-10_account-history-reputation_prd.md) | F07-10. 정산 계좌 / 내 정산 이력 / 호스트 신뢰도 (Account, History, Reputation) | 3 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F07-01](../02_feature_prds/07_meeting_settlement/F07-01_create-settlement_prd.md) | F07-01. 모임 정산 생성 (Create Settlement) | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F07-02](../02_feature_prds/07_meeting_settlement/F07-02_settlement-items_prd.md) | F07-02. 정산 항목 관리 (Settlement Items CRUD) | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F07-04](../02_feature_prds/07_meeting_settlement/F07-04_status-summary-receipt_prd.md) | F07-04. 정산 현황 / 요약 / 영수증 (Status & Summary & Receipt) | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F07-05](../02_feature_prds/07_meeting_settlement/F07-05_pay-share_prd.md) | F07-05. 분담금 납부 (Pay Share / Transfer) | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F07-06](../02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md) | F07-06. 이체 확인 / 일괄 확인 / 상각 (Host Confirm Transfers) | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F07-03](../02_feature_prds/07_meeting_settlement/F07-03_activate-cancel_prd.md) | F07-03. 정산 활성화/취소 (Activate / Cancel) | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-
-## 8. 운영 방법
-
-1. 새 구현이나 QA 착수 전 `PRD_MIGRATION_STATUS.md`에서 담당 기능의 trace/risk 수를 확인한다.
-2. 담당 기능 PRD의 `실사 근거`, `서버 계약`, `프론트 계약`, `상태/권한/시나리오 매트릭스`, `Gap / Risk`를 먼저 읽는다.
-3. PRD가 인용한 `units` 문서와 실제 source trace를 열어 endpoint, DTO, enum, provider, screen이 현재 코드와 맞는지 확인한다.
-4. 도메인 정책은 이 문서에서 확정하지 않는다. 기능 PRD와 정책 PRD의 Gap/Risk가 충돌하면 `05_planning_artifacts/decision_register.md`에 결정 항목으로 올린다.
+| F07-01 | 첫 비용으로 초안 만들기, 지난 정산 복사, 계산기 가져오기 | [정산 생성과 복구](../02_feature_prds/07_meeting_settlement/F07-01_create-settlement_prd.md) |
+| F07-02 | 비용·수입 항목과 저장된 분담금·비율 관리 | [정산 항목 관리](../02_feature_prds/07_meeting_settlement/F07-02_settlement-items_prd.md) |
+| F07-03 | 금액 검토 뒤 정산 요청, 취소와 반환 의무 생성 | [정산 요청과 취소](../02_feature_prds/07_meeting_settlement/F07-03_activate-cancel_prd.md) |
+| F07-04 | 현재 현황·요약·영수증과 과거 원본 상세의 조회 범위 | [현황·요약·영수증](../02_feature_prds/07_meeting_settlement/F07-04_status-summary-receipt_prd.md) |
+| F07-05 | 항목별 납부와 직접 송금, 계좌 확인·복사·송금 신고 | [분담금 납부와 직접 송금](../02_feature_prds/07_meeting_settlement/F07-05_pay-share_prd.md) |
+| F07-06 | 단건·일괄 입금 확인, 만료 재요청·포기, 완료 판정 | [입금 확인과 송금 관리](../02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md) |
+| F07-07 | 실제 미납 대상별 알림, 마감 연장과 이력 | [미납 알림과 마감 연장](../02_feature_prds/07_meeting_settlement/F07-07_remind-extend_prd.md) |
+| F07-08 | 당사자의 이의, 생성자 답변, 운영팀 판단과 변경 기록 | [이의·답변·변경 기록](../02_feature_prds/07_meeting_settlement/F07-08_appeal-audit_prd.md) |
+| F07-09 | 출시 제한 중인 별도 정산 선입금과 재개 조건 | [정산 선입금의 현재 제한](../02_feature_prds/07_meeting_settlement/F07-09_prepayment-refund_prd.md) |
+| F07-10 | 본인 계좌, 개인별 돈 목록, 모임별 목록과 호스트 평판 | [정산 계좌·내 정산·평판](../02_feature_prds/07_meeting_settlement/F07-10_account-history-reputation_prd.md) |
+
+기능 PRD가 현재 제품 설명의 정본이며 해당 HTML과 로컬 보조 문서는 그 내용을 따른다. 함수·주소는 실제 서버 연결 목록에서 확인하고, 상세 계약을 이 요약에 중복 작성하지 않는다.
+
+## 첫 비용부터 납부 요청까지
+
+현재 주최자는 정산이 없는 모임에서 첫 비용 작성으로 시작한다. 초안 생성과 첫 항목 저장은 별도 요청이다. 항목에는 비용명·금액·결제자 또는 수입 보유자·나눌 사람을 정하고 균등·직접 금액·비율로 배분한다. 편집할 때는 저장된 개인별 분담을 읽으며 참가자 전체에 임의로 다시 나누지 않는다.
+
+첫 저장만으로 납부 요청을 보내지 않는다. 금액 검토 뒤 별도로 요청하고, 서버는 모임 종료 시각·정산 상태·대상·항목·분담을 다시 확인한다. 남은 지급 의무가 없으면 요청 결과가 바로 완료일 수 있다. 금액 검토와 요청은 별도 동작이므로 다른 위치의 수정과 원자적으로 묶였다고 설명하지 않는다.
+
+초안 생성·일반 항목 추가·복사·계산기 가져오기는 실패 복구 범위도 다르다. 첫 비용의 결과 불명 복구를 모든 작성 명령의 중복 방지 보장으로 확대하지 않는다. 복사 원본 상태와 이름 기반 회원 연결의 차이는 각 기능 문서에 남긴다.
+
+## 읽기와 관리 권한
+
+현재 모임 주최자, 정산 생성자, 참석자, 고정 회차의 실제 출석자, 분담·송금 당사자를 구분한다. 현재 정산 읽기 자격과 생성자 관리 권한은 다르며, 초안의 비관리자는 메모·다른 사람의 상세·항목·영수증을 제한받는다.
+
+여러 앱 관리 경로는 현재 모임 주최자를 요구하지만 서버 변경은 정산 생성자를 기준으로 한다. 주최자를 넘긴 뒤 이 두 역할이 달라질 수 있다. 화면의 버튼이나 메뉴가 보인다는 사실만으로 서버 실행 권한을 보장하지 않는다.
+
+현황의 진행률은 납부 금액 비율과 구분한다. 초안의 본인 행만 남긴 요약과 전체 지출·수입 합계를 함께 읽을 때도 전체 모임의 인원·평균으로 단정하지 않는다. 취소된 원본 거래와 같은 모임의 새 정산은 별도 조회 대상이다.
+
+## 계좌 확인·송금 신고·입금 확정
+
+받는 사람의 계좌 보기·복사, 외부 송금 앱 열기, 「보냈어요」 신고는 입금 확정과 다르다. 일반 은행 송금은 받는 사람 또는 정산 생성자가 실제 입금 내역을 확인한 뒤 완료 처리한다. 생성자라도 본인이 보낸 돈을 스스로 확인할 수 없다.
+
+혼합 납부에서 은행 부분이 남으면 별도 확인 대기 상태가 된다. 가상계좌와 수동 확인 허용 여부도 판정한다. 전체 송금액을 남은 은행 부분으로 표시하지 않도록 현재 금액 필드와 화면의 차이를 함께 본다. 일괄 확인은 건별 성공·실패 결과를 갖는다.
+
+계좌 등록·소액 확인은 예금주 실명 대조나 상대 거래의 실제 입금 확인을 대신하지 않는다. 운영에서 실제 소액 확인 공급자가 준비되지 않으면 인증 시작을 거절한다. 확인 계좌 강제 여부의 설정 기본값과 실제 운영 환경값은 구분한다.
+
+## 취소·반환·결과 불명 복구
+
+작성 중·진행 중 정산을 취소할 수 있지만 취소 성공이 모든 반환의 완료는 아니다. 포인트·장부에 반영된 금액의 반환, 외부 은행 직접 반환, 반환 실패 복구, 알림 의도 저장은 서로 다른 결과다. 취소된 정산을 진행 중으로 돌려놓는 방식으로 실패한 돈 처리를 숨기지 않는다.
+
+만료 송금도 지급 의무가 사라졌다는 뜻이 아니다. 생성자의 재요청·포기와 운영자의 혼합 은행분 정리는 다른 판단이며, 이전 이의와 후속 거래의 연결도 확인해야 한다. 현재 정산의 완료 여부는 서버가 남은 의무를 다시 판정한다.
+
+계좌 인증 성공이나 수익 집계만으로 플랫폼의 외부 출금·실지급·은행 대사가 끝났다고 기록하지 않는다. 공개 경로가 닫힌 정산 선입금에도 기존 종료·취소·계정 종료 의무의 내부 경로가 남아 있으므로, 제한 상태를 잔액이나 의무가 없다는 근거로 사용하지 않는다.
+
+## 개인별 내 정산과 평판
+
+전체 메뉴와 지갑의 「내 정산」은 같은 화면을 연다. 상단은 전체 기간의 확인 전 보낼 돈·받을 돈을 분리하고, 아래는 보낼 돈·받을 돈·지난 내역과 추가 확인 대상으로 나눈다. 작성자가 관리만 하는 다른 사람 간 돈을 본인 합계에 넣지 않는다.
+
+목록의 전체·월·기간 조건과 전체 요약은 별개다. 지난 내역은 이번 달과 실제 확인·기록일을 기준으로 시작한다. 금액 불명·취소·환불·면제를 정상 완료 금액과 구분하고, 목록 1,000건 제한과 검색 전체 합계도 구분한다. 개인 카드는 원본 종류와 번호로 상세를 열어 취소 원본을 새 정산으로 바꾸지 않는다.
+
+모임별 목록의 기본 조회는 취소를 제외하고 취소 필터로 따로 읽는다. 이전 6개월·최대 24개월 월별 API는 현재 개인 목록 화면의 자료원이 아니다.
+
+호스트 평판의 전체 정산 건수에는 준비 중도 포함되며 진행 중 건수에서만 제외한다. 차단·공개 제한을 적용하고, 0건·로딩·오류이면 배지를 숨긴다. 표시용 평판 배지를 별도 상세 창이나 은행 거래의 신뢰 인증으로 소개하지 않는다.
+
+## 미납 알림·마감 연장·이의 처리
+
+수동·자동·연장 알림은 같은 정산·수신자별 24시간 제한을 공유한다. 서버가 실제 지급 방향과 완료·송금 신고·최근 알림으로 대상을 다시 고른다. 대상이 없거나 시간 제한에 걸린 요청 성공을 새 푸시 수신으로 세지 않는다.
+
+마감 연장은 현재 마감에 시간을 더하므로 응답 유실 뒤 재요청의 중복 효과를 확인해야 한다. 알림 이력의 묶음 건수와 실제 요청·수신 건수도 구분한다.
+
+이의 접수 대상과 당사자, 생성자의 조회·답변, 운영팀 처리는 각각의 조건이 있다. 이의를 수락했다고 금액 수정·환불이 자동 실행되지 않는다. 감사 기록은 조회자에게 허용된 범위로 보여 주고, 모든 변경을 영구 보관한다고 설명하지 않는다.
+
+## 남은 제품 차이와 확인 범위
+
+| 묶음 | 현재 남은 차이 | 정본 |
+|---|---|---|
+| 주최자 변경 | 앱의 현재 주최자 입구와 서버의 정산 생성자 권한 차이 | F07-01~04, F07-07~08 |
+| 저장·재시도 | 일반 항목 추가·복사·가져오기·연장·답변의 응답 유실과 입력 복구 범위 | F07-01~03, F07-07~08 |
+| 돈 표시·행동 | 항목별 포인트 납부 화면 미연결, 반환 안내 금액 차이, 혼합 대기 합계·수동 확인·일괄 실패 상세 표시 | F07-05~06 |
+| 조회·알림 | 일부 조회 실패 숨김, 정산 전체 잠금과 수신자별 알림 제한 차이, 참가자 이의 표시 권한 차이 | F07-04, F07-07~08 |
+| 계좌 인증 | 오입력 뒤 남은 횟수 고정 표시, 실제 공급자·실계좌 확인 미완료 | F07-10 |
+| 별도 상품 | 정산 선입금 출시 제한과 상품 채택 전 조건 | F07-09 |
+
+각 차이의 구체적인 판정과 수용 기준은 위 기능별 정본을 따른다. 문서 개수·시나리오 수·연결한 서버 함수 수를 제품 통과 수로 쓰지 않는다. 기존 실행 기록은 당시 버전·환경을 유지하고, 이번 문서 대조가 새 실행 기록을 만들었다고 표시하지 않는다.
+
+## 문서 완료 판정과 후속 갱신
+
+기능 PRD 열 개의 검토 기록과 파일 지문을 대조해 이 도메인·로컬 개요·HTML에 같은 결론을 반영한다. 기존 HTML의 연결 위치를 유지하고 상대 링크와 원본 지문을 검사한다. 새 소스 변경이 있을 때는 영향받는 기능을 먼저 갱신한 뒤 이 요약을 수정한다.
+
+실제 제품 완료는 남은 결함의 해결 근거, 현재 배포본의 허용 경로, 필요한 외부 공급자와 기기 결과를 추가로 요구한다. 이 문서 최신화만으로 출시·실제 돈 이동·푸시 수신을 완료 처리하지 않는다.
