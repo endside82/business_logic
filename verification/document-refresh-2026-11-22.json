@@ -424,7 +424,8 @@
         "content_photos_20261122",
         "notification_results_20261122",
         "payment_policy_20261122",
-        "payment_supplement_20261122"
+        "payment_supplement_20261122",
+        "privacy_policy_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5078,12 +5079,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "6bf984c9b8cb07948a025cb05d7fb1611370d26224883498b5c8f3c613e5538d",
-      "review": "pending",
-      "disposition": "partially_updated",
+      "review": "source_verified",
+      "disposition": "updated",
       "evidence": [
-        "profile_domain_rollup_20261122"
+        "privacy_policy_20261122"
       ],
-      "note": "프로필 공개·내보내기·삭제·탈퇴의 현재 근거만 갱신. 다른 안전·증빙·보존·위치 항목은 전체 대조 대기."
+      "reviewedSha256": "edbb92832d776d06f72ae5f2e59c9fc8016b25fbf2eb7c6152ac8f6c15aaaa8e"
     },
     {
       "path": "docs/policies/state.html",
@@ -8399,13 +8400,12 @@
       "kind": "policy_prd",
       "document": true,
       "baselineSha256": "60f75c5f2f218c0da3ca5af0c76ff5cf325679c7c2e6e51a0282a3692e4caad4",
-      "review": "pending",
-      "disposition": "partially_updated",
+      "review": "source_verified",
+      "disposition": "updated",
       "evidence": [
-        "profile_domain_rollup_20261122",
-        "privacy_visibility_20261122"
+        "privacy_policy_20261122"
       ],
-      "note": "프로필 공개·내보내기·삭제·탈퇴의 현재 근거만 갱신. 다른 안전·증빙·보존·위치 항목은 전체 대조 대기."
+      "reviewedSha256": "0742e1a59c020577ddefa437af8d1488ab244abf36091acb93f9c8757ae561d2"
     },
     {
       "path": "prd/03_policy_prds/state_policy_prd.md",
@@ -16116,9 +16116,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "88c362fc994443b40e522ef5579d81ef05da502db838e7888f8bcf56a245af16",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "privacy_policy_20261122"
+      ],
+      "reviewedSha256": "0f2da653038f0bf4b1bbd8102d468b1862d79e10ea21f1bd844b565559cdd271"
     },
     {
       "path": "verification/maxlength_baseline.txt",
@@ -43586,6 +43589,200 @@
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; current source contracts and previously reviewed canonical evidence reused"
+      },
+      "observedSourceVersions": {
+        "community_api": "8955dac9f50ba83014a6a26f37326de05d1dfa78",
+        "community_app": "c453d6d2d991e00b921a699cafd5365b5cd251c6"
+      }
+    },
+    "privacy_policy_20261122": {
+      "kind": "source_review",
+      "scope": "개인정보 정책 PRD·공개 HTML·위치 개인정보 이전 결정 전체 대조. 동일 SHA의 22개 기능/정책 정본 재사용 및 본인확인 관리자 승인·금전 작업 원문 보존 직접 소스 대조. 제품 실행·운영 소거·법률 검토는 수행하지 않음.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/AdminMoneyOperationRetentionJob.java",
+          "sha256": "7ba07e882c001dbcca268b9aa432dcc1ba7244b279266b258b88aad396f94e66",
+          "reviewScope": "전체 본문: 기본 90일·종결 작업 원문 보관 만료·배치 제한"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/repository/query/AdminMoneyOperationRecordQueryRepository.java",
+          "sha256": "1db8cfc1a01566d38f901db40b2c2162a5e1d3809af6ab0c44981af08c0519e4",
+          "reviewScope": "전체 본문: 확인 시각 또는 거절 갱신 시각 기준; 계정 파기는 확인 완료/거절만 마스킹"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/privatedate/service/ManageDateVerificationService.java",
+          "sha256": "054a627c591b285dbc9cd9b6787c910c119348c4a6a7c8a11f5771bde1ae7180",
+          "reviewScope": "220–284 승인 현재 회원·생년월일·제출 파일·토큰;465–494 관리자·파일·기한 토큰 소비;567–589 파일 소유·완료·목적·CLEAN;649–659 현재 제출 검토 일치"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/PaymentAccountEraser.java",
+          "sha256": "d0841622de0fe15755ce8a00e6160dd240007d1bb69b2c3247230f5a772e2cd6",
+          "reviewScope": "35–74 지갑 종료·자격/계좌 삭제·종결 금전 작업 마스킹 분리"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/DataDeletionExecutionWorker.java",
+          "sha256": "b2db88c8b8c88b83ba712bb5cedafe817328e890bd88dbc03840df4d9aab2a9f",
+          "reviewScope": "375–389 계정 파기 지갑·인증/계좌·종결 금전 작업 마스킹 실제 호출"
+        }
+      ],
+      "reuses": [
+        "account_closure_20261122",
+        "club_finance_20261122",
+        "data_export_20261122",
+        "date_identity_profile_20261122",
+        "date_matching_block_20261122",
+        "dispute_evidence_20261122",
+        "dispute_intake_20261122",
+        "dispute_query_20261122",
+        "favorite_management_calendar_20261122",
+        "location_features_20261122",
+        "mileage_queries_20261122",
+        "notification_results_20261122",
+        "people_block_source_advance_20261122",
+        "poll_supplement_20261122",
+        "privacy_visibility_20261122",
+        "profile_domain_rollup_20261122",
+        "report_intake_20261122",
+        "review_core_20261122",
+        "settlement_domain_rollup_20261122",
+        "stamp_supplement_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/03_policy_prds/privacy_safety_policy_prd.md",
+          "sha256": "0742e1a59c020577ddefa437af8d1488ab244abf36091acb93f9c8757ae561d2"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/11_review_report/F11-04_report_prd.md",
+          "sha256": "62524dc3d89c9ff83201ba7258805720e2530477ff91205ae89ad498d802f37e"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/11_review_report/F11-02_review-list_prd.md",
+          "sha256": "0c801b6eec657def892458f11ab29d85029aa1959a053a785af1b3caa820c8d4"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-02_dispute-create_prd.md",
+          "sha256": "a1e081811e550998fe55c4c6f273ba523ae51e9b02f436dbaf82245d86dc0454"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-04_evidence-visibility_prd.md",
+          "sha256": "fc7a6d43295b0121e09802419ce6b70d2cfe3574115863d9aa3fc6bede7c9131"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-05_host-inbox_prd.md",
+          "sha256": "12921e429909dfb2188371702496671aa7f42aa1e65eb42cddb3276789033661"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-01_verification_prd.md",
+          "sha256": "b23553fe1606ec404362cea808a5f91e0aa4ca91a8fe26f4df95bde40a3b44fa"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-02_profile_prd.md",
+          "sha256": "919d199edcb321fe5edb81cabf2731a19f0d0cd3a96bab77350ffda7a40a5538"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-03_candidate_swipe_prd.md",
+          "sha256": "186a8636af6ddf3fc71836490b89f0108f1af592b93fa08fce4effe26d248f62"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-07_block_prd.md",
+          "sha256": "c7024ade9bf17c4a9415dc17e5276a91766a460472056d11c34f3b3e0b8ac891"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-01_event-location-share_prd.md",
+          "sha256": "c6a23acda7bcc657dfe1c54de5d2274b7691dac39781a26b4ea440194fcd5025"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-02_location-opt-out_prd.md",
+          "sha256": "2669914b0645a0e49d9b348efce135a09bcc7bd62c7c844153909491ca4785e4"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-04_location-privacy-dashboard_prd.md",
+          "sha256": "5936326c6c98dc801d3d0b3e758328e81280fc661fd981e516eb439e38be38d0"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/19_favorite/F19-03_privacy-visibility-settings_prd.md",
+          "sha256": "36890a5f27ca3d2fd28a790e43fa46ec2e7271503f189f4113ad145167672798"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-05_data-export_prd.md",
+          "sha256": "78719feeac48678c9e694f2490621675a9f7e9b17b54de085926476a5a8d508c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-06_account-deletion_prd.md",
+          "sha256": "e449257fba1a450206adec52ddb1a9d83c55e1c43bfc711d485ad15eac3aaafc"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-07_account-deactivation_prd.md",
+          "sha256": "a9ee225dc276e70de86ac07aa21fa7e8ea42f6a30c542a52b724053da4c11dd9"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-13_fund-overview_prd.md",
+          "sha256": "d5474c1a3155bcd8177bfa05f34af73d6e144fb1f1a8fc7903bbf7984acf790d"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-01_my-mileage-main_prd.md",
+          "sha256": "faac8c985f1995f6440e54d47926ae7ce0822b6a381304c81495a16993128888"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/07_모임_정산_prd.md",
+          "sha256": "908d8b4f69867c732244f61ad3c74d4474db6f05397fa86340c0fe9a24f4c9be"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/notification_policy_prd.md",
+          "sha256": "33b47a7240b350980237f9421cf1e99c0d98a5ed853df422879317e09fc732c4"
+        },
+        {
+          "path": "business_logic/docs/features/club-stamp.html",
+          "sha256": "b4a7f4ee690ae79af00d164ca742dc54c50225ee06f83d426e7be44c87ad4f6a"
+        },
+        {
+          "path": "business_logic/docs/features/club-poll.html",
+          "sha256": "e5551bac752078bede9ddbfec7e045d4bd8dae0f5aa86c16f44469887e7cad82"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/policies/privacy.html": [
+          "sidebar",
+          "export-scope-current",
+          "poll-privacy",
+          "fund-summary"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "신고 유형 15종과 앱/서버 사유 차이 명시",
+        "사건 접근과 자료별 제출자 예외 구분",
+        "보존 중 계정 정리와 참조 해제/파일 파기 단계 분리",
+        "삭제 예약과 즉시 탈퇴·종결 금전 작업 원문 마스킹 구분",
+        "위치 개인정보 실제 연결을 반영해 옛 미연결 결정을 역사로 보존",
+        "모든 차단/삭제의 즉시 성공 요구를 성공·실패·재조회·후속 파기로 교정"
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "prd/03_policy_prds/privacy_safety_policy_prd.md",
+          "sha256": "8553e2e0eab86ab7de4c4c9e411f96a291e0cadba4ef770a9efb0fa165403053",
+          "characters": 2981,
+          "note": "과거 감사·결정 원문 보존; 현재 계약·실행 통과의 근거로 합산하지 않음",
+          "heading": "## 과거 접근권한 감사 원문 보존"
+        },
+        {
+          "path": "verification/location_privacy_decision.md",
+          "sha256": "88c362fc994443b40e522ef5579d81ef05da502db838e7888f8bcf56a245af16",
+          "characters": 4465,
+          "note": "과거 감사·결정 원문 보존; 현재 계약·실행 통과의 근거로 합산하지 않음",
+          "heading": "## 이전 결정 원문 보존"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "28 source/canonical digests; 4 retained HTML IDs",
+        "derivedDocuments": "3 documents; shared batch verified 3 paths, 51 relative links/anchors and 1 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; previously reviewed unchanged canonical contracts and direct source evidence used"
       },
       "observedSourceVersions": {
         "community_api": "8955dac9f50ba83014a6a26f37326de05d1dfa78",
