@@ -1,86 +1,60 @@
-# F15-07. 이의제기 처리 PRD
+# F15-07. 경고 이의제기 처리와 재제출 허용 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 현재 서버·앱 소스를 대조했다. 문서 최신화이며 새 제품 실행·운영 검수 통과 기록이 아니다.
 
-## 1. 결론
+## 현재 역할과 입구
 
-이의제기 처리는 `WARNING_REVIEWER` 권한으로 `WarningAdminActionController`가 제공한다. `GET /appeals`(`Page<WarningAppealVo>`)로 이의를 검색하고, `POST /appeals/{appealId}/resolve`로 인용(`ACCEPTED`)·부분 인용(`PARTIALLY_ACCEPTED`)·기각(`REJECTED`)을 판정한다. 컨트롤러는 resolve 전에 `claimForReview`(SUBMITTED→IN_REVIEW)를 호출한다. 인용은 `WarningLedgerService.insertReverse`로 대상 GRANT를 REVERSE하고, 부분 인용은 `insertMitigate(mitigatePoints)`로 경감하며, 기각은 원장 변화 없이 상태만 바꾼다. 종결된 이의는 `POST /appeals/{appealId}/allow-resubmit`로 재제기를 허용할 수 있다(이의 row에 `resubmitAllowedAt/By`만 기록). 처리 결과는 audit + outbox `WarningAppealResolved`로 발행된다. Flutter `warning_appeal_inbox_screen.dart`가 이를 구현했다.
+운영 이의 목록은 GET /api/v1/admin/clubs/{clubId}/warnings/appeals의 Page를 읽는다. 상태·회원 필터를 지원하고 회원 닉네임을 보완한다. 운영자는 이의와 대상 GRANT를 확인해 전부 수용·일부 수용·반려를 선택하거나 종결된 이의의 재제출을 허용한다.
 
-판정: **검색·판정·원장 연동·재제기 허용의 정합은 닫혀 있다**. Gap은 (a) resolve의 reason blank가 `WARNING_APPEAL_NOT_FOUND`로 매핑되어 오해, (b) 부분 인용 시 mitigatePoints가 null/0이면 `WARNING_MITIGATE_EXCEEDS_EFFECTIVE`로 던지는데 "초과"라는 의미와 다름, (c) allow-resubmit가 DB 컬럼만 기록하고 실제 재제기 시 이 허용을 강제 확인하지 않는 점(F15-03 submit은 진행 중 1건만 검사)이다.
+## 처리 권한과 결과
 
-## 2. 코드 위치
+컨트롤러는 WARNING_REVIEWER 권한을 요구한다. 대상 GRANT의 패널티 카탈로그가 SEVERE이면 서버 resolve는 최종 결정 종류와 무관하게 OWNER를 요구한다. 단순 검토 권한만으로 모든 심각도 이의를 처리할 수 있다고 쓰지 않는다.
 
-계약의 정본은 코드다. 서버: `WarningAdminActionController`, `WarningAppealService`, `WarningLedgerService`, `WarningAppealResolveParam`, `WarningAppealVo`, `WarningAppealStatus`, `ErrorCode`. 앱: `warning_appeal_inbox_screen.dart`, `warning_admin_action_api.dart`.
+POST /appeals/{appealId}/resolve는 resolution·선택 mitigatePoints·reasonCode·reason을 받는다. ACCEPTED는 대상 원장의 REVERSE, PARTIALLY_ACCEPTED는 양수 감경점수의 MITIGATE를 만들고 resultingLedgerId를 연결한다. REJECTED는 원장을 그대로 두고 결과 원장 식별자가 없다. SUBMITTED·IN_REVIEW·WITHDRAWN을 최종 resolution으로 받지 않는다. 원장 조정의 세부 조건은 [경고 부여와 원장 조정](F15-06_grant-ledger-adjust_prd.md)을 따른다.
 
-## 3. 전체 동작 흐름
+사유는 공백 불가·최대 4000자이며 reasonCode 최대 40자다. 앱 처리 다이얼로그는 최소 5자와 일부 수용 시 양수 점수를 요구한다. 사유 누락은 현재 서버에서 WARNING_APPEAL_NOT_FOUND로 거절한다.
 
-1. WARNING_REVIEWER가 `appeals`(`Routes.adminWarningAppeals`) → `WarningAppealInboxScreen(clubId)` → `GET /appeals`(`WarningAppealSearchParam`) → `Page<WarningAppealVo>`.
-2. 항목 처리 → `POST /appeals/{appealId}/resolve`(`WarningAppealResolveParam{resolution, mitigatePoints?, reasonCode?, reason}`). 컨트롤러가 `claimForReview`(SUBMITTED→IN_REVIEW) 후 `resolve` 호출.
-3. `resolve`: 종결 상태면 `WARNING_APPEAL_ALREADY_PROCESSED`, resolution이 SUBMITTED/IN_REVIEW/WITHDRAWN이면 거절, reason blank면 `WARNING_APPEAL_NOT_FOUND`.
-   - `ACCEPTED` → `insertReverse(targetGrantLedgerId, reasonCode||"APPEAL_GRANTED", reason)` → `resultingLedgerId` 설정.
-   - `PARTIALLY_ACCEPTED` → mitigatePoints>0 필수, `insertMitigate(...)` → `resultingLedgerId` 설정.
-   - `REJECTED` → 원장 변화 없음.
-4. appeal `status=resolution`, `processedBy/At`, `processReason`, `resultingLedgerId` 설정 → audit `APPEAL_RESOLVED_{status}` + outbox `WarningAppealResolved`.
-5. 재제기 허용: `POST /appeals/{appealId}/allow-resubmit` → 종결(REJECTED/PARTIALLY_ACCEPTED/WITHDRAWN)에서만 의미, `resubmitAllowedAt/By` 기록 + outbox `WarningAppealResubmitAllowed`.
+## 선점·결과·검토 큐의 거래
 
-## 6. 상태/권한 매트릭스
+공개 처리 경로는 하나의 트랜잭션인 claimAndResolve 안에서 먼저 claimForReview를 호출한다. 선점은 SUBMITTED만 받아 IN_REVIEW로 바꾸고 이어서 resolve가 최종 상태·처리자·시각·사유·결과 원장을 저장한다. 처리와 연결 큐의 마무리·감사·outbox 등록을 수행한다. 뒤 단계 실패는 이 트랜잭션의 선점도 되돌린다.
 
-| 사용자/상태 | 서버 근거 | 프론트 분기 | 사용자 결과 | 판단 |
-|---|---|---|---|---|
-| WARNING_REVIEWER | 클래스 권한 | 검토함 진입 | 판정 가능 | 일치 |
-| 인용(ACCEPTED) | `insertReverse` | 인용 액션 | GRANT REVERSE + 점수 하락 | 일치 |
-| 부분 인용 | `insertMitigate(mitigatePoints)` | 부분 인용 | 점수 일부 경감 | 일치 |
-| 기각(REJECTED) | 원장 변화 없음 | 기각 | 점수 유지 | 일치 |
-| 종결 이의 재처리 | `WARNING_APPEAL_ALREADY_PROCESSED` | 에러 | 차단 | 일치 |
-| 부분 인용 mitigatePoints 누락 | `WARNING_MITIGATE_EXCEEDS_EFFECTIVE` | 에러 | 차단(의미 모호) | Risk(아래) |
-| reason 누락 | `WARNING_APPEAL_NOT_FOUND` | 에러 | 차단(의미 모호) | Risk(아래) |
-| 재제기 허용 | `resubmit_allowed_at/by` 기록 | 안내 | 멤버 재제기 안내 | 부분 동작 Gap |
+내부 resolve 자체는 미종결 상태를 다루지만 공개 경로의 선점이 더 좁다. 따라서 이미 IN_REVIEW로 남아 있는 이의는 공개 resolve 요청의 첫 단계에서 거절된다. 앱은 SUBMITTED와 IN_REVIEW 양쪽에 처리 조건을 열어 두므로 실제 요청에서 이 차이가 드러날 수 있다.
 
-## 7. 정합성 판단
+## 재제출 허용의 범위
 
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| 검토함 응답 형태 | `Page<WarningAppealVo>` | `PageResponse` | 일치 |
-| 판정 응답 형태 | `WarningAppealVo` | VO | 일치 |
-| `WarningAppealStatus` | 6값 | enum 동일 | 일치 |
-| 인용→원장 | REVERSE / MITIGATE | VO `resultingLedgerId` | 일치 |
-| allow-resubmit 추적 | `resubmitAllowedAt/By` | VO 필드 포함 | 일치(강제는 안 함) |
+POST /appeals/{appealId}/allow-resubmit는 진행 중 SUBMITTED·IN_REVIEW를 제외한 이의에 허용 시각·담당자를 저장하고 감사·outbox를 등록한다. 원장을 복원하거나 새 이의를 자동 생성하지 않는다. 현재 서버는 기존 허용 시각이 있어도 다시 기록할 수 있다.
 
-## 8. Gap / Risk
+운영 앱은 REJECTED이면서 허용 시각이 없는 행에만 허용 버튼을 제공한다. 회원 앱의 재제출은 허용 표식·종결 종류·같은 원장의 진행 중 이의 없음을 확인한다. 반면 서버의 새 이의 submit에는 허용 표식 검사가 없다. 상세한 차이는 [회원 이의제기의 재제출 조건](F15-03_appeal_prd.md#재제출-허용의-앱과-서버-차이)을 따른다.
 
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| P2 | reason blank가 `WARNING_APPEAL_NOT_FOUND`로 매핑 | `resolve`가 reason 없으면 NOT_FOUND throw | 운영진이 "이의 없음"으로 오해 | `WARNING_REASON_REQUIRED`로 통일 |
-| P2 | 부분 인용 points 누락이 `MITIGATE_EXCEEDS_EFFECTIVE`로 매핑 | mitigatePoints≤0면 해당 코드 throw | "초과" 에러로 오해 | 전용 검증 메시지/코드 분리 |
-| P3 | allow-resubmit가 강제 가드 없음 | submit(F15-03)은 진행 중 1건만 검사, `resubmitAllowedAt`를 확인하지 않음 | 운영진이 허용하지 않아도 종결 후 재제기 가능 — 허용 기록의 실효성 약함 | 재제기 정책(허용 필수 여부) 확정 후 submit에 반영 |
+## 앱의 최신 상태 확인과 복구
 
-## 9. 수용 기준
+처리 다이얼로그는 현재 이의 목록에서 같은 클럽·행이 아직 처리 가능한지 재확인한다. 로딩·오류 중에는 오래된 행으로 처리하지 않는다. 재제출 허용도 현재 계정·세션·검토 권한·최신 행을 확인하고 동일 행의 중복 요청을 막는다.
 
-### AC-01. 이의 인용 → REVERSE
-Given WARNING_REVIEWER가 이의를 `ACCEPTED`로 판정한다(reason 포함).
-When `POST .../appeals/{appealId}/resolve`가 호출된다.
-Then 대상 GRANT가 REVERSE되고 appeal에 `resultingLedgerId`가 연결되며 멤버 effective_score가 하락한다.
+성공과 반영 가능성이 있는 결과 불명은 콘솔·대상 회원·이의 목록을 갱신한다. 이미 처리된 오류는 목록을 읽고 닫으며 결과 불명·일반 거절은 입력을 유지한다. 이의 처리 API에는 회원 제출 API와 같은 필수 Idempotency-Key 헤더가 없다. 서로 다른 작업의 재전송 계약을 합치지 않는다.
 
-### AC-02. 부분 인용 → MITIGATE
-Given WARNING_REVIEWER가 `PARTIALLY_ACCEPTED`, mitigatePoints=1로 판정한다.
-When resolve가 호출된다.
-Then MITIGATE 원장 1건(points=1)이 생성되고 effective_score가 1 감소한다.
+## 코드 위치
 
-### AC-03. 기각
-Given WARNING_REVIEWER가 이의를 `REJECTED`로 판정한다.
-When resolve가 호출된다.
-Then 원장 변화 없이 appeal `status=REJECTED`, outbox `WarningAppealResolved`가 발행된다.
+서버: WarningAdminActionController#searchAppeals/resolveAppeal/allowResubmit, WarningAppealService#claimAndResolve/claimForReview/resolve/allowResubmit, WarningAppealResolveParam. 앱: warning_appeal_inbox_screen.dart, warning_admin_commands.dart, my_appeals_screen.dart.
 
-### AC-04. 종결 이의 재제기 허용
-Given 이의가 REJECTED로 종결되었다.
-When `POST .../appeals/{appealId}/allow-resubmit`가 호출된다.
-Then `resubmitAllowedAt/By`가 기록되고 outbox `WarningAppealResubmitAllowed`가 발행된다.
+<!-- source-references:start -->
+서버 창구: `WarningAdminActionController#searchAppeals`, `WarningAdminActionController#resolveAppeal`, `WarningAdminActionController#allowResubmit`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-## 10. 미결정 / 후속
+## 현재 제한과 확인 범위
 
-| 분류 | 항목 | 결정/작업 |
+| 분류 | 현재 경계 | 문서 처리 |
 |---|---|---|
-| UX | 에러 매핑 | resolve reason/points 누락을 전용 코드로 분리 |
-| 정책 | 재제기 허용 강제 | submit에서 `resubmitAllowedAt` 확인을 강제할지 결정 |
-| 테스트 | 이의 처리 | 인용/부분/기각 원장 연동 + 종결 재처리 + allow-resubmit E2E |
+| Gap | 앱은 IN_REVIEW 처리 버튼을 허용하지만 공개 resolve의 선점은 SUBMITTED만 받는다. | 이미 검토 중 자료의 실패 가능성을 남긴다. |
+| Gap | 운영 앱·회원 앱·서버의 재제출 허용 조건이 다르다. | 허용 표식을 서버 제출의 강제 승인으로 설명하지 않는다. |
+| Risk | 심각도 OWNER 제한은 반려까지 적용되고 처리 사유 누락은 대상 없음 오류다. | 처리별 실제 권한·오류를 기록한다. |
+| 미검증 | 실제 동시 판정·원장 후속 처리·알림 수신을 새로 실행하지 않았다. | 서비스 호출과 운영 완료를 구분한다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 권한:** 경고 검토 권한과 SEVERE 대상의 OWNER 제한을 최종 결정 종류와 함께 적용한다.
+- **AC-02 결과:** 전부 수용은 REVERSE, 일부 수용은 양수 MITIGATE, 반려는 원장 유지로 처리한다.
+- **AC-03 거래:** 공개 경로의 SUBMITTED 선점과 최종 처리·큐·감사·outbox를 같은 트랜잭션에서 수행한다.
+- **AC-04 검토 중 차이:** 앱 IN_REVIEW 표시와 공개 선점의 거절 조건을 미해결 경계로 기록한다.
+- **AC-05 재제출 허용:** 허용 표식 저장을 새 이의 생성·원장 복원과 구분하고 세 계층의 다른 조건을 명시한다.
+- **AC-06 앱 복구:** 최신 행·계정·권한을 재확인하고 이미 처리·결과 불명·일반 실패를 나눠 갱신과 입력 유지를 수행한다.

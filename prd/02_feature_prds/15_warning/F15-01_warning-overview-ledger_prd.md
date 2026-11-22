@@ -1,91 +1,55 @@
-# F15-01. 내 경고 현황 & 원장 PRD
+# F15-01. 내 경고 현황과 원장 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 현재 서버·앱 소스를 대조했다. 문서 최신화이며 새 제품 실행·운영 검수 통과 기록이 아니다.
 
-## 1. 결론
+## 현재 역할과 입구
 
-멤버 본인 경고 화면은 **점수 요약·검토 등급·활성 제재·최근 원장 5건**을 `GET /api/v1/clubs/{clubId}/warnings/me`(`WarningMemberOverviewVo`)로, **전체 원장 페이지**를 `GET .../me/ledger`(`Page<WarningLedgerVo>`)로 내려주며, Flutter `warning_main_screen.dart`/`warning_ledger_screen.dart`가 이를 그대로 소비한다. 두 엔드포인트 모두 `permissionChecker.requireClubMember`로 멤버만 접근하고, 원장 조회는 서버가 `param.setMemberId(principal.getUserId())`로 본인 범위를 강제한다. 응답 VO 필드와 Dart 모델 필드는 일치한다.
+클럽의 내 경고 화면은 점수·검토 등급·진행 중 이의·제재 및 잠금 기록·최근 원장을 보여 준다. 경고 기록, 내 이의, 제보하기, 내 제보 네 입구를 제공한다. 이벤트 일반 신고와 클럽 경고 제보는 다른 계약이다.
 
-판정: **조회·권한·본인 범위 격리는 사용 가능**. 다만 (a) 정책이 비활성(`is_active=false`)인 클럽에서도 본인 화면 진입 시 `warning_member_summary` row가 0값으로 생성되고, (b) `effectiveScore`/`reviewLevel`은 캐시값이라 원장과 일시적으로 불일치할 수 있으며, (c) Flutter 원장 검색 파라미터가 서버 필터 컬럼과 어디까지 맞물리는지 PRD에서 확정 못 한 부분이 Gap이다.
+## 본인 조회와 원장 필터
 
-## 2. 코드 위치
+GET /api/v1/clubs/{clubId}/warnings/me는 클럽 회원을 확인하고 summary·recentLedger·activeSanctions·선택 appealSlaText를 반환한다. 최근 원장은 생성 시각 내림차순에서 5개를 선택한다. 요약은 effectiveScore·qualifiedScore·rawScore·effectiveCount, 유형·심각도별 집계 문자열, reviewLevel·underReview·manualLock과 관련 시각·사유를 담는다.
 
-계약의 정본은 코드다. 서버: `WarningMemberController`, `WarningQueryService`, `WarningMemberSummaryService`. 앱: `warning_main_screen.dart`, `warning_ledger_screen.dart`, `warning_member_api.dart`, `warning_member_providers.dart`, `warning_member_overview_vo.dart`, `warning_member_summary_vo.dart`, `warning_ledger_vo.dart`, `warning_ledger_row.dart`, `warning_severity_chip.dart`.
+GET /api/v1/clubs/{clubId}/warnings/me/ledger는 Page를 반환한다. 서버가 memberId를 로그인 본인으로 덮어쓰므로 요청 필터로 타인의 원장을 읽을 수 없다. type·penaltyTypeCode·fromAt·toAt·page·size를 지원하고 기간은 생성 시각의 양 끝을 포함한다. 조회 순서는 createdAt 내림차순 뒤 id 내림차순이다. 앱 모델에도 같은 필터가 있고 provider는 페이지당 20개를 요청한다. 모델 지원을 화면의 모든 필터 조작이 구현됐다는 뜻으로 확장하지 않는다.
 
-## 3. 전체 동작 흐름
+## 요약 생성과 제재 목록의 의미
 
-1. 멤버가 클럽 화면에서 `warnings`(Routes.clubWarnings) route로 진입해 `WarningMainScreen(clubId)`를 연다.
-2. 화면은 `warningMemberOverviewProvider(clubId)`를 구독 → `WarningMemberRepository.getMyOverview` → `GET /api/v1/clubs/{clubId}/warnings/me`.
-3. 서버 `WarningMemberController#getMyMain`은 `requireClubMember(clubId, userId)`로 멤버 검증 후 `WarningQueryService.getMemberOverview`를 호출한다.
-4. 서비스는 `WarningMemberSummaryService.getOrInitialize`로 summary를 얻고(row 없으면 0값 INSERT), 원장 최근순 상위 5건과 활성 제재 목록(`listActiveByMember`)을 합성해 `WarningMemberOverviewVo`로 반환한다.
-5. Flutter는 `summary.effectiveScore`/`reviewLevel`/`underReview`/`manualLock`로 상단 점수 카드와 등급 배지를, `activeSanctions`로 제재 안내를, `recentLedger`로 최근 항목 리스트를 렌더한다.
-6. "전체 원장 보기" → `ledger`(Routes.clubWarningLedger) route → `WarningLedgerScreen` → `warningMyLedgerProvider(clubId, param)` → `GET .../me/ledger`.
-7. 서버는 `param.setMemberId(principal.getUserId())`로 본인 범위를 덮어쓰고 `WarningQueryService.searchLedger`로 `Page<WarningLedgerVo>`를 반환한다. Flutter는 `PageResponse<WarningLedgerVo>`로 받아 페이지네이션한다.
+내 경고 조회는 요약이 없으면 빈 요약 행을 초기화하는 쓰기 가능한 트랜잭션이다. 부모 클럽·회원 확인과 중복 초기화 방어가 있으며 정책 활성 여부를 요구하지 않는다. 정책 미운영 클럽에서도 빈 요약이 생길 수 있다. 이 GET이 매번 전체 원장을 재계산하는 것은 아니며 저장된 요약을 반환한다.
 
-## 4. 제품 규칙
+activeSanctions는 ACTIVE 상태에서 endAt이 없거나 미래인 행이다. 이 목록 필터는 startAt을 검사하지 않아 예약된 제재나 잠금 관련 기록을 포함할 수 있다. 현재 시점의 모든 실효 제재만 담긴 목록이라고 단정하지 않는다. 집행 계약은 [제재 집행](F15-08_sanction-enforcement_prd.md)을 따른다.
 
-- 내 경고 화면은 그 클럽 멤버만 볼 수 있고, 요약과 최근 원장 5건, 지금 적용 중인 제재를 보여 준다.
-- 목록 조회는 본인 기록만 보인다.
+## 본인 정보와 운영 정보의 구분
 
-## 6. 상태/권한 매트릭스
+본인 원장에서는 actorId를 가리고, 본인 제재 응답에서는 actorId·actorRole·revokedBy를 가린다. 제재의 actions는 현재 조회자의 권한·상태를 바탕으로 계산한다. 본인 경고 화면이 모든 운영진 액션을 허용한다는 의미는 아니다. 운영자용 회원 상세는 다른 API이며 별도 권한을 따른다.
 
-| 사용자/상태 | 서버 근거 | 프론트 분기 | 사용자 결과 | 판단 |
-|---|---|---|---|---|
-| 비멤버 | `requireClubMember` 실패 | route는 클럽 멤버 컨텍스트 진입 | 차단/에러 | 일치 |
-| 멤버 + 경고 0 | summary row 0값 생성 | effectiveScore=0, reviewLevel=NONE | "경고 없음" 상태 | 일치 |
-| 멤버 + ATTENTION~ | `reviewLevel != NONE` | 등급 배지 + 안내 | 등급별 안내 표시 | 일치 |
-| 멤버 + 활성 제재 | `activeSanctions` 비어있지 않음 | 제재 안내 카드 | 진행 중 제재 표시 | 일치 |
-| 멤버 + manual_lock | `manualLock=true` | 잠금 상태 표시 | 자동 해제 차단 안내 | 일치 |
-| 정책 비활성 클럽 멤버 | `me`는 정책 활성 검사 없음 → 진입 가능 | 화면 진입됨 | 0점 화면 + summary row 생성 | Gap(아래) |
+## 앱의 조회와 이의 연결
 
-## 7. 정합성 판단
+메인 새로고침은 요약과 본인 이의를 함께 다시 읽는다. 원장은 페이지를 이어 읽고 읽어 온 자료를 GRANT와 연결된 조정 행으로 묶는다. 현재 진행 중인 이의 대상도 읽어 이의 버튼의 중복 진입을 제한한다. 메인·원장·이의 provider는 해당 클럽 회원 변경 신호를 구독한다.
 
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| `WarningLedgerType` | `GRANT/MITIGATE/REVERSE/EXPIRE` | `warning_enums.dart` 동일 | 일치 |
-| `WarningReviewLevel` | 5값 | `warning_enums.dart` 동일 | 일치 |
-| overview 응답 형태 | `WarningMemberOverviewVo`(단일) | `getMyOverview` → VO | 일치 |
-| ledger 응답 형태 | `Page<WarningLedgerVo>` | `getMyLedger` → `PageResponse<WarningLedgerVo>` | 일치 |
-| boolean key | Java `underReview`/`manualLock` (이미 is-prefix 없음) | Dart 동일 key | 일치 |
-| `countBySeverity`/`countByPenaltyType` | String(JSON 문자열) | Dart String | 일치(클라이언트가 재파싱 필요) |
-| effective 캐시 vs 원장 | summary는 캐시, 원장 변경 시 `recalculateForUpdate` | 화면은 캐시값 신뢰 | 대체로 일치(캐시 지연 Risk) |
+이의 제출 도중 원장이 이미 취소·만료됐다는 응답을 받으면 원장과 이의를 갱신하고 제출창을 닫는다. 다른 실패·결과 불명은 입력을 유지한다. 제출 키·재전송과 권한은 [회원의 이의제기](F15-03_appeal_prd.md)에 정의한다.
 
-## 8. Gap / Risk
+## 코드 위치
 
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| **버그 해소** | `getMemberOverview`/`getAdminMemberDetail` readOnly tx에서 `getOrInitialize`/`ensureRow`가 INSERT 시도 → "Connection is read-only" 500 발생 | (2026-06-04): 두 메서드에 `@Transactional(rollbackFor = {Exception.class})` 추가로 쓰기 tx 전환. `WarningQueryService.java:54,77` | 해소됨 — 클럽 진입 시 500 오류 없이 summary row 정상 생성 | — |
-| P2 | 정책 비활성 클럽에서도 본인 화면 진입 시 summary row 생성 | `getMyMain`은 `requireActive`를 호출하지 않고, `getOrInitialize`가 row를 INSERT | 경고 제도를 켜지 않은 클럽에도 빈 경고 행이 양산됨(데이터 노이즈) | 정책 비활성 시 본인 화면을 "제도 미운영"으로 처리할지, row 생성을 lazy 유지할지 결정 |
-| P2 | summary 캐시와 원장 일시 불일치 | summary는 `recalculateForUpdate`로 갱신되지만 화면은 캐시값을 신뢰 | 동시 조정 중 점수가 잠깐 어긋나 보일 수 있음 | 화면 새로고침 시 재조회로 수렴, 운영 안내 필요 |
-| P3 | `WarningLedgerSearchParam` 필터 컬럼이 PRD에서 미확정 | 본 PRD에서 search param 필드 전수 확인 안 함 | 원장 필터 UX와 서버 쿼리 정합 미검증 | `WarningLedgerSearchParam`/`WarningLedgerQueryRepository` 대조 후 보강 |
+서버: WarningMemberController#getMyMain/getMyLedger, WarningQueryService, WarningMemberSummaryService#getOrInitialize/ensureRow, WarningLedgerSearchParam, WarningLedgerQueryRepository, WarningAbilityPolicy, WarningSanctionService#listActiveByMember. 앱: warning_member_api.dart, warning_member_providers.dart, warning_main_screen.dart, warning_ledger_screen.dart, warning_member_overview_vo.dart, warning_member_summary_vo.dart.
 
-## 9. 수용 기준
+<!-- source-references:start -->
+서버 창구: `WarningMemberController#getMyMain`, `WarningMemberController#getMyLedger`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-### AC-01. 경고 없는 멤버 메인
-Given 경고 이력이 없는 멤버가 본인 경고 메인에 진입한다.
-When `GET /warnings/me`가 성공한다.
-Then `summary.effectiveScore=0`, `reviewLevel=NONE`, `recentLedger=[]`, `activeSanctions=[]`이고 Flutter는 "경고 없음" 상태를 표시한다.
+## 현재 제한과 확인 범위
 
-### AC-02. 검토 등급 멤버 메인
-Given 멤버의 `reviewLevel=RESTRICTION_CANDIDATE`이다.
-When 메인 화면이 overview를 수신한다.
-Then 등급 배지와 effectiveScore를 표시하고, 활성 제재가 있으면 제재 안내 카드를 표시한다.
-
-### AC-03. 원장 페이지네이션
-Given 멤버가 전체 원장 화면에 진입한다.
-When `GET /warnings/me/ledger`가 `Page<WarningLedgerVo>`를 반환한다.
-Then 서버는 `memberId`를 본인으로 강제하고, Flutter는 `ledgerType`/`points`/`createdAt`을 행으로 페이지네이션한다.
-
-### AC-04. 타인 원장 접근 차단
-Given 멤버가 본인이 아닌 memberId의 원장을 보려 한다.
-When `me/ledger`는 query memberId를 무시하고 principal로 덮어쓴다.
-Then 항상 본인 원장만 반환된다.
-
-## 10. 미결정 / 후속
-
-| 분류 | 항목 | 결정/작업 |
+| 분류 | 현재 경계 | 문서 처리 |
 |---|---|---|
-| 정책 | 비활성 클럽 본인 화면 | 제도 미운영 클럽의 멤버 화면 노출/row 생성 정책 결정 |
-| 테스트 | 본인 화면 권한·범위 | `requireClubMember` 차단, ledger 본인 범위 강제 E2E 추가 |
-| 구현 | 원장 필터 | `WarningLedgerSearchParam` 필터 컬럼과 화면 필터 정합 확인 |
+| Risk | 저장된 요약을 반환하고 제재 목록에는 시작 전 행도 포함될 수 있다. | 현재 원장 재계산과 실제 제재 발효를 구분한다. |
+| Gap | 내 경고 도움말이 F11-07을 가리킨다. | 현재 경고 기능 안내와 연결 차이를 남긴다. |
+| 미검증 | 실제 회원별 접근·페이지 추가·동시 조정·복귀를 실행하지 않았다. | 소스 대조를 제품 실행 완료로 기록하지 않는다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 본인 범위:** 회원 여부를 확인하고 원장 memberId를 본인으로 강제한다.
+- **AC-02 응답 구분:** 메인은 요약·최근 5건·제재·SLA 안내, 원장은 페이지 응답으로 소비한다.
+- **AC-03 필터 계약:** 유형·패널티 코드·포함 기간·페이지를 적용하고 생성 시각 및 id 역순으로 읽는다.
+- **AC-04 요약 의미:** 정책 비활성에서도 초기화할 수 있고 조회 자체를 전체 재계산으로 설명하지 않는다.
+- **AC-05 정보 가림:** 회원 응답의 운영자 식별 정보를 가리고 제재 actions는 실제 조회자 기준으로 계산한다.
+- **AC-06 앱 갱신:** 회원 변경·새로고침·원장 상태 변경 후 관련 화면을 다시 읽고 이의 입력 유지 여부를 구분한다.

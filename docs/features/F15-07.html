@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F15-07 이의제기 처리 — community PRD</title>
+  <title>F15-07 경고 이의제기 처리와 재제출 허용</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,81 +17,26 @@
           <a href="../domains/15-warning.html">15 경고·징계</a><span>›</span>
           F15-07 이의제기 처리
         </div>
-        <h1>F15-07. 이의제기 처리</h1>
-        <p class="lede">
-          운영진이 멤버가 제기한 이의를 판정하는 면. 인용하면 대상 경고가 정정되어 점수에서 빠지고,
-          부분 인용하면 점수가 일부 깎이며, 기각하면 그대로 유지된다. 기각된 이의도 운영진이 “다시 제기해도 된다”고 열어줄 수 있다.
-        </p>
+        <h1>F15-07 경고 이의제기 처리와 재제출 허용</h1>
+        <p class="lede">이의 처리의 심각도 권한·원장 결과·단일 거래와 검토 중/재제출 조건 차이 및 앱 복구를 정리한다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section id="action-permission-current">
-        <h2>허용된 동작과 운영자 표시</h2>
-        <p>서버가 현재 사용자에게 허용한 동작만 실행합니다. 허용 정보를 새로 확인할 수 없으면 이전 권한으로 변경하지 않습니다. 운영자가 처리한 기록은 운영자·시스템으로 구분하며 운영자 번호를 일반 회원 프로필로 연결하지 않습니다.</p><p><a href="../policies/permission.html#server-actions">화면의 동작과 서버의 권한 판정을 맞춥니다</a>에서 적용 조건과 예외를 확인합니다.</p>
-      </section>
-
-
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">권한</div><div class="value">검토자</div><div class="hint">소유자 자동 통과</div></div>
-          <div class="metric"><div class="label">판정 3종</div><div class="value">인용·부분·기각</div><div class="hint">인용=정정, 부분=감경</div></div>
-          <div class="metric"><div class="label">재제기</div><div class="value">허용 가능</div><div class="hint">종결 이의에 한해</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — 판정은 곧바로 점수에 반영된다</span>
-          <p>이의 처리는 단순 상태 변경이 아니라 점수에 직접 연결된다. 인용은 대상 경고를 정정해 점수에서 완전히 빼고,
-            부분 인용은 감경으로 점수를 일부만 줄인다. 기각은 점수를 그대로 둔다.
-            이렇게 “판정 → 원장 기록 → 점수 재계산”이 한 번에 묶여서, 멤버는 판정 결과를 바로 자기 점수로 확인할 수 있다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">인용</div>
-            <h3>이의가 타당해 경고를 정정한다</h3>
-            <p>인용으로 판정하면 대상 경고가 정정되어 점수에서 빠진다. 멤버 유효 점수가 즉시 내려간다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">부분 인용</div>
-            <h3>일부만 인정해 점수를 깎아준다</h3>
-            <p>부분 인용 + 감경 점수를 지정하면 그만큼만 점수가 줄어든다. 경고 자체는 남되 강도가 낮아진다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">기각</div>
-            <h3>이의가 근거 없어 기각한다</h3>
-            <p>기각하면 점수 변화 없이 이의가 종결된다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">재제기 허용</div>
-            <h3>기각된 이의를 다시 받기로 한다</h3>
-            <p>운영진이 종결된 이의에 재제기를 허용하면 그 사실이 기록되고 멤버에게 안내된다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">재처리 차단</div>
-            <h3>이미 판정한 이의를 또 처리하려 한다</h3>
-            <p>종결된 이의는 “이미 처리됨”으로 막힌다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것 — 비즈니스 리스크</h2>
-        <div class="callout warn">
-          <span class="label">에러 메시지와 재제기 허용의 실효성</span>
-          <ul>
-            <li><strong>사유를 빼먹으면 “이의를 찾을 수 없음”이라는 엉뚱한 에러가 뜬다.</strong> 부분 인용 점수를 안 넣으면 “유효 점수 초과”로 떠서, 실제 원인과 메시지가 다르다.</li>
-            <li><strong>“재제기 허용”이 강제 가드가 아니다.</strong> 현재 멤버 재제기는 진행 중 이의가 없으면 자동으로 가능해, 운영진이 명시적으로 허용하지 않아도 재제기될 수 있다. 허용 기록의 실효성을 정책으로 확정해야 한다.</li>
-          </ul>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>현재 역할과 입구</h2><p>운영 이의 목록은 GET /api/v1/admin/clubs/{clubId}/warnings/appeals의 Page를 읽는다. 상태·회원 필터를 지원하고 회원 닉네임을 보완한다. 운영자는 이의와 대상 GRANT를 확인해 전부 수용·일부 수용·반려를 선택하거나 종결된 이의의 재제출을 허용한다.</p></section>
+<section id="action-permission-current"><h2>처리 권한과 결과</h2><p>컨트롤러는 WARNING_REVIEWER 권한을 요구한다. 대상 GRANT의 패널티 카탈로그가 SEVERE이면 서버 resolve는 최종 결정 종류와 무관하게 OWNER를 요구한다. 단순 검토 권한만으로 모든 심각도 이의를 처리할 수 있다고 쓰지 않는다.</p>
+<p>POST /appeals/{appealId}/resolve는 resolution·선택 mitigatePoints·reasonCode·reason을 받는다. ACCEPTED는 대상 원장의 REVERSE, PARTIALLY_ACCEPTED는 양수 감경점수의 MITIGATE를 만들고 resultingLedgerId를 연결한다. REJECTED는 원장을 그대로 두고 결과 원장 식별자가 없다. SUBMITTED·IN_REVIEW·WITHDRAWN을 최종 resolution으로 받지 않는다. 원장 조정의 세부 조건은 <a href="F15-06.html">경고 부여와 원장 조정</a>을 따른다.</p>
+<p>사유는 공백 불가·최대 4000자이며 reasonCode 최대 40자다. 앱 처리 다이얼로그는 최소 5자와 일부 수용 시 양수 점수를 요구한다. 사유 누락은 현재 서버에서 WARNING_APPEAL_NOT_FOUND로 거절한다.</p></section>
+<section id="current-3"><h2>선점·결과·검토 큐의 거래</h2><p>공개 처리 경로는 하나의 트랜잭션인 claimAndResolve 안에서 먼저 claimForReview를 호출한다. 선점은 SUBMITTED만 받아 IN_REVIEW로 바꾸고 이어서 resolve가 최종 상태·처리자·시각·사유·결과 원장을 저장한다. 처리와 연결 큐의 마무리·감사·outbox 등록을 수행한다. 뒤 단계 실패는 이 트랜잭션의 선점도 되돌린다.</p>
+<p>내부 resolve 자체는 미종결 상태를 다루지만 공개 경로의 선점이 더 좁다. 따라서 이미 IN_REVIEW로 남아 있는 이의는 공개 resolve 요청의 첫 단계에서 거절된다. 앱은 SUBMITTED와 IN_REVIEW 양쪽에 처리 조건을 열어 두므로 실제 요청에서 이 차이가 드러날 수 있다.</p></section>
+<section id="current-4"><h2>재제출 허용의 범위</h2><p>POST /appeals/{appealId}/allow-resubmit는 진행 중 SUBMITTED·IN_REVIEW를 제외한 이의에 허용 시각·담당자를 저장하고 감사·outbox를 등록한다. 원장을 복원하거나 새 이의를 자동 생성하지 않는다. 현재 서버는 기존 허용 시각이 있어도 다시 기록할 수 있다.</p>
+<p>운영 앱은 REJECTED이면서 허용 시각이 없는 행에만 허용 버튼을 제공한다. 회원 앱의 재제출은 허용 표식·종결 종류·같은 원장의 진행 중 이의 없음을 확인한다. 반면 서버의 새 이의 submit에는 허용 표식 검사가 없다. 상세한 차이는 <a href="F15-03.html#appeal-resubmit-current">회원 이의제기의 재제출 조건</a>을 따른다.</p></section>
+<section id="current-5"><h2>앱의 최신 상태 확인과 복구</h2><p>처리 다이얼로그는 현재 이의 목록에서 같은 클럽·행이 아직 처리 가능한지 재확인한다. 로딩·오류 중에는 오래된 행으로 처리하지 않는다. 재제출 허용도 현재 계정·세션·검토 권한·최신 행을 확인하고 동일 행의 중복 요청을 막는다.</p>
+<p>성공과 반영 가능성이 있는 결과 불명은 콘솔·대상 회원·이의 목록을 갱신한다. 이미 처리된 오류는 목록을 읽고 닫으며 결과 불명·일반 거절은 입력을 유지한다. 이의 처리 API에는 회원 제출 API와 같은 필수 Idempotency-Key 헤더가 없다. 서로 다른 작업의 재전송 계약을 합치지 않는다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Gap</td><td>앱은 IN_REVIEW 처리 버튼을 허용하지만 공개 resolve의 선점은 SUBMITTED만 받는다.</td><td>이미 검토 중 자료의 실패 가능성을 남긴다.</td></tr><tr><td>Gap</td><td>운영 앱·회원 앱·서버의 재제출 허용 조건이 다르다.</td><td>허용 표식을 서버 제출의 강제 승인으로 설명하지 않는다.</td></tr><tr><td>Risk</td><td>심각도 OWNER 제한은 반려까지 적용되고 처리 사유 누락은 대상 없음 오류다.</td><td>처리별 실제 권한·오류를 기록한다.</td></tr><tr><td>미검증</td><td>실제 동시 판정·원장 후속 처리·알림 수신을 새로 실행하지 않았다.</td><td>서비스 호출과 운영 완료를 구분한다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 권한:</strong> 경고 검토 권한과 SEVERE 대상의 OWNER 제한을 최종 결정 종류와 함께 적용한다.</li><li><strong>AC-02 결과:</strong> 전부 수용은 REVERSE, 일부 수용은 양수 MITIGATE, 반려는 원장 유지로 처리한다.</li><li><strong>AC-03 거래:</strong> 공개 경로의 SUBMITTED 선점과 최종 처리·큐·감사·outbox를 같은 트랜잭션에서 수행한다.</li><li><strong>AC-04 검토 중 차이:</strong> 앱 IN_REVIEW 표시와 공개 선점의 거절 조건을 미해결 경계로 기록한다.</li><li><strong>AC-05 재제출 허용:</strong> 허용 표식 저장을 새 이의 생성·원장 복원과 구분하고 세 계층의 다른 조건을 명시한다.</li><li><strong>AC-06 앱 복구:</strong> 최신 행·계정·권한을 재확인하고 이미 처리·결과 불명·일반 실패를 나눠 갱신과 입력 유지를 수행한다.</li></ul></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>

@@ -1,85 +1,58 @@
-# F15-03. 이의제기 (Appeal) PRD
+# F15-03. 회원의 경고 이의제기 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 현재 서버·앱 소스를 대조했다. 문서 최신화이며 새 제품 실행·운영 검수 통과 기록이 아니다.
 
-> **범위 경계**: 이 PRD는 **클럽 경고 이의제기(`WarningAppeal`)** 만 다룬다. `WarningAppealStatus`는 6값(`SUBMITTED/IN_REVIEW/ACCEPTED/PARTIALLY_ACCEPTED/REJECTED/WITHDRAWN`)이다. v3 통합 분쟁 이의(`DisputeAppeal`, 4값 `PENDING/UPHELD/REJECTED/CLOSED`)는 전혀 다른 도메인이며 `../../01_domain_prds/18_분쟁_해결_prd.md`(병렬 작성 중, 링크만)를 참조한다.
+## 현재 역할과 입구
 
-## 1. 결론
+본인 경고 원장의 GRANT 항목에서 이의 다이얼로그를 열거나 전용 제출 화면으로 이동한다. 내 이의 목록은 진행 상태·처리 결과·철회와 조건부 재제출 입구를 제공한다. 제출 대상은 일반 신고나 제재 식별자가 아니라 targetGrantLedgerId다.
 
-이의제기는 멤버가 본인에게 부여된 **활성 GRANT 원장 항목**(`targetGrantLedgerId`)에 대해 `POST /api/v1/clubs/{clubId}/warnings/appeals`로 제출하는 흐름이다. 서버 `WarningAppealService.submit`은 (a) 대상 ledger가 GRANT 타입이고 본인(`memberId`)·해당 클럽 소유인지, (b) 이미 REVERSE/EXPIRE되지 않았는지, (c) 같은 GRANT에 진행 중(SUBMITTED/IN_REVIEW) 이의가 없는지를 검증한 뒤 `SUBMITTED`로 저장한다. 종결된 이의(REJECTED/PARTIALLY_ACCEPTED/WITHDRAWN)가 있으면 재제기를 허용한다(진행 중 1건 제한만 적용). 본인 이의 목록은 `List<WarningAppealVo>`(Page 아님)로 내려오고, 진행 중 이의는 철회할 수 있다. Flutter `appeal_submit_screen.dart`/`my_appeals_screen.dart`/`warning_appeal_dialog.dart`가 이를 구현했다.
+## 제출 계약과 중복 방어
 
-판정: **제출/조회/철회 정합은 닫혀 있다**. Gap은 (a) 제출 시 `description`만 필수이고 reason blank가 아니라 description blank를 `@NotBlank`로 막는데, 운영진 처리(F15-07)의 reason 누락은 `WARNING_APPEAL_NOT_FOUND`로 매핑되어 오해 소지, (b) 본인 이의 목록이 List라 페이지네이션 부재, (c) 14/28일 SLA 알림 스케줄러가 placeholder인 점이다.
+POST /api/v1/clubs/{clubId}/warnings/appeals는 회원 여부와 필수 Idempotency-Key를 확인하고 201 WarningAppealVo를 반환한다. 본문은 targetGrantLedgerId·description·선택 attachments다. 설명은 공백만 있는 값이 불가하고 최대 4000자다. 첨부는 파일 식별자 배열 JSON 문자열이며 소유권·최대 5개를 확인해 참조를 등록한다. JSON을 해석하지 못하면 현재 parser는 빈 첨부로 취급하므로 모든 잘못된 JSON을 거절한다고 쓰지 않는다.
 
-## 2. 코드 위치
+서버는 해당 클럽·본인의 GRANT인지 확인하고 회원 잠금을 잡은 뒤 이미 취소·만료됐는지와 진행 중 이의를 커밋된 자료로 확인한다. 같은 원장에 SUBMITTED 또는 IN_REVIEW가 있으면 중복이다. 따라서 예전의 「잠금 없는 조회 후 저장」 설명은 현재 제출 구현에 맞지 않는다. 모든 운영 처리의 동시성까지 이 확인으로 보장하지는 않는다.
 
-계약의 정본은 코드다. 서버: `WarningMemberController`, `WarningAppealService`, `WarningLedgerService`, `WarningAppealAddParam`, `WarningAppealVo`, `WarningAppealStatus`, `ErrorCode`, `WarningAppealOverdueScheduler`. 앱: `appeal_submit_screen.dart`, `my_appeals_screen.dart`, `warning_member_api.dart`, `warning_appeal_dialog.dart`, `warning_member_providers.dart`.
+앱은 같은 본문을 재전송할 때 키를 유지하고 본문이 바뀌면 새 키를 만든다. 서버의 멱등 실행 경로와 함께 결과 불명 상태에서 동일 제출을 다시 확인할 수 있게 한다. 이 키 계약을 멱등 헤더가 없는 제보 제출에도 적용한다고 설명하지 않는다.
 
-## 3. 전체 동작 흐름
+## 본인 목록과 철회
 
-1. 멤버가 본인 원장(F15-01)에서 활성 GRANT 항목을 선택 → `appeals/submit`(`Routes.clubWarningAppealSubmit`) → `AppealSubmitScreen` 또는 `warning_appeal_dialog`로 사유 입력.
-2. `WarningMemberApi.submitAppeal` → `POST /warnings/appeals`(`WarningAppealAddParam{targetGrantLedgerId, description, attachments}`).
-3. 서버 `submit`: ledger 조회 → GRANT 타입·본인·클럽 일치 확인(아니면 `WARNING_APPEAL_NO_TARGET_GRANT`) → `getInvalidationStatus`로 REVERSE/EXPIRE 검사 → 진행 중 이의 있으면 `WARNING_APPEAL_DUPLICATE` → `SUBMITTED` 저장.
-4. audit log `APPEAL_SUBMITTED` + outbox `WarningAppealSubmitted` 발행, 201로 `WarningAppealVo` 반환.
-5. `my-appeals`(`Routes.clubWarningMyAppeals`) → `MyAppealsScreen` → `warningMyAppealsProvider(clubId)` → `GET /warnings/me/appeals` → `List<WarningAppealVo>`(생성일 내림차순).
-6. 철회: `POST /warnings/appeals/{appealId}/withdraw` → 본인 + 상태 ∈ {SUBMITTED, IN_REVIEW}일 때만 `WITHDRAWN`.
+GET /api/v1/clubs/{clubId}/warnings/me/appeals는 본인 List를 생성 시각 역순으로 반환하고 상태 필터를 지원한다. 담당자·처리자·재제출 허용 담당자 식별자는 가린다. POST /appeals/{appealId}/withdraw는 해당 클럽·본인 자료이고 SUBMITTED 또는 IN_REVIEW일 때 WITHDRAWN으로 바꾼다. 연결된 검토 큐도 처리 상태로 맞춘다. 원장 자체를 취소하는 동작은 아니다.
 
-## 6. 상태/권한 매트릭스
+앱 목록은 필터로 숨겨진 행도 진행 중 중복 판정에 포함하도록 필터 없는 전체 목록을 구독한다. 재제출 선택 시 최신 행·계정·세션을 확인하고 원장 식별자와 기존 설명을 전용 화면에 넘긴다.
 
-| 사용자/상태 | 서버 근거 | 프론트 분기 | 사용자 결과 | 판단 |
-|---|---|---|---|---|
-| 본인 활성 GRANT | 검증 통과 | 제출 폼 | 이의 SUBMITTED | 일치 |
-| 비-GRANT 대상 | `WARNING_APPEAL_NO_TARGET_GRANT` | 에러 | 차단 | 일치 |
-| 타인 GRANT 대상 | clubId/memberId 불일치 → `NO_TARGET_GRANT` | 에러 | 차단 | 일치 |
-| 이미 REVERSE/EXPIRE GRANT | `WARNING_LEDGER_ALREADY_*` | 에러 | "이미 정정/만료됨" | 일치 |
-| 진행 중 이의 존재 | `WARNING_APPEAL_DUPLICATE` | 에러 | "처리 중 이의 있음" | 일치 |
-| 종결 후 재제기 | 진행 중 없으면 신규 허용 | 재제출 가능 | 새 이의 생성 | 일치 |
-| 종결 이의 철회 | `WARNING_APPEAL_ALREADY_PROCESSED` | 에러 | 차단 | 일치 |
+## 재제출 허용의 앱과 서버 차이
 
-## 7. 정합성 판단
+앱의 재제출 버튼은 resubmitAllowedAt이 있고 상태가 REJECTED·PARTIALLY_ACCEPTED·WITHDRAWN 중 하나이며 같은 원장에 진행 중 이의가 없어야 한다. 운영진 UI의 허용 버튼은 그보다 좁게 REJECTED이면서 아직 허용 시각이 없는 행에 노출된다.
 
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| 제출 응답 형태 | `WarningAppealVo` | VO | 일치 |
-| 내 이의 목록 형태 | `List<WarningAppealVo>` | List | 일치(Page 아님) |
-| `WarningAppealStatus` | 6값 | `warning_enums.dart` 동일 | 일치 |
-| `targetGrantLedgerId` | Long@NotNull | Dart int | 일치 |
-| `resubmitAllowedAt/By` | VO 포함 | Dart 모델 포함 | 일치 |
+그러나 서버 submit은 resubmitAllowedAt을 필수 조건으로 검사하지 않고 활성 GRANT·진행 중 이의 없음만 확인한다. 서버 allowResubmit도 진행 중 상태만 제외하고 허용 시각을 남긴다. 앱 버튼 조건·운영진 버튼 조건·최종 서버 제출 조건을 하나의 강제 정책으로 합치지 않는다. ACCEPTED 결과로 원장이 취소된 뒤에는 원장 검사에 의해 새 이의가 막힌다.
 
-## 8. Gap / Risk
+## 앱 실패와 복귀
 
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| P2 | 진행 중 1건 제한이 동시 제출 경합에 취약할 수 있음 | `submit`이 조회→검사→저장이며 DB UNIQUE 제약 없음 | 동시 2건 제출 시 둘 다 SUBMITTED 가능 | 동시성 테스트 + 필요 시 부분 UNIQUE 또는 락 |
-| P2 | 본인 이의 목록 List(페이지네이션 부재) | 서버 전체 반환 | 이의 누적 시 응답 비대 | 페이징 전환 검토 |
-| P3 | SLA 알림 스케줄러 placeholder | `notifyOverdueAppeals`가 `findByClubIdAndStatus(0L, ...)` 더미 호출 | 14/28일 미처리 알림이 실제로 안 나감 | 전체 클럽 순회 쿼리 + 스케줄러 활성화 (F15-09와 함께) |
+업로드·제출 중에는 중복 제출과 이탈을 제어한다. 성공하면 돌아가 본인 이의·요약을 다시 읽는다. 원장 취소·만료 오류는 현재 원장과 이의를 재조회하고 제출 화면을 닫는다. 결과 불명은 안전한 동일 요청 재전송 안내와 입력을 유지하고, 다른 실패도 입력을 남긴다. 목록·확인창은 계정·세션 변경 뒤 오래된 작업이 이어지지 않게 확인한다.
 
-## 9. 수용 기준
+## 코드 위치
 
-### AC-01. 활성 GRANT 이의 제출
-Given 멤버가 본인 활성 GRANT에 이의를 제출한다.
-When `POST /warnings/appeals`가 유효한 `targetGrantLedgerId`/`description`으로 호출된다.
-Then `status=SUBMITTED` row가 생성되고 outbox `WarningAppealSubmitted`가 발행된다.
+서버: WarningMemberController#submitAppeal/getMyAppeals/withdrawAppeal, WarningAppealService#submit/getMyAppeals/withdraw/allowResubmit, WarningAppealAddParam. 앱: warning_member_api.dart, warning_member_commands.dart, warning_appeal_dialog.dart, warning_ledger_screen.dart, appeal_submit_screen.dart, my_appeals_screen.dart.
 
-### AC-02. 진행 중 이의 중복 차단
-Given 같은 GRANT에 SUBMITTED 이의가 이미 있다.
-When 멤버가 다시 이의를 제출한다.
-Then 서버는 `WARNING_APPEAL_DUPLICATE`로 거절한다.
+<!-- source-references:start -->
+서버 창구: `WarningMemberController#submitAppeal`, `WarningMemberController#getMyAppeals`, `WarningMemberController#withdrawAppeal`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-### AC-03. 무력화된 GRANT 이의 차단
-Given 대상 GRANT가 이미 REVERSE되었다.
-When 멤버가 이의를 제출한다.
-Then 서버는 `WARNING_LEDGER_ALREADY_REVERSED`로 거절한다.
+## 현재 제한과 확인 범위
 
-### AC-04. 종결 후 재제기
-Given 멤버의 이전 이의가 REJECTED로 종결되었다.
-When 같은 GRANT에 새 이의를 제출한다.
-Then 진행 중 이의가 없으므로 신규 SUBMITTED 이의가 생성된다.
-
-## 10. 미결정 / 후속
-
-| 분류 | 항목 | 결정/작업 |
+| 분류 | 현재 경계 | 문서 처리 |
 |---|---|---|
-| 구현 | 동시 제출 경합 | 진행 중 1건 보장을 DB 제약/락으로 강화할지 결정 |
-| 구현 | SLA 알림 | `notifyOverdueAppeals` 전체 클럽 순회 + 스케줄러 활성화 |
-| 테스트 | 이의 제출 분기 | 비-GRANT/타인/무력화/중복/재제기 E2E |
+| Gap | 앱 재제출 표식과 서버 제출 조건이 다르다. | 운영진 허용을 서버 제출의 필수 승인으로 설명하지 않는다. |
+| Risk | 본인 목록은 페이지가 아니고 잘못된 첨부 JSON은 빈 첨부로 처리된다. | 데이터 규모·입력 실패 경계를 구분한다. |
+| 미검증 | 실제 동시 제출·응답 유실 재전송·계정 전환을 새로 실행하지 않았다. | 잠금·키 코드의 존재와 실행 검증을 구분한다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 대상:** 본인·같은 클럽·활성 GRANT를 확인하고 취소·만료를 별도 오류로 거절한다.
+- **AC-02 제출 중복:** 필수 멱등 키와 회원 잠금 뒤 진행 중 이의 확인을 적용한다.
+- **AC-03 입력:** 필수 설명·4000자·첨부 소유권·5개 한도와 JSON 실패 처리를 구분한다.
+- **AC-04 본인 목록:** 본인 List·상태 필터·운영자 정보 가림을 유지하고 재제출 중복은 전체 목록으로 판정한다.
+- **AC-05 철회:** 진행 중 본인 이의만 철회하며 원장 취소와 혼동하지 않는다.
+- **AC-06 재제출:** 회원 버튼·운영진 허용 버튼·서버 submit의 서로 다른 조건을 기록한다.
+- **AC-07 오류 복구:** 원장 상태 변경은 재조회 후 닫기, 결과 불명·일반 실패는 입력 유지와 적절한 안내로 나눈다.

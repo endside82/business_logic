@@ -305,7 +305,8 @@
         "feedback_taste_20261122",
         "trust_score_20261122",
         "report_intake_20261122",
-        "location_features_20261122"
+        "location_features_20261122",
+        "warning_intake_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -371,7 +372,8 @@
         "report_intake_20261122",
         "review_domain_20261122",
         "location_features_20261122",
-        "location_domain_20261122"
+        "location_domain_20261122",
+        "warning_intake_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -4175,9 +4177,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "53ef844b7343ec88a78e25c0654d8a142d7f851e45baedc94d50013836cadc5b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "warning_intake_20261122"
+      ],
+      "reviewedSha256": "30911637a955e3c6f7aca8cb1f0c9fe7763db7a618bc30e57a16d0c84925b72a"
     },
     {
       "path": "docs/features/F15-02.html",
@@ -4185,9 +4190,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "2bf3ab20249cf08511a010277637cdab72058a56b2106492c29ea764a0d157e4",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "warning_intake_20261122"
+      ],
+      "reviewedSha256": "8fc66b9a62b93aba28c3a914633a07f714f491682a81c17413ccd259df67226c"
     },
     {
       "path": "docs/features/F15-03.html",
@@ -4195,9 +4203,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "3d0876bc6fb84c5082c9f9ce3f7b303043061539a694ab7d3a5c92b940e6c37e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "warning_intake_20261122"
+      ],
+      "reviewedSha256": "787c82da38f73693fc815283a5883025099fad8d308c213e6cbc1313dbc430cb"
     },
     {
       "path": "docs/features/F15-04.html",
@@ -4215,9 +4226,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "7969423c7450631872ff21480bf6e2f683c432f8772013da4e1491a6365f46f3",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "warning_intake_20261122"
+      ],
+      "reviewedSha256": "ab3f7b0891be33e373eb7bc2ef9e2b51da4ae1d0a4e9aaa78ecbf0d66236d914"
     },
     {
       "path": "docs/features/F15-06.html",
@@ -4235,9 +4249,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "def44c5b10d32dadc36eab82bf304f9c902fdcc6bdad51b937ef4fc3fd4ea062",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "warning_intake_20261122"
+      ],
+      "reviewedSha256": "0e08e9cc7ac2375d68459def5c738acbf1f96938fb46c6ac52e7630db954331c"
     },
     {
       "path": "docs/features/F15-08.html",
@@ -5152,7 +5169,8 @@
         "feedback_taste_20261122",
         "trust_score_20261122",
         "report_intake_20261122",
-        "location_features_20261122"
+        "location_features_20261122",
+        "warning_intake_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5252,7 +5270,8 @@
         "feedback_taste_20261122",
         "trust_score_20261122",
         "report_intake_20261122",
-        "location_features_20261122"
+        "location_features_20261122",
+        "warning_intake_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5376,7 +5395,8 @@
         "feedback_taste_20261122",
         "trust_score_20261122",
         "report_intake_20261122",
-        "location_features_20261122"
+        "location_features_20261122",
+        "warning_intake_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -7426,10 +7446,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "02a2df64031d8392c75e80cc79bb6f8726853084eca4976b77b3f14e600c088d",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "warning_intake_20261122"
+      ],
+      "reviewedSha256": "f5192f53d0f66addf35b146f2a2119b38d3a6c93e878aa9a9772e092d854a668"
     },
     {
       "path": "prd/02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md",
@@ -7437,10 +7459,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "165dc03ae0c264847f9e913c38932708b8a399382df80a13dd81d6144c71edb6",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "warning_intake_20261122"
+      ],
+      "reviewedSha256": "99a2f46e7bf2ee30e11512ddb026d2efe8878c6992f865010fa45dbc72dbb6e8"
     },
     {
       "path": "prd/02_feature_prds/15_warning/F15-03_appeal_prd.md",
@@ -7448,10 +7472,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "dce23d25ff7efc20622102d18ccac69f681de8523f12b375d323b95ad5a523fc",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "warning_intake_20261122"
+      ],
+      "reviewedSha256": "80647479db7e31d0392ea130ba7a1498461c15f71f6f64eeadb3d739910b7bf2"
     },
     {
       "path": "prd/02_feature_prds/15_warning/F15-04_policy-penalty-types_prd.md",
@@ -7470,10 +7496,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "d9c159d26380751790bfb175a0eb5bc137e360c5969b7d1605a957884cb2d359",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "warning_intake_20261122"
+      ],
+      "reviewedSha256": "8fc3304d6cc030996ba82a495606f95ce86788eb9214ff65b44a416f69056213"
     },
     {
       "path": "prd/02_feature_prds/15_warning/F15-06_grant-ledger-adjust_prd.md",
@@ -7492,10 +7520,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "9a95a4c3b491411b94dd88060a28bf5c482086e7591998e5930d5144a677c96b",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "warning_intake_20261122"
+      ],
+      "reviewedSha256": "cb25e842f2a21fdbe63456f7187a679a8e988b7f87ab96c72d84a036340755ba"
     },
     {
       "path": "prd/02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md",
@@ -8254,7 +8284,8 @@
         "feedback_taste_20261122",
         "trust_score_20261122",
         "report_intake_20261122",
-        "location_features_20261122"
+        "location_features_20261122",
+        "warning_intake_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8506,7 +8537,8 @@
         "feedback_taste_20261122",
         "trust_score_20261122",
         "report_intake_20261122",
-        "location_features_20261122"
+        "location_features_20261122",
+        "warning_intake_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -35659,6 +35691,278 @@
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; verified feature document rollup"
+      },
+      "observedSourceVersions": {
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+        "community_app": "3aa21da1e1c60194f0d1352e2718dc452f69862a"
+      }
+    },
+    "warning_intake_20261122": {
+      "kind": "source_review",
+      "scope": "경고 회원 현황·제보 접수/심사·이의 접수/처리 5개 기능의 연결된 서버·앱 흐름 대조. 익명 본인 목록, 추가 검토, 멱등 키·잠금, 권한/정보 가림, 재제출·검토 중 상태 차이와 복귀/오류를 정정. 경고 정책·원장 조정·제재 집행·큐/통계의 전체 검토는 다음 묶음으로 남음.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningMemberController.java",
+          "sha256": "89c338e1d0f62071ba28e788cc0baca70560a6ae8cb33e1b5957140e51208f0f",
+          "reviewScope": "본인 요약·원장·제보/이의 접수·목록·철회 경로·회원 검사·필수 이의 멱등 키"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningHostController.java",
+          "sha256": "0e006d6e8d0f33b33ef27735ca012d1ec46af0cb8b87f62715a8cca2802d09fa",
+          "reviewScope": "이벤트 호스트 제보 POST/GET와 요청·반환"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+          "sha256": "4913b411833de708501b502e5bd88f4ac35c4dc880668ea3137b196f2840abf0",
+          "reviewScope": "운영 제보 목록/상세/증빙/승인/반려/추가 정보 및 이의 목록/처리/재제출 허용 경로와 권한"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/service/WarningQueryService.java",
+          "sha256": "8b2b1315969d0420bd11b22cc8cf188da64687bd2daa042853c4560de445f749",
+          "reviewScope": "본인 요약·최근 5건·운영자 정보 가림·원장 본인 조회"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/service/WarningSanctionService.java",
+          "sha256": "84b36701ef5e315cc706698e8e35eac7455d03f57d5093fc99f73d5fc7297eba",
+          "reviewScope": "484–501,595–596: ACTIVE 및 종료 시각 필터·시작 시각 미검사. 집행/생성 전체 검토는 별도"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/policy/WarningAbilityPolicy.java",
+          "sha256": "e7f24035c0f88327488125e7e9c1cbae552e13b7e53db3a5cf82338f2e86ae98",
+          "reviewScope": "회원 제재 actions와 제보 자기 대상/처리 상태/유형/심각도에 따른 실행 허용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/repository/query/WarningLedgerQueryRepository.java",
+          "sha256": "30008ddcf94346e81107ae36d66acc86da7acd28afa04f9e6002f59998d8f5ea",
+          "reviewScope": "36–65: 클럽·회원·유형·패널티·생성 기간 및 생성 시각/id 역순 페이지 조회"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/param/WarningLedgerSearchParam.java",
+          "sha256": "86282344d0753de2b743cff8ec82ef162cead76f7847f6a8a37ee901804f9326",
+          "reviewScope": "서버 원장 검색 인자와 PagingParam"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/vo/WarningMemberOverviewVo.java",
+          "sha256": "8c69d95027c99e9dbd99217abdd038fe783bfc52cd8e705f93757bb64a27999f",
+          "reviewScope": "summary/recentLedger/activeSanctions/appealSlaText 응답"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/vo/WarningMemberSummaryVo.java",
+          "sha256": "d5bc7a1b4d80692029cc49401219f94270f4e81df3970328717d7c2e21859eb2",
+          "reviewScope": "원시/유효/검토 점수·집계·등급·수동 잠금·시각 필드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/service/WarningReportService.java",
+          "sha256": "401ab6196c00cd9d4ccd177d93f50d27612cca9662ccc0cf4bc831834c91ba37",
+          "reviewScope": "회원/호스트 접수·자격/잠금/24h 한도/5분 중복/익명 추가 검토·본인 익명 목록/철회·운영 자기 대상 가림/증빙/심사·별도 선점"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/param/WarningReportAddParam.java",
+          "sha256": "55dc204eeb73c63db002d52337092cc3d25752ff8c9a71f561ef603a2eff0a6f",
+          "reviewScope": "대상·유형·이벤트·첨부 JSON·설명·익명 입력"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/param/WarningReportSearchParam.java",
+          "sha256": "be64d4602f18d5055cf4f1283225b7dff2ef14760180378b6d1f3156cfe1a495",
+          "reviewScope": "회원/운영 목록의 상태·대상·이벤트·유형·기간·정렬 인자"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/vo/WarningReportVo.java",
+          "sha256": "d8b0b9995e3f02812324c0935a1352cd739bffcabfa2ab2b4768c207f32b7442",
+          "reviewScope": "공개 응답·내부 식별자 미노출·actions·표시명·추가 검토 필드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/service/WarningAppealService.java",
+          "sha256": "efb3bc6c1a00c0e080f8eae4c7a8550eb6fde543c7d03f5862869a5afa8fdf10",
+          "reviewScope": "회원 제출 잠금/진행 중 중복·첨부·목록 가림·철회·선점과 단일 처리 거래·심각도 OWNER·재제출 표식과 제출 조건의 차이"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/param/WarningAppealAddParam.java",
+          "sha256": "1b38dd43e83d2d10bf559cc5dc408f18067f2b8c01bc685191924ab1ae94ea42",
+          "reviewScope": "GRANT 대상·설명·첨부 JSON 입력"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/param/WarningAppealSearchParam.java",
+          "sha256": "d47f6e2b0ec071bfd8656fbfeb7f42fe9af99b14ca413ff5d8962dae9e2c8a20",
+          "reviewScope": "상태·회원 검색 인자"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/param/WarningAppealResolveParam.java",
+          "sha256": "cfe84e9db5e5f6075540a85add5cdfa0142cf0a80603f1787fb398f724da565a",
+          "reviewScope": "결과·감경 점수·사유 코드/본문 입력"
+        },
+        {
+          "path": "community_app/lib/data/api/warning/warning_member_api.dart",
+          "sha256": "540033ea3b0cc3532b8d9e7fa2733e1637350f857b441cccd4f62ccea6a9e9c5",
+          "reviewScope": "회원 API 경로·페이지/List·필수 이의 키 전달"
+        },
+        {
+          "path": "community_app/lib/domain/providers/warning/warning_member_providers.dart",
+          "sha256": "281c2035a4e7e3948825cd37655f031b051d9a3576c0ed1a28a3a36a4a5e4da9",
+          "reviewScope": "클럽 회원 변경 구독·원장 20개 페이지·본인 List 조회"
+        },
+        {
+          "path": "community_app/lib/domain/providers/warning/warning_member_commands.dart",
+          "sha256": "cc5c48ecd9820b55be8e7297c95a0afeaa44eacc5484cd2dc76349aadb04fef9",
+          "reviewScope": "명령 성공/반영 불명시 목록 무효화와 현재 세션 조건"
+        },
+        {
+          "path": "community_app/lib/data/models/warning/warning_member_overview_vo.dart",
+          "sha256": "0379b0b22c57d8497aadb1c6ec539d0b851da22cfaa93813bd121ee861a127ea",
+          "reviewScope": "메인 응답 소비와 nullable SLA"
+        },
+        {
+          "path": "community_app/lib/data/models/warning/warning_member_summary_vo.dart",
+          "sha256": "1fb0fb874ba2b2de647aa86b00813600948ed1d134e6d0397e2d416870f3f493",
+          "reviewScope": "본인 요약 필드·집계 문자열·underReview/manualLock JSON 매핑"
+        },
+        {
+          "path": "community_app/lib/data/models/warning/param/warning_ledger_search_param.dart",
+          "sha256": "8d9a20370bfbc4a5badea8f5a1375dc91400d55de6d14816ef22db6c33c2afb9",
+          "reviewScope": "유형·코드·회원·기간·페이지 인자 대응"
+        },
+        {
+          "path": "community_app/lib/presentation/warning/screens/warning_main_screen.dart",
+          "sha256": "74364d717c1e9b6c44256edcee191756dd5581019638d9a824e9643346eca03a",
+          "reviewScope": "요약/이의/제재/잠금/최근 원장·네 입구·도움말·새로고침"
+        },
+        {
+          "path": "community_app/lib/presentation/warning/screens/warning_ledger_screen.dart",
+          "sha256": "34bffab677082d213bf6e5c793430da9cdaab9795f4c971f2fb08b2c8d085c31",
+          "reviewScope": "읽은 원장 그룹·진행 중 이의·같은 본문 키 재사용·원장 상태 변경 오류 복구"
+        },
+        {
+          "path": "community_app/lib/presentation/warning/widgets/warning_appeal_dialog.dart",
+          "sha256": "f1edbd3672a5b51aa7dfe0738ffc9fd2a6018ad2e8f14ce05f3e2f09baff4bdb",
+          "reviewScope": "설명·첨부/업로드/중복 제출·실패 시 입력 유지"
+        },
+        {
+          "path": "community_app/lib/presentation/warning/widgets/warning_ledger_state_changed.dart",
+          "sha256": "a764dc70855ba3ab5c2b125716db91b94eb84c854bb27da5a784e7ed04ed742f",
+          "reviewScope": "원장 취소·만료 오류와 안내"
+        },
+        {
+          "path": "community_app/lib/presentation/warning/screens/report_submit_screen.dart",
+          "sha256": "283690344b0d14ca7fe6334e4036491d74c444afc2910e4053428fb955833bea",
+          "reviewScope": "회원 제보 입력/업로드·설명 필수·추가 검토 성공 안내·실패 입력 유지·이탈 방지"
+        },
+        {
+          "path": "community_app/lib/presentation/warning/screens/host_report_submit_screen.dart",
+          "sha256": "af655a3db3a2d65c04bde9459c6c70575adfe1540b5a9256621888d1bae7e644",
+          "reviewScope": "호스트 제보 입력/제출·목록 복귀·실패·도움말"
+        },
+        {
+          "path": "community_app/lib/presentation/warning/screens/my_reports_screen.dart",
+          "sha256": "08b59c8b0163a43f8a859c58ba4f79d3a26c5b658b247478eefc8d4ffee3f904",
+          "reviewScope": "본인 철회 전/후 계정·세션·현재 화면·행 재확인과 확인창 수명"
+        },
+        {
+          "path": "community_app/lib/presentation/warning/screens/appeal_submit_screen.dart",
+          "sha256": "124dbf3e17d0bfebd601f7ef5152e44d5f7f8e1b3f1cc4b87334d6dd9640a0fa",
+          "reviewScope": "같은 본문 멱등 키·입력/첨부/복귀·원장 상태 변경/결과 불명 실패 분기"
+        },
+        {
+          "path": "community_app/lib/presentation/warning/screens/my_appeals_screen.dart",
+          "sha256": "99ed63efd2142ddf910db9ed0097717863c2356864fb7df2333a1a256ba8cbdf",
+          "reviewScope": "전체 목록 기반 진행 중 판정·재제출 표식/상태·최신 계정/행으로 재제출 입구"
+        },
+        {
+          "path": "community_app/lib/presentation/warning/admin/warning_report_detail_screen.dart",
+          "sha256": "fcc8342d6fb3a311170451801a7e454500189c1b97177b53a2214701c64440ec",
+          "reviewScope": "제보별 actions 재확인·첨부 접근·처리 사유/메모·상태 변경/권한 거절/결과 불명 복구"
+        },
+        {
+          "path": "community_app/lib/presentation/warning/admin/warning_appeal_inbox_screen.dart",
+          "sha256": "a0f557285216e129e1c08666d97931521d16359530f168662ee5f33aea16e212",
+          "reviewScope": "이의 처리 최신 행/권한·사유·상태 변화/결과 불명 복구·REJECTED 재제출 허용 조건"
+        },
+        {
+          "path": "community_app/lib/domain/providers/warning/warning_admin_commands.dart",
+          "sha256": "2f15de2989d09f97417be60ce3539d7eb0befa539d9a3fcafe71145dceb1a7c9",
+          "reviewScope": "57–146: 제보 승인/반려/추가 자료와 이의 처리/재제출 허용 뒤 콘솔·회원 자료 갱신"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/service/WarningMemberSummaryService.java",
+          "sha256": "83f9731acb4104e8b95a031c9367e35f0dbef7ca43c3d4e781327019772e574e",
+          "reviewScope": "75–140: 내 요약 조회·초기화·부모 존재·insert-if-absent와 관리자 findOrEmpty의 구분"
+        }
+      ],
+      "reuses": [
+        "club_reputation_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-01_warning-overview-ledger_prd.md",
+          "sha256": "f5192f53d0f66addf35b146f2a2119b38d3a6c93e878aa9a9772e092d854a668"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md",
+          "sha256": "99a2f46e7bf2ee30e11512ddb026d2efe8878c6992f865010fa45dbc72dbb6e8"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-03_appeal_prd.md",
+          "sha256": "80647479db7e31d0392ea130ba7a1498461c15f71f6f64eeadb3d739910b7bf2"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-05_report-review_prd.md",
+          "sha256": "8fc3304d6cc030996ba82a495606f95ce86788eb9214ff65b44a416f69056213"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-07_appeal-resolve_prd.md",
+          "sha256": "cb25e842f2a21fdbe63456f7187a679a8e988b7f87ab96c72d84a036340755ba"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F15-01.html": [
+          "sidebar",
+          "launch-strip",
+          "action-permission-current",
+          "release-completion"
+        ],
+        "docs/features/F15-02.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/features/F15-03.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/features/F15-05.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/features/F15-07.html": [
+          "sidebar",
+          "launch-strip",
+          "action-permission-current",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "F15-01/02/03/05/07 현재 공개 컨트롤러 19개 경로를 새 참조 표에 등록"
+      ],
+      "followUpFindings": [
+        "익명 제보가 본인 목록/철회에 포함되고 높은 익명 반려율은 접수 거절이 아니라 추가 검토 표식",
+        "제보 설명의 앱 필수/서버 선택 차이와 도움말 F11-07 연결",
+        "회원 이의의 필수 멱등 키·회원 잠금·진행 중 자료의 커밋된 읽기",
+        "회원/운영진 앱과 서버의 재제출 허용 조건 차이",
+        "공개 이의 처리의 SUBMITTED 선점과 앱 IN_REVIEW 처리 표시 차이",
+        "제보 선점과 최종 처리의 분리된 거래 및 추가 정보 요청의 outbox 부재",
+        "본인 운영자 식별 정보 가림과 자기 대상 제보/증빙 가림"
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 125개가 실제 소스와 일치합니다.",
+        "groupDigests": "42 source/canonical digests; 17 retained HTML IDs",
+        "derivedDocuments": "10 documents; shared batch verified 10 paths, 60 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review only"
       },
       "observedSourceVersions": {
         "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",

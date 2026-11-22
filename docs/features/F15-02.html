@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F15-02 신고 제출·내 신고 관리 — community PRD</title>
+  <title>F15-02 클럽 경고 제보와 본인 관리</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,78 +17,26 @@
           <a href="../domains/15-warning.html">15 경고·징계</a><span>›</span>
           F15-02 신고 제출·내 신고 관리
         </div>
-        <h1>F15-02. 신고 제출 & 내 신고 관리</h1>
-        <p class="lede">
-          멤버가 다른 멤버의 부적절한 행동을 운영진에게 제보하는 면. 이벤트 호스트는 출결(지각·노쇼 등)을 근거로 별도 제보 경로를 쓴다.
-          제보는 바로 경고가 되는 게 아니라 운영진 심사(F15-05)를 거치며, 본인이 낸 제보는 목록으로 보고 처리되기 전이라면 철회할 수 있다.
-        </p>
+        <h1>F15-02 클럽 경고 제보와 본인 관리</h1>
+        <p class="lede">익명 포함 본인 조회·철회, 제출 한도·중복·추가 검토와 회원/호스트 경로 및 세션별 복구를 맞춘다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">제보 경로</div><div class="value">2개</div><div class="hint">멤버 일반 · 호스트 출결 연계</div></div>
-          <div class="metric"><div class="label">제출 전 검사</div><div class="value">12단계</div><div class="hint">입력형식·제도·익명허용·자가·비멤버·이벤트불일치·유형유효·한도·중복·남용·증빙·동시요청</div></div>
-          <div class="metric"><div class="label">철회 가능</div><div class="value">처리 전만</div><div class="hint">승인·반려되면 불가</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — 제보는 “바로 처벌”이 아니라 “심사 대기”다</span>
-          <p>제보가 즉시 경고로 바뀌면 악용 위험이 크다. 그래서 제보는 “제출됨” 상태로만 들어가고 운영진 심사를 거친다.
-            대신 남용을 막기 위해 제출 시점에 여러 검사를 한다 — 제도가 켜져 있는지, 익명이 허용되는지, 자기 자신을 제보하는 건 아닌지,
-            같은 제보를 짧은 시간에 반복하는 건 아닌지, 익명으로 한 대상을 반복 저격하는 건 아닌지. 호스트 출결 제보는 출결과 연결 가능한 유형만 쓸 수 있다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">기본 제보</div>
-            <h3>부적절한 행동을 한 멤버를 제보한다</h3>
-            <p>대상·사유 유형·설명·익명 여부를 입력해 제출. “제출됨” 상태로 들어가고 운영진 검토함에 올라간다. 익명을 선택하면 신고자가 운영진에게도 비공개로 처리된다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">호스트 출결</div>
-            <h3>이벤트 호스트가 노쇼한 참가자를 제보한다</h3>
-            <p>이벤트 화면에서 출결 연계 제보. 출결과 연결 가능한 유형(지각·당일 취소·노쇼 등)만 고를 수 있고, 그 이벤트가 자동으로 근거로 붙는다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">남용 차단</div>
-            <h3>같은 사람을 짧은 시간에 반복 제보한다</h3>
-            <p>최근 24시간 제보 한도(일반 멤버 20건, 이벤트 호스트 100건)가 있고, 실명·익명 모두 5분 내 동일 제보가 막힌다. 같은 시간대에 동시에 들어온 요청도 한 건만 접수된다. 익명은 24시간 내 한 대상 3건 이상도 막힌다. 자기 자신 제보도 차단된다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">제도 미운영</div>
-            <h3>경고 제도를 켜지 않은 클럽에서 제보한다</h3>
-            <p>“경고 제도가 운영되지 않는 클럽입니다”로 차단된다. 제도가 켜져 있어야 제보가 가능하다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">철회</div>
-            <h3>제출했던 제보를 거둬들인다</h3>
-            <p>아직 처리 전(제출/검토 중/보완 필요)이면 철회 가능. 이미 승인·반려된 제보는 철회되지 않는다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것 — 비즈니스 리스크</h2>
-        <div class="callout warn">
-          <span class="label">신고 남용 방어 현황</span>
-          <ul>
-            <li><strong>제보 대상이 클럽 멤버인지 확인한다.</strong> 클럽에 없는 사용자를 제보하려 하면 “제보 대상이 클럽 멤버가 아닙니다”로 거절된다.</li>
-            <li><strong>제보 한도를 넘기면 "잠시 후 다시 시도"로 거절된다.</strong> 일반 멤버는 최근 24시간 20건, 이벤트 호스트 경로는 100건이 한도다. 실명·익명 제보를 합산하며, 달력상 날짜가 바뀐다고 한도가 초기화되지는 않는다.</li>
-            <li><strong>익명 반복 악성 제보는 신고자 단위로 막는다.</strong> 클럽 안에서 그 사람의 익명 제보가 다섯 건 이상 쌓이고 그중 반려 비율이 70%를 넘으면 새 익명 제보를 받지 않는다.</li>
-            <li><strong>차단 사유가 사용자에게 잘 전달되지 않는 점은 남아 있다.</strong> 서버는 차단마다 다른 사유를 돌려주지만 앱이 그 사유를 안내 문구로 바꾸지 않아, 사용자는 여전히 “왜 막혔는지” 알기 어렵다. 특히 자기 자신을 제보하면 “찾을 수 없음”으로 거절돼 원인과 안내가 어긋난다.</li>
-            <li><strong>내 제보 목록과 호스트 제보 목록은 한 번에 전부 내려온다.</strong> 제보가 많이 쌓이면 화면이 무거워질 수 있다.</li>
-          </ul>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>현재 역할과 입구</h2><p>클럽 회원의 경고 제보는 /api/v1/clubs/{clubId}/warnings/reports, 이벤트 호스트의 출결 연계 제보는 /api/v1/clubs/{clubId}/events/{eventId}/warning-reports로 제출한다. 둘 다 201 WarningReportVo를 반환한다. 일반 플랫폼 신고는 <a href="F11-04.html">일반 신고 접수</a>와 구분한다.</p>
+<p>호스트 경로는 실제 이벤트 호스트와 이벤트·클럽 일치를 검사하고 출결 연계가 허용된 활성 패널티 유형을 요구한다. URL의 eventId를 본문에 강제한다. 클럽 운영자라는 이유만으로 이벤트 호스트 검사를 생략하지 않는다.</p></section>
+<section id="current-2"><h2>입력과 접수 조건</h2><p>입력은 targetMemberId·penaltyTypeCode·선택 eventId·attachmentIds·description·anonymous다. attachmentIds는 파일 식별자 목록을 담은 JSON 문자열이며 소유권·최대 5개를 검사해 정규화하고 참조를 등록한다. 설명은 서버에서 최대 4000자를 검사하지만 필수는 아니다. 현재 앱은 비어 있지 않은 설명을 제출 조건으로 삼는다.</p>
+<p>서버는 정책 활성, 익명 허용, 자기 자신 제보 금지, 대상의 클럽 회원 여부, 선택 이벤트의 클럽 일치, 패널티 유형 사용 가능성을 확인한다. 클럽·제보자·대상 잠금을 잡고 실명과 익명을 합친 최근 24시간 제출 수를 검사한다. 일반 경로는 20건, 호스트 경로는 100건 한도이며 이 횟수 조회는 특정 클럽으로 제한하지 않는다.</p></section>
+<section id="current-3"><h2>중복과 익명 제보의 추가 검토</h2><p>최근 5분 동일 클럽·제보자·대상·패널티 유형의 중복을 실명/익명 저장 필드별로 확인한다. 별도로 5분 시간 구간의 고유 키는 실명과 익명 모두 같은 제보자 식별자를 사용한다. 키에는 eventId·설명·익명 여부가 없으며 DB 고유 제약 충돌도 중복 오류로 처리한다. 이 계약은 동일 결과를 돌려주는 Idempotency-Key 재전송 계약과 다르다.</p>
+<p>익명 제보자가 같은 클럽의 같은 대상에게 최근 24시간 이미 3건을 냈으면 추가 접수를 거절하고 REPEATED_REPORT 검토 큐를 남긴다. 해당 거절은 큐 기록을 함께 되돌리지 않도록 처리한다. 익명 제보 표본 5건 이상에서 반려 비율 70% 이상이면 접수 자체를 차단하지 않고 extraReviewRequired=true로 저장한다. 앱은 접수 성공 뒤 추가 검토 안내를 표시한다.</p></section>
+<section id="current-4"><h2>익명 포함 본인 목록과 철회</h2><p>현재 본인 목록은 reporterUserId 또는 anonymousReporterId가 본인인 자료를 조회하므로 <strong>익명 제보도 포함된다</strong>. 응답은 Page가 아닌 List다. 상태·유형·대상·이벤트·생성 기간을 필터하며 호스트 목록에는 URL 이벤트 범위를 추가로 강제한다. 본인 범위 밖의 reporterUserId 요청 값을 그대로 신뢰하지 않는다.</p>
+<p>본인 응답은 담당자·처리자·내부 메모를 가린다. 목록에는 대상 닉네임·이벤트 제목을 붙인다. 익명 제보의 내부 소유자 필드는 공개 VO에 없다. 철회도 실명·익명 원본의 본인을 확인하고 APPROVED·REJECTED·WITHDRAWN이면 거절한다. 그 밖의 미처리 상태는 WITHDRAWN과 처리 시각을 기록한다.</p></section>
+<section id="current-5"><h2>앱의 제출·복귀·실패</h2><p>회원·호스트 작성 화면은 첨부 업로드 중 또는 제출 중의 재제출을 막고 미저장 이탈을 확인한다. 성공하면 호출 화면으로 돌아가고 관련 본인·호스트 목록을 갱신한다. 실패는 입력을 유지하지만 현재 안내는 일반적인 접수 실패 문구다. 명령 결과가 불확실해도 현재 세션에서 반영 가능성이 있으면 목록을 재조회한다.</p>
+<p>본인 철회는 확인창을 연 뒤 계정·세션·대상 행·현재 화면을 다시 확인하고 호출한다. 다른 계정으로 바뀐 뒤 이전 확인창으로 작업을 이어가지 않는다. 제보하기·호스트 출결 제보의 도움말은 현재 F11-07을 가리킨다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Risk</td><td>본인 List를 읽은 뒤 필터하므로 페이지 조회가 아니며 누적 자료의 비용이 남는다.</td><td>목록을 서버 페이지 응답으로 설명하지 않는다.</td></tr><tr><td>Gap</td><td>앱 설명 필수·도움말 F11-07·일반 실패 문구가 서버 계약 및 해당 기능 안내와 다르다.</td><td>입력과 오류·도움말 차이를 남긴다.</td></tr><tr><td>Risk</td><td>자기 자신 제보는 WARNING_REPORT_NOT_FOUND로 거절한다.</td><td>전용 자기 제보 오류가 있다고 쓰지 않는다.</td></tr><tr><td>미검증</td><td>실제 익명 계정 분리·동시 제출·첨부 열람을 새로 실행하지 않았다.</td><td>현재 소스와 실행 증거를 구분한다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 두 입구:</strong> 회원 경로와 이벤트 호스트 경로의 권한·유형·eventId 강제를 구분한다.</li><li><strong>AC-02 입력 검증:</strong> 대상·정책·유형·클럽 일치와 첨부 소유권·5개 한도를 검사하며 설명 필수의 앱/서버 차이를 기록한다.</li><li><strong>AC-03 접수 제한:</strong> 실명·익명 합산 24시간 한도, 최근 중복 조회, 공통 구간 키를 각각 적용한다.</li><li><strong>AC-04 익명 추가 검토:</strong> 반복 3건 뒤 거절·큐 유지와 반려 비율에 따른 추가 검토 표식을 구분한다.</li><li><strong>AC-05 본인 익명 목록:</strong> 실명·익명 본인 제보를 List로 반환하고 운영자 식별 정보·내부 메모를 가린다.</li><li><strong>AC-06 철회:</strong> 본인 소유·미처리 상태를 확인하고 앱은 확인 후 계정·대상·세션을 다시 검사한다.</li><li><strong>AC-07 결과 복구:</strong> 성공과 반영 가능성이 있는 결과 불명은 관련 목록을 갱신하며 실패 입력을 유지한다.</li></ul></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>

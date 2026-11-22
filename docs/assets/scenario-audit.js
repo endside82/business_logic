@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 44,
     "partialEvidenceChain": 57,
     "definitionOnlyEvidence": 74,
-    "traceMarkers": 586,
-    "verifiedTraceRecords": 584,
+    "traceMarkers": 605,
+    "verifiedTraceRecords": 603,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -15782,7 +15782,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F15-01",
       "domain": "경고 & 징계",
-      "name": "내 경고 현황 & 원장",
+      "name": "내 경고 현황과 원장",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/15_warning/F15-01_warning-overview-ledger_prd.md",
@@ -15793,10 +15793,45 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 2,
+        "verified": 2,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F15-01:1",
+            "label": "GET /api/v1/clubs/{clubId}/warnings/me",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningMemberController.java",
+                "controller": "WarningMemberController",
+                "method": "getMyMain",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{clubId}/warnings/me",
+                "targetLine": 59,
+                "methodLine": 61
+              }
+            ]
+          },
+          {
+            "id": "F15-01:2",
+            "label": "GET /api/v1/clubs/{clubId}/warnings/me/ledger",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningMemberController.java",
+                "controller": "WarningMemberController",
+                "method": "getMyLedger",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{clubId}/warnings/me/ledger",
+                "targetLine": 68,
+                "methodLine": 70
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -15825,7 +15860,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F15-02",
       "domain": "경고 & 징계",
-      "name": "신고 제출 & 내 신고 관리",
+      "name": "클럽 경고 제보와 본인 관리",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md",
@@ -15836,10 +15871,96 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 5,
+        "verified": 5,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F15-02:1",
+            "label": "POST /api/v1/clubs/{clubId}/warnings/reports",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningMemberController.java",
+                "controller": "WarningMemberController",
+                "method": "submitReport",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/clubs/{clubId}/warnings/reports",
+                "targetLine": 80,
+                "methodLine": 82
+              }
+            ]
+          },
+          {
+            "id": "F15-02:2",
+            "label": "GET /api/v1/clubs/{clubId}/warnings/me/reports",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningMemberController.java",
+                "controller": "WarningMemberController",
+                "method": "getMyReports",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{clubId}/warnings/me/reports",
+                "targetLine": 91,
+                "methodLine": 93
+              }
+            ]
+          },
+          {
+            "id": "F15-02:3",
+            "label": "POST /api/v1/clubs/{clubId}/warnings/reports/{reportId}/withdraw",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningMemberController.java",
+                "controller": "WarningMemberController",
+                "method": "withdrawReport",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/clubs/{clubId}/warnings/reports/{reportId}/withdraw",
+                "targetLine": 102,
+                "methodLine": 104
+              }
+            ]
+          },
+          {
+            "id": "F15-02:4",
+            "label": "POST /api/v1/clubs/{clubId}/events/{eventId}/warning-reports",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningHostController.java",
+                "controller": "WarningHostController",
+                "method": "submitAttendanceReport",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/clubs/{clubId}/events/{eventId}/warning-reports",
+                "targetLine": 41,
+                "methodLine": 43
+              }
+            ]
+          },
+          {
+            "id": "F15-02:5",
+            "label": "GET /api/v1/clubs/{clubId}/events/{eventId}/warning-reports",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningHostController.java",
+                "controller": "WarningHostController",
+                "method": "getMyAttendanceReports",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{clubId}/events/{eventId}/warning-reports",
+                "targetLine": 53,
+                "methodLine": 55
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -15866,7 +15987,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F15-03",
       "domain": "경고 & 징계",
-      "name": "이의제기 (Appeal)",
+      "name": "회원의 경고 이의제기",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/15_warning/F15-03_appeal_prd.md",
@@ -15877,10 +15998,62 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 3,
+        "verified": 3,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F15-03:1",
+            "label": "POST /api/v1/clubs/{clubId}/warnings/appeals",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningMemberController.java",
+                "controller": "WarningMemberController",
+                "method": "submitAppeal",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/clubs/{clubId}/warnings/appeals",
+                "targetLine": 112,
+                "methodLine": 114
+              }
+            ]
+          },
+          {
+            "id": "F15-03:2",
+            "label": "GET /api/v1/clubs/{clubId}/warnings/me/appeals",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningMemberController.java",
+                "controller": "WarningMemberController",
+                "method": "getMyAppeals",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{clubId}/warnings/me/appeals",
+                "targetLine": 128,
+                "methodLine": 130
+              }
+            ]
+          },
+          {
+            "id": "F15-03:3",
+            "label": "POST /api/v1/clubs/{clubId}/warnings/appeals/{appealId}/withdraw",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningMemberController.java",
+                "controller": "WarningMemberController",
+                "method": "withdrawAppeal",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/clubs/{clubId}/warnings/appeals/{appealId}/withdraw",
+                "targetLine": 138,
+                "methodLine": 140
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -15948,7 +16121,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F15-05",
       "domain": "경고 & 징계",
-      "name": "신고 심사",
+      "name": "클럽 경고 제보 심사",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/15_warning/F15-05_report-review_prd.md",
@@ -15959,10 +16132,113 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 6,
+        "verified": 6,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F15-05:1",
+            "label": "GET /api/v1/admin/clubs/{clubId}/warnings/reports",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "searchReports",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/reports",
+                "targetLine": 84,
+                "methodLine": 86
+              }
+            ]
+          },
+          {
+            "id": "F15-05:2",
+            "label": "GET /api/v1/admin/clubs/{clubId}/warnings/reports/{reportId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "getReport",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/reports/{reportId}",
+                "targetLine": 97,
+                "methodLine": 99
+              }
+            ]
+          },
+          {
+            "id": "F15-05:3",
+            "label": "GET /api/v1/admin/clubs/{clubId}/warnings/reports/{reportId}/attachments/{fileId}/download-url",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "getReportAttachmentDownloadUrl",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/reports/{reportId}/attachments/{fileId}/download-url",
+                "targetLine": 112,
+                "methodLine": 114
+              }
+            ]
+          },
+          {
+            "id": "F15-05:4",
+            "label": "POST /api/v1/admin/clubs/{clubId}/warnings/reports/{reportId}/approve",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "approveReport",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/reports/{reportId}/approve",
+                "targetLine": 123,
+                "methodLine": 125
+              }
+            ]
+          },
+          {
+            "id": "F15-05:5",
+            "label": "POST /api/v1/admin/clubs/{clubId}/warnings/reports/{reportId}/reject",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "rejectReport",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/reports/{reportId}/reject",
+                "targetLine": 136,
+                "methodLine": 138
+              }
+            ]
+          },
+          {
+            "id": "F15-05:6",
+            "label": "POST /api/v1/admin/clubs/{clubId}/warnings/reports/{reportId}/request-more-info",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "requestMoreInfo",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/reports/{reportId}/request-more-info",
+                "targetLine": 149,
+                "methodLine": 151
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -16030,7 +16306,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F15-07",
       "domain": "경고 & 징계",
-      "name": "이의제기 처리",
+      "name": "경고 이의제기 처리와 재제출 허용",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/15_warning/F15-07_appeal-resolve_prd.md",
@@ -16041,10 +16317,62 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 3,
+        "verified": 3,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F15-07:1",
+            "label": "GET /api/v1/admin/clubs/{clubId}/warnings/appeals",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "searchAppeals",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/appeals",
+                "targetLine": 249,
+                "methodLine": 251
+              }
+            ]
+          },
+          {
+            "id": "F15-07:2",
+            "label": "POST /api/v1/admin/clubs/{clubId}/warnings/appeals/{appealId}/resolve",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "resolveAppeal",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/appeals/{appealId}/resolve",
+                "targetLine": 258,
+                "methodLine": 260
+              }
+            ]
+          },
+          {
+            "id": "F15-07:3",
+            "label": "POST /api/v1/admin/clubs/{clubId}/warnings/appeals/{appealId}/allow-resubmit",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "allowResubmit",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/appeals/{appealId}/allow-resubmit",
+                "targetLine": 270,
+                "methodLine": 272
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
