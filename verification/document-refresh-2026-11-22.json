@@ -419,7 +419,8 @@
         "curated_assignment_20261122",
         "curated_domain_20261122",
         "notification_marketing_20261122",
-        "poll_supplement_20261122"
+        "poll_supplement_20261122",
+        "stamp_supplement_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -4881,9 +4882,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "84b329e0227b480de359ea63ff52ca53bb9e62e78cda29d166c72609f4990dd2",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "stamp_supplement_20261122"
+      ],
+      "reviewedSha256": "b4a7f4ee690ae79af00d164ca742dc54c50225ee06f83d426e7be44c87ad4f6a"
     },
     {
       "path": "docs/features/content-photos.html",
@@ -5025,9 +5029,10 @@
       "disposition": "partially_updated",
       "evidence": [
         "notification_marketing_20261122",
-        "poll_supplement_20261122"
+        "poll_supplement_20261122",
+        "stamp_supplement_20261122"
       ],
-      "note": "광고 동의·재확인·메일·공통흐름·투표 부분 대조 완료. 스탬프·사진 심사·본인확인·반환 등 업무별 추가 설명 대조 후 페이지 전체 완료 판정."
+      "note": "광고 동의·재확인·메일·공통흐름·투표·스탬프 부분 대조 완료. 사진 심사·본인확인·반환 등 추가 설명 대조 후 페이지 전체 완료 판정."
     },
     {
       "path": "docs/policies/payment.html",
@@ -42617,6 +42622,276 @@
       "observedSourceVersions": {
         "community_api": "719cdaa2d5edd5b3ae31e27e50435950c8b777d5",
         "community_app": "39074c1e4e91aaf8a37da82b3c9cc434c6ae5bab"
+      }
+    },
+    "stamp_supplement_20261122": {
+      "kind": "source_review",
+      "scope": "클럽 스탬프 보충 문서 전체의 실제 계약·권한·기한·구조고정·찍기/정정/보상·이관·복구·앱흐름·알림·개인정보 대조. 과거 실행/캡처와 현재 소스 검증 구분. 알림 정책 HTML은 스탬프 부분만 동기화.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/stamp/service/StampAuthorityResolver.java",
+          "sha256": "3c0d3dfaf7e7c7f424a12dc2866e738d30a4dc4426d626ed7e7ef78ceebdb59e",
+          "reviewScope": "전체 실제본문: 정규 소유자·운영진 역할 제한·유효 비트"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/stamp/service/StampAuthority.java",
+          "sha256": "109fba35765866c075dd661b319e622e7b6370338a46dd98abd6f320d05501e3",
+          "reviewScope": "전체 실제본문: STAMP_ISSUER 판정"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/stamp/service/StampTemplateAccessGuard.java",
+          "sha256": "1af63de334553e17713a0732547951e5865fe54c754c0cab3b3a841d7252b634",
+          "reviewScope": "전체 실제본문: club/template 결합 검사"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/stamp/service/ClubStampConfigService.java",
+          "sha256": "cf61e941214370e0e854962a6a6feb8f484b2f1a404a2eda20da1415ba6f4c63",
+          "reviewScope": "전체 실제본문: 기본꺼짐·소유자 전용 설정"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/stamp/service/StampTemplateCommandService.java",
+          "sha256": "ac43552333de60a2f4a59fa8fd38c4b5072d5204e42fc9f5bcc56f2d85a2b737",
+          "reviewScope": "전체 실제본문: 생성30개·KST기간·구조고정·버전수정·종료·잠금과 이관·확인증"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/stamp/service/StampMarkCommandService.java",
+          "sha256": "8a28920e1f8506c76852908f5a2ed579205728e0814c39899c87f22d2ee0e062",
+          "reviewScope": "전체 실제본문: 현재회원·계정활동·기간·순서/선택·일괄 원자성·완료·정정·보상·발송 의도·확인증"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/stamp/service/StampQueryService.java",
+          "sha256": "af6652be3c4c31101a067ca1bdf8d99839b086c6b2b0a45fb06ae2f1a1da9b8a",
+          "reviewScope": "전체 실제본문: 회원/운영진별 조회·빈카드·탈퇴카드·커서이력·본인확인증"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/stamp/service/StampVoAssembler.java",
+          "sha256": "b9707f9d873ec0afa964882ced7e0d7aa2a51d01b0314580aade34d635af208a",
+          "reviewScope": "전체 실제본문: 표시 URL·기한/시작 전·관리/이관권한·빈카드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/stamp/service/StampCommandExecutor.java",
+          "sha256": "7f6f0ddc66cfc7ef63cbcc1b9a5ff4f807583c26a0cba5afe9dfb89bcfb5bacd",
+          "reviewScope": "전체 실제본문: 확인증 유일키 충돌 복구·동일지문 대조"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/stamp/service/StampCommandReceiptReader.java",
+          "sha256": "a6984071d522fbdbf14709a41d031048ae100456771dd243213969a08e2ac97a",
+          "reviewScope": "전체 실제본문: 독립 확인증 조회"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/stamp/service/StampPrivacyEraser.java",
+          "sha256": "a35bcc20edbe91616578ab51d0b1007a24adbf6b2dea845881bff8b3e0c6d013",
+          "reviewScope": "전체 실제본문: 도장/이력 메모 500개 묶음 지우기"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/stamp/service/StampDataExportAssembler.java",
+          "sha256": "919058c64d5dc7d54c0ee3a99b946f430296daaab6ca36e32d400ca8048941a5",
+          "reviewScope": "전체 실제본문: 내카드·내가찍은도장·대상/행위 이력 및 내보내기 필드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/stamp/util/StampStructureValidator.java",
+          "sha256": "842475570db5bb99b2ee081caf35fcc1d1bf9b851b423b2ff382c3bcc8317e12",
+          "reviewScope": "전체 실제본문: 1–50칸·완료기준·20자이름·중복·모드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/stamp/util/StampTime.java",
+          "sha256": "f792b601a83be74c26fec07b91416a1afee3001fb5f00bda56233ee853cf4aca",
+          "reviewScope": "전체 실제본문: Asia/Seoul 날짜"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/stamp/param/StampBatchMarkParam.java",
+          "sha256": "8f657e97d5c75faa26231ce4f12d1dd23eee5bb6935f4ae0a62e2724fe06e9fc",
+          "reviewScope": "전체 실제본문: 1–100명·중복/비양수 거절·정렬·지문"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/stamp/repository/query/StampQueryRepository.java",
+          "sha256": "680d8c62ac74a2ba0e7d205d1f21b38bfd38842372ab12536b9ad00222b0f1c6",
+          "reviewScope": "192–305 현재회원/계정상태·진행30개·목록기한 필터;444–513 본인 관련 메모 선택과 파기"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/stamp/controller/StampAdminController.java",
+          "sha256": "e98bd6d7a9da15c903fee12acc3ecb152623dc716bb20bd7df50c988dc1a955c",
+          "reviewScope": "전체 실제본문: 운영권한·출시범위·주소/method/본문/헤더/확인증/버전/markId·기능별응답"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/stamp/controller/StampMemberController.java",
+          "sha256": "3f77315e2f58496a10c4462126d46342d00aea1c3e4076a79990f27157b153e1",
+          "reviewScope": "전체 실제본문: 회원권한·출시범위·목록/상세/내이력"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/outbox/DomainOutboxEventMapper.java",
+          "sha256": "9409205f0540b157946fdfbdd142eedb7c014311b4abf33c48651b05388f34a1",
+          "reviewScope": "139–159 도장찍기/취소 알림 타입·완료전이/진행분모;532–563 STAMP_UPDATED 채널"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/outbox/DomainOutboxItemWorker.java",
+          "sha256": "86bd9a77b78ea16c44411c61f8157d82d75186b9cc28693305e7b69baa192d13",
+          "reviewScope": "63–224 클라이언트 허용정보·현재회원 재확인·설정·차단판정 전달·발송의도 처리"
+        },
+        {
+          "path": "community_api/admin-app/src/main/resources/application-default.yml",
+          "sha256": "8dbb00e3b0360fab9d4126e0c8c7ccc6e9e28972a20a444b41b3e6ceb1bcc3fb",
+          "reviewScope": "228 RELEASE_SCOPE_ENABLED_DOMAINS 기본값에 CLUB_STAMP 포함;실제환경 미확인"
+        },
+        {
+          "path": "community_app/lib/domain/providers/stamp/stamp_command_service.dart",
+          "sha256": "aa8cfaa1143061690303a4aec5b0e083b38c319ae3ad1ff430da827abaab13bd",
+          "reviewScope": "전체 실제본문: 계정별 보관·대상충돌·동일요청전송/복구·404미확정·실패분류·취소충돌"
+        },
+        {
+          "path": "community_app/lib/domain/providers/stamp/stamp_admin_commands.dart",
+          "sha256": "e04df7e64d19ec4be57a0dbb5281c083bb8ac319d1a35b892e492b716a9487ca",
+          "reviewScope": "전체 실제본문: 설정/수정/종료/이관 후 현재세션·반영가능성에 따른 재조회"
+        },
+        {
+          "path": "community_app/lib/core/storage/stamp_pending_command_store.dart",
+          "sha256": "f4956ba2328266bc0e0553e663cc818e6f69aa4379f9dfb9d4c929730667dbdd",
+          "reviewScope": "270–325 계정별 secure storage키·저장준비;372–414 확정뒤본문삭제·명령/계정삭제"
+        },
+        {
+          "path": "community_app/lib/presentation/stamp/stamp_action_boundary.dart",
+          "sha256": "1a5aecb98529359975e4a9bf02d378900eb044a2d9fbddb9b5440a4f81d56ddc",
+          "reviewScope": "전체 실제본문: 계정티켓/세션과 읽은 현재권한 경계"
+        },
+        {
+          "path": "community_app/lib/presentation/stamp/admin/screens/stamp_template_admin_screen.dart",
+          "sha256": "0ea62f355c8b41e64b1a1cc4505d2e60ea1dee6364e0fc8788f84a8596589a66",
+          "reviewScope": "65–330 일괄 대상선택/보관/발송/원자결과·종료·담당자 이관"
+        },
+        {
+          "path": "community_app/lib/presentation/stamp/admin/screens/stamp_template_form_screen.dart",
+          "sha256": "80a614d6680195e0c22052684ecd4bae989833d6c08b335d0bc23d89689ceb96",
+          "reviewScope": "290–443 생성확인증 후상세·버전수정·충돌시최신값비교·입력유지"
+        },
+        {
+          "path": "community_app/lib/presentation/stamp/admin/screens/stamp_card_screen.dart",
+          "sha256": "187ffe4e75dd365875fa2c7a0ea992938e28df2ab39257c104f04f64c838a69a",
+          "reviewScope": "75–277 현재권한/계정·갱신·발행자변경·도장/취소/전체및칸별보상 실행"
+        },
+        {
+          "path": "community_app/lib/presentation/stamp/screens/stamp_my_card_screen.dart",
+          "sha256": "0f465132f5fa07339ed385e17af9b7086d083101165468b9514c1e6bbb7845aa",
+          "reviewScope": "23–135 조회·보상·내이력·새로고침·실패표시"
+        },
+        {
+          "path": "community_app/lib/presentation/stamp/screens/stamp_template_list_screen.dart",
+          "sha256": "a1010bf747c5e8ae144aebf5ad24aedcd348d99b5f979b0e28e3f1c059e46e71",
+          "reviewScope": "100–191 진행/지난·빈목록·추가페이지오류·카드이동"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/club_admin_routes.dart",
+          "sha256": "17fc4ae347a4bda985d4b20cfa090f699322ac3dcab625c74b3ce83deefc6527",
+          "reviewScope": "276–353 운영목록/생성/수정/카드/상세와운영진가드 호출"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/config/security/RequiresClubPermissionAspect.java",
+          "sha256": "572f74c7aaf46ec1384e215f1b63767bd93ce02270a086797ef637d5b247fbab",
+          "reviewScope": "35–85 인증·회원 또는 유효 역할비트 확인"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/security/ClubMemberPermissionFlag.java",
+          "sha256": "6002b6dd0542fc1be497c41ffb47ed820a8c2370bc57b4719109a34dc8818362",
+          "reviewScope": "88–140 OWNER전체·ADMIN 자동STAMP_ISSUER·제한시0·위임대상 제외"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/security/ClubMemberPermissionChecker.java",
+          "sha256": "86c807bf78390e1a44e19962e9f963cac3fe3c6d5dba0faff62b3114fe3f436d",
+          "reviewScope": "55–86 실제소유자와 유효비트;300–313 현재클럽회원 조건"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/DataExportContentWorker.java",
+          "sha256": "033435a127b0d90a6da9719d197be460ceac7d710b20d7e8dda2b15cc05a7dae",
+          "reviewScope": "364–369 clubRecords에 스탬프 내보내기 연결"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/UserDeactivationFinalizer.java",
+          "sha256": "2a3e4f54bd9941981ea9377d9fbe7ac567b2db905be2a25d628e77ee257c95ef",
+          "reviewScope": "119–130 탈퇴확정의 스탬프 메모파기 호출"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/DataDeletionExecutionWorker.java",
+          "sha256": "b2db88c8b8c88b83ba712bb5cedafe817328e890bd88dbc03840df4d9aab2a9f",
+          "reviewScope": "310–320 파기실행의 스탬프 메모파기 호출"
+        },
+        {
+          "path": "community_api/api-app/src/main/resources/application-prod.yaml",
+          "sha256": "8cb1351b9f4d0664d91da564ff054fe7f5d05dfbe6dcd0055d0ed024a4a2b187",
+          "reviewScope": "245 RELEASE_SCOPE_ENABLED_DOMAINS 기본값에 CLUB_STAMP 포함;실제환경 미확인"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/club_branch_routes.dart",
+          "sha256": "648c40ee84823118fae9e22f7a7ee83dae3bbabe822944683817b895947bc363",
+          "reviewScope": "439–468 회원 스탬프목록/내카드 경로와회원가드 호출"
+        },
+        {
+          "path": "community_app/lib/core/utils/notification_router.dart",
+          "sha256": "b855b662852561c0229007c825d4f5d261eb0f20252ae2ae1316a51362bccc67",
+          "reviewScope": "1529–1534 StampMarked/StampUnmarked의 templateId유무별 경로"
+        },
+        {
+          "path": "community_app/lib/presentation/notification/screens/notification_settings_screen.dart",
+          "sha256": "1545eda9424b9eafd2af70b5e4282c825fb0e1cb0f8c93fec322c6d672682a2a",
+          "reviewScope": "143–162 clubStampUpdated의 클럽 알림 묶음"
+        }
+      ],
+      "reuses": [
+        "account_closure_20261122",
+        "dispute_evidence_20261122",
+        "mileage_commands_20261122",
+        "poll_supplement_20261122",
+        "warning_operations_20261122"
+      ],
+      "canonicalSources": [],
+      "retainedHtmlIds": {
+        "docs/features/club-stamp.html": [
+          "sidebar",
+          "actual-screens",
+          "release-completion"
+        ],
+        "docs/policies/notification.html": [
+          "sidebar",
+          "refresh-and-destination-current",
+          "durable-delivery",
+          "poll-notifications",
+          "marketing-current-1",
+          "marketing-current-2",
+          "marketing-current-3",
+          "marketing-current-4",
+          "marketing-current-5",
+          "marketing-current-6"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "만료 ACTIVE와 명시적 CLOSED 구분; 종료만 재개불가",
+        "카드 완료 후 남은 칸 추가가능; 전체 보상과 칸별 보상 정정조건 구분",
+        "확인증404는 실패확정 아님; 일괄 미확정 상태를 단건새요청으로 대체금지",
+        "보상/판변경에는 스탬프알림 발행없음",
+        "공통 운영자 권한도 발행자잠금 적용; 자격상실시에만 다른운영진 이관복구",
+        "현재 소스 대조와 과거 로컬실행·보존캡처·실단말 배포 증거 분리"
+      ],
+      "retainedHistoricalQuotes": [],
+      "retainedHistoricalHtml": [
+        {
+          "path": "docs/features/club-stamp.html",
+          "pattern": "<details id=\"stamp-previous-execution\">[\\s\\S]*?</details>",
+          "sha256": "f6eaf77d516296ec089d67bbba2789e0a9905dfafea82e9828246e77e36cc30e",
+          "note": "기존 로컬검사/운영기본값/남은검증 주장 원문; 현재실행통과로 합산하지않음"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "41 source/canonical digests; 13 retained HTML IDs",
+        "derivedDocuments": "1 documents; shared batch verified 2 paths, 24 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review and document checks only; existing images retained without rendering"
+      },
+      "observedSourceVersions": {
+        "community_api": "719cdaa2d5edd5b3ae31e27e50435950c8b777d5",
+        "community_app": "c453d6d2d991e00b921a699cafd5365b5cd251c6"
       }
     }
   },
