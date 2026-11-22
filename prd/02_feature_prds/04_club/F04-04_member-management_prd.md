@@ -26,7 +26,7 @@
 
 GET /api/v1/clubs/{id}/members는 현재 클럽 회원이어야 하며 Page<ClubMemberVo>를 반환한다. 응답에는 회원 행 번호·클럽/사용자 번호·닉네임·역할·가입 시각과 kick·ban·promoteToAdmin·changeRole 허용값이 있다. role은 정확히 일치하는 역할로 거르고 keyword는 닉네임의 대소문자 구분 없는 부분 일치다. 가입 시각·회원 행 번호 오름차순으로 읽는다.
 
-일반 탐색은 본인과 차단 관계인 사용자를 제외한다. purpose를 쓰는 운영 대상 선택은 별도 권한을 확인한 뒤 이 차단 제외를 적용하지 않는다. STAMP·MILEAGE·BADGE는 해당 기능 권한을, HOST_PROPOSAL은 eventId와 그 이벤트의 주최 권한을 요구한다. 목적만 추가하면 누구나 전체 명단을 볼 수 있는 계약이 아니다.
+일반 탐색은 본인과 차단 관계인 사용자를 제외한다. purpose를 쓰는 운영 대상 선택은 별도 권한을 확인한 뒤 이 차단 제외를 적용하지 않는다. STAMP·MILEAGE·BADGE는 해당 기능 권한을, HOST_PROPOSAL은 eventId와 그 이벤트의 주최 권한을 요구한다. 목적만 추가하면 누구나 전체 명단을 볼 수 있는 계약이 아니다. 일반 회원 목록은 사람 차단 성공 시 해당 회원을 현재 목록에서 먼저 빼고 첫 쪽부터 다시 조회한다. 재조회 중에는 예전 쪽 번호로 추가 조회하지 않는다. 운영 대상 선택 명단에 이 즉시 숨김을 일괄 적용하지 않으며, 차단 해제는 새 조회 결과로 반영한다.
 
 앱은 20개씩 읽고 300ms 입력 지연 뒤 검색어를 적용한다. 검색어는 trim하고 빈 값은 해제한다. 전체·운영진·일반 탭 중 운영진은 ADMIN 필터이므로 OWNER를 합산한 모든 운영 역할 필터라고 설명하지 않는다. 권한이 있으면 승인 대기·초대 입구를 추가하며, 승인 대기는 별도 목록으로 이동한다. 검색어·선택 탭은 클럽 탐색 상태에 보관한다.
 
@@ -50,7 +50,7 @@ ADMIN 승격은 대상의 역할 제한이 있으면 거절한다. MEMBER로 내
 
 ## 세부 권한 위임
 
-모임 관리의 권한 위임 입구는 delegatePermissions 허용 조건을 사용한다. API 경로는 /api/v1/admin/clubs/{clubId}/members/permissions이며, /admins 목록·/{memberUserId} 단건 GET·같은 단건 PUT이 있다. 경로에 admin이 있어도 이 창구는 API 앱의 클럽 소유자용 권한 콘솔이다. 목록은 Page가 아닌 List다.
+모임 관리의 ‘권한 맡기기’ 입구는 delegatePermissions 허용 조건을 사용한다. API 경로는 /api/v1/admin/clubs/{clubId}/members/permissions이며, /admins 목록·/{memberUserId} 단건 GET·같은 단건 PUT이 있다. 경로에 admin이 있어도 이 창구는 API 앱의 클럽 소유자용 권한 콘솔이다. 목록은 Page가 아닌 List다.
 
 콘솔은 OWNER·ADMIN뿐 아니라 잔여 flags가 있는 일반 회원도 포함한다. 소유자 행은 전체 효과를 표시하지만 편집 대상은 아니다. 현재 flags를 주고받으며 PUT은 음수가 아닌 flags를 요구하고 서버의 위임 가능 마스크 밖 비트는 거절한다.
 

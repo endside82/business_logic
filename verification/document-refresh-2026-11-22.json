@@ -2552,9 +2552,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "home_feed_core_20261122"
+        "home_feed_core_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "43a0e11f22602f9bb046801ac95fdede2e1e4b8812cf07928505278d042194bb"
+      "reviewedSha256": "50dab2bef06ff47ac18b44c08005a8cc71bd843c9804beccc119276f5cb3835b"
     },
     {
       "path": "docs/features/F02-02.html",
@@ -2695,9 +2696,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "event_capacity_waitlist_20261122"
+        "event_capacity_waitlist_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "a3d2f485c7687351d6331a13e52419bc4d2a52f51ccc7c4ff9fb42f765766be4"
+      "reviewedSha256": "0c3ae45e7ab984ee539d1a5f95326f62e65f41310caee0c3b77103aa6e7fb42f"
     },
     {
       "path": "docs/features/F03-08.html",
@@ -2734,9 +2736,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "event_plan_link_20261122"
+        "event_plan_link_20261122",
+        "app_label_layout_source_advance_20261122"
       ],
-      "reviewedSha256": "f883b1f1d7241f10b21da7556d8651a7e57ce43d24f01a1fbea4e34cc1b7746c"
+      "reviewedSha256": "4f7825e7dfafedfef6fbe13dc7b9a2a9c89e4e8d3a55726c4d919488edc364bc"
     },
     {
       "path": "docs/features/F03-11.html",
@@ -2916,9 +2919,11 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "club_members_20261122"
+        "club_members_20261122",
+        "app_label_layout_source_advance_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "2481028e124803b56cf8f7154b48706715bbafa9bcc24ad65830f8a6e7beddff"
+      "reviewedSha256": "4bb5dd18b93470a2a3046fc539fe4c0d90254e8a12ed9010a192ec7177bc18bb"
     },
     {
       "path": "docs/features/F04-05.html",
@@ -3111,9 +3116,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "search_workflows_20261122"
+        "search_workflows_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "0c7ddc4b2f74f52608da7106265565226eb09355f922735fb3f350aa6daa1f82"
+      "reviewedSha256": "3c332a9f79d3007df6d822b57121385c554a91c6f7a66423ced3039bc53f35a3"
     },
     {
       "path": "docs/features/F05-02.html",
@@ -3855,9 +3861,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "profile_hub_edit_addresses_20261122"
+        "profile_hub_edit_addresses_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "acd95bc560c5a9c9600a7e944f3120b3b2455cad16904231f5b2f50f31abf075"
+      "reviewedSha256": "2df5b8d23a0f7c49a54455fb7a60da7dba409f58cd33f81524302cce2deef44c"
     },
     {
       "path": "docs/features/F13-02.html",
@@ -4353,9 +4360,10 @@
       "disposition": "updated",
       "evidence": [
         "privacy_visibility_20261122",
-        "favorite_management_calendar_20261122"
+        "favorite_management_calendar_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "d2a2a2ac53a7c6a599d74299a1def4fb0349fa776ab274cfcf123f7542718a87"
+      "reviewedSha256": "b1100be866eb95c8e26f131dd8eb11bf75fcc52101e16f24051962049336be24"
     },
     {
       "path": "docs/features/F20-01.html",
@@ -5596,9 +5604,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "home_feed_core_20261122"
+        "home_feed_core_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "a2fcc5c2331105a72223639cfaedb6b81303f50527db4d6cb1962d428a06624e"
+      "reviewedSha256": "c963f371cf9a7e18fb76ae2107d2fa501bb42b6467131926a405e8f14d605370"
     },
     {
       "path": "prd/02_feature_prds/02_home_feed/F02-02_home-feed-refresh_prd.md",
@@ -5739,9 +5748,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "event_capacity_waitlist_20261122"
+        "event_capacity_waitlist_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "53f273ed2e7db28c4fad27e7a6ba2046f60d4ac6f0b13274bdf0844476cc8274"
+      "reviewedSha256": "57550c551859139cf4771cba59ce6e55ea52266e836a0b95e7fa1d51afadbb69"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-08_qr-checkin_prd.md",
@@ -5778,9 +5788,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "event_plan_link_20261122"
+        "event_plan_link_20261122",
+        "app_label_layout_source_advance_20261122"
       ],
-      "reviewedSha256": "38bc9c707a7ad291c7e8f84fae8419bdf9f03b1f0a7457e0cd4f7b12671b23bf"
+      "reviewedSha256": "8705fb93ac20072c0b58897d194ace681fe8ba94db2cfbe5f1327cd689f8d123"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-11_wishlist_prd.md",
@@ -5960,9 +5971,11 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "club_members_20261122"
+        "club_members_20261122",
+        "app_label_layout_source_advance_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "b90ddf37449a21158c8b2a76737874dc49ef5508013cebc82f9f78400faf77e7"
+      "reviewedSha256": "54c40c5beb03c524ed41462b839918b3a04b97686958db26e800f800d270777b"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-05_waitlist-invitation_prd.md",
@@ -6155,9 +6168,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "search_workflows_20261122"
+        "search_workflows_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "69296c86632d6f8ac1a60faea18b84640a53f887dcc2eff0fbe5fc70b2f1ac6f"
+      "reviewedSha256": "2299cbc6d3e2cbf93e6d19ae2ddc040ef0e8c7509245175fac31eeb05b25f7e5"
     },
     {
       "path": "prd/02_feature_prds/05_search/F05-02_autocomplete-suggest_prd.md",
@@ -6937,9 +6951,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "profile_hub_edit_addresses_20261122"
+        "profile_hub_edit_addresses_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "0895ef949b6c266c256e81e05c598117aa5d6b2ca314920526bc17f7a4bcf6af"
+      "reviewedSha256": "73b0db9e10fed64cf4361233bed2f293e503e4c28673064823524051e9537ec7"
     },
     {
       "path": "prd/02_feature_prds/13_profile_settings/F13-02_profile-edit_prd.md",
@@ -7474,9 +7489,10 @@
       "disposition": "updated",
       "evidence": [
         "privacy_visibility_20261122",
-        "favorite_management_calendar_20261122"
+        "favorite_management_calendar_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "0faf5770fd509d49880a12c6016d4aa9f328dd8fb1ff0a90b6648f405af1b130"
+      "reviewedSha256": "36890a5f27ca3d2fd28a790e43fa46ec2e7271503f189f4113ad145167672798"
     },
     {
       "path": "prd/02_feature_prds/20_support/F20-01_inquiry_prd.md",
@@ -8656,9 +8672,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "home_feed_core_20261122"
+        "home_feed_core_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "1c9467799f645dbe75cf7dd681d0d92ed067827a5bb96cf9ec134a4c9e213483"
+      "reviewedSha256": "62047b1196df25c4950a494b3423eb3d4d60e514e16b8ef43323a311698e10a6"
     },
     {
       "path": "units/02_home_feed/F02-01_home-feed-main/diagrams.md",
@@ -8669,9 +8686,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "home_feed_core_20261122"
+        "home_feed_core_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "b6dd0338dff0792dd931e2b9565b16e0a7275b997331082cde696d12d8048276"
+      "reviewedSha256": "918f0a09d9d766ba9218d625317d7f5c40cc919c97d744f2ca8d78040b29f425"
     },
     {
       "path": "units/02_home_feed/F02-01_home-feed-main/frontend.md",
@@ -8682,9 +8700,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "home_feed_core_20261122"
+        "home_feed_core_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "bde3ddc4d36a5c0e71af0385a09d8b5f5eb959b23db8c9c0c69b1c2b9606eaca"
+      "reviewedSha256": "ab382c0afcd3be9531f55d5df5812e3feae6868e6c4d44fabea9f81099894d51"
     },
     {
       "path": "units/02_home_feed/F02-01_home-feed-main/scenarios.md",
@@ -8695,9 +8714,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "home_feed_core_20261122"
+        "home_feed_core_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "c23a8807bd471fe42ffd10273d0b8aff97611c6c469bdf645964bb0708986f33"
+      "reviewedSha256": "e7dcf41f719e4fedaed58a42a72e42326c0bb1f4f33a80db58711ea59347ac6d"
     },
     {
       "path": "units/02_home_feed/F02-02_home-feed-refresh/backend.md",
@@ -9241,9 +9261,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "event_capacity_waitlist_20261122"
+        "event_capacity_waitlist_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "a5689986add79a5c3052902bc3edc530b0cb68a19b49eb5c3615983a4fd0f292"
+      "reviewedSha256": "b9b9fd8b997ea80c58032b46b0cf7792e022a6335258dfa1b155e0de20e80f88"
     },
     {
       "path": "units/03_event/F03-07_capacity-and-waitlist/diagrams.md",
@@ -9254,9 +9275,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "event_capacity_waitlist_20261122"
+        "event_capacity_waitlist_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "832e6b116ee7741df7bbd5b521c7cbc2382111f013aa0d15ea740b89e34fb9e6"
+      "reviewedSha256": "6423070955949be065aa882a515eedfecc85553154d0bae310ff90cab5bba3f3"
     },
     {
       "path": "units/03_event/F03-07_capacity-and-waitlist/frontend.md",
@@ -9267,9 +9289,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "event_capacity_waitlist_20261122"
+        "event_capacity_waitlist_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "3ec58e620059ffe8cda5498fe3933063fceee6ee415fe5179ea48895ac65e50c"
+      "reviewedSha256": "a0b7805b143d6f1e9fa38e6cade8e98176e3f0c3855c31b35cc566d9e57132f9"
     },
     {
       "path": "units/03_event/F03-07_capacity-and-waitlist/scenarios.md",
@@ -9280,9 +9303,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "event_capacity_waitlist_20261122"
+        "event_capacity_waitlist_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "e18da391146750d270f46553ef40d3894e64abe77b85ee578d487bc289e60bd6"
+      "reviewedSha256": "c44210218828b31594d305446f2c7d3bf5b182c7c40a044a7bb94940b3fdf0fa"
     },
     {
       "path": "units/03_event/F03-08_qr-checkin/backend.md",
@@ -9397,9 +9421,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "event_plan_link_20261122"
+        "event_plan_link_20261122",
+        "app_label_layout_source_advance_20261122"
       ],
-      "reviewedSha256": "4734a2d758ca49c14d13c1ae604b5e641f6dacb889723edaa64dcfd46dda41ea"
+      "reviewedSha256": "632da177009ad8bd89321fea5046f928d1e11717f634a252ab3b15d3d1c5ba56"
     },
     {
       "path": "units/03_event/F03-10_event-plan-link/diagrams.md",
@@ -9410,9 +9435,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "event_plan_link_20261122"
+        "event_plan_link_20261122",
+        "app_label_layout_source_advance_20261122"
       ],
-      "reviewedSha256": "e2092ce4151ccc3d2d0eb85b8448790c4560c29188e555c76a67fc7b0a211386"
+      "reviewedSha256": "f163ab695eef7c47054cafbd7d346d2147b90dc0926fca542b39e5e0aa3aa969"
     },
     {
       "path": "units/03_event/F03-10_event-plan-link/frontend.md",
@@ -9423,9 +9449,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "event_plan_link_20261122"
+        "event_plan_link_20261122",
+        "app_label_layout_source_advance_20261122"
       ],
-      "reviewedSha256": "17379e10737c9659537a7f06e0262ebb504ec9fbde21aa84fc3f58551c8a5c7b"
+      "reviewedSha256": "32be5ddd191f3c21e5b9351fd0b169988bd0c190aa3497e0197ad2090fc7412f"
     },
     {
       "path": "units/03_event/F03-10_event-plan-link/scenarios.md",
@@ -9436,9 +9463,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "event_plan_link_20261122"
+        "event_plan_link_20261122",
+        "app_label_layout_source_advance_20261122"
       ],
-      "reviewedSha256": "0d225a95abcc2b8bfbf7cf615633aba04bd23bba0d0463943458e9b1dc5e7b54"
+      "reviewedSha256": "db4861c4b956dbde5cf4ed482e37d6a07d9f2042d74cc86c372fc6f1bddfadc8"
     },
     {
       "path": "units/03_event/F03-11_wishlist/backend.md",
@@ -9722,9 +9750,11 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "club_members_20261122"
+        "club_members_20261122",
+        "app_label_layout_source_advance_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "9e260d7cb413ff595c00f8fc789bf7849502b0bd84f88f395bcc633150179dbb"
+      "reviewedSha256": "6a18fb6a346f0072aa36a8f036e11052c80630205362563df1a3ae2af729f636"
     },
     {
       "path": "units/04_club/F04-04_member-management/diagrams.md",
@@ -9735,9 +9765,11 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "club_members_20261122"
+        "club_members_20261122",
+        "app_label_layout_source_advance_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "9e2b900aa40b7fc126b55e656ac8ce72410e33b955adfa62650874c3b7e3deca"
+      "reviewedSha256": "35a84c07be0e47f248af590982f51fc802fff05289b58d2cf2c96b29404c2c7c"
     },
     {
       "path": "units/04_club/F04-04_member-management/frontend.md",
@@ -9748,9 +9780,11 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "club_members_20261122"
+        "club_members_20261122",
+        "app_label_layout_source_advance_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "3e34fad050025c9219e9382783268b5ea3faf0f514c30b7c692b147867c274da"
+      "reviewedSha256": "76b3597871a0b383700249bae32b2ebc8e18d8e578fce5a3557e019fb6ef2686"
     },
     {
       "path": "units/04_club/F04-04_member-management/scenarios.md",
@@ -9761,9 +9795,11 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "club_members_20261122"
+        "club_members_20261122",
+        "app_label_layout_source_advance_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "3d146682f2cc723f0755bae3e3b35031c11d4ddb3158e13d9b4118539cf32000"
+      "reviewedSha256": "9baa6ec600a91b231b2a762d5b46e3d772d13f13c3d73ac27db4bcdf8f98372e"
     },
     {
       "path": "units/04_club/F04-05_waitlist-invitation/backend.md",
@@ -10411,9 +10447,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "search_workflows_20261122"
+        "search_workflows_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "15f6df87b3bf91fa14834f419b36bb92c1beb9cbeb1266e8a7f88de235ffdf49"
+      "reviewedSha256": "44f4c661df8365b4c981e54cd29cd99d7e001cda68406df46ecab9a07861c559"
     },
     {
       "path": "units/05_search/F05-01_keyword-search/diagrams.md",
@@ -10424,9 +10461,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "search_workflows_20261122"
+        "search_workflows_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "7acf6e18f6b40f49130c15926eccb7a3581b781f2c8ddfb86f65610fa05dce78"
+      "reviewedSha256": "ef337a6bef7f8a5c97e680b8aaced1a8c88d939c782cd63636e708cedf650460"
     },
     {
       "path": "units/05_search/F05-01_keyword-search/frontend.md",
@@ -10437,9 +10475,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "search_workflows_20261122"
+        "search_workflows_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "31b9ded6ba8a74b5daedfe9fb6335c8def292bfb7fc71b3473bf8e120bad90db"
+      "reviewedSha256": "dbb4cd05d8f93cccd93608e6edd125751049b381cfd45be6b4dc06939be1c291"
     },
     {
       "path": "units/05_search/F05-01_keyword-search/scenarios.md",
@@ -10450,9 +10489,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "search_workflows_20261122"
+        "search_workflows_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "69d274f7cbeeda594a311df01889ba767cdce47704671f6cdcf8c6ec9145bf42"
+      "reviewedSha256": "536e3e6275124dc3cf4675efe0293dfa3a2080566d06b3315580d756c3c8c5f4"
     },
     {
       "path": "units/05_search/F05-02_autocomplete-suggest/backend.md",
@@ -13361,9 +13401,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "profile_hub_edit_addresses_20261122"
+        "profile_hub_edit_addresses_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "6513b2cac8f5b44f862084701c75f5d01a973d9a11843de936278376d19e255e"
+      "reviewedSha256": "1b7fd2fb2140becf828ac9144edac66b1a6256c0d191cb63d406d317ddf4ac4b"
     },
     {
       "path": "units/13_profile_settings/F13-01_profile-hub/diagrams.md",
@@ -13374,9 +13415,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "profile_hub_edit_addresses_20261122"
+        "profile_hub_edit_addresses_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "d0f9993cd2bc0325daa948d1acc452c058d1aac7a082c7679220eb6d4b04c560"
+      "reviewedSha256": "11cbf5401e3e15219d398f4ef17a5f4cff51e89d04a7c45e90aad5e720ebee74"
     },
     {
       "path": "units/13_profile_settings/F13-01_profile-hub/frontend.md",
@@ -13387,9 +13429,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "profile_hub_edit_addresses_20261122"
+        "profile_hub_edit_addresses_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "3aa78df45f77543ba5cb3888dce5e4b2d1afd84ed987c83fe0919a766399dbb3"
+      "reviewedSha256": "4797735c212fcd1616e273b241adea9f9fc783e92de4498b6b9d6ab4fa662f5e"
     },
     {
       "path": "units/13_profile_settings/F13-01_profile-hub/scenarios.md",
@@ -13400,9 +13443,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "profile_hub_edit_addresses_20261122"
+        "profile_hub_edit_addresses_20261122",
+        "people_block_source_advance_20261122"
       ],
-      "reviewedSha256": "ac0451f09ece9129761b176f471f66afd1f2c907fb8589d42b4c8ef3d3493a8a"
+      "reviewedSha256": "9a991e3ec7373712a5c80900d44abf7aaeaab721872696a1198b59b81222f576"
     },
     {
       "path": "units/13_profile_settings/F13-02_profile-edit/backend.md",
@@ -15658,6 +15702,16 @@
       "command": "Node vm LAUNCH_STATUS.forFeature(F07-07); historical normalized quote hash; git diff --check",
       "result": "보완 항목/개발 필요 연결·기존 출시 범위open 유지·9월26일 과거 DB 기록 원문 지문 보존·공백 검사 통과",
       "scope": "문서 등록부와 과거 기록 보존; 제품·푸시·스케줄·이미지 실행 없음"
+    },
+    {
+      "command": "check_document_evidence_group.py app_filter_sheet_source_advance_20261122 / app_label_layout_source_advance_20261122 / people_block_source_advance_20261122",
+      "result": "세 변경 묶음 소스·정본 지문 8/19/14개 일치; 전체 기존 앱 근거 776개 고유 파일도 현재 로컬 소스와 일치",
+      "scope": "0504cfb→e808058→42d3316 기존 검토 범위 재대조; 제품 실행·이미지·원격 조회 없음"
+    },
+    {
+      "command": "check_reviewed_doc_artifacts.py; sync_source_reference_docs.mjs --check; build_scenario_audit_data.mjs --write / --check; git diff --check",
+      "result": "검토 문서 상대 경로 2680개·파생 정본 지문316개·서버 위치표113개 일치; 시나리오 자료 재생성 후 일치; 문서515검토/33과거보존/454대기",
+      "scope": "문서 내용·생성 자료 검사이며 기존 검토 문서 갱신으로 완료 문서 수 증가 없음"
     }
   ],
   "evidenceGroups": {
@@ -15707,7 +15761,15 @@
         },
         {
           "path": "community_app/lib/presentation/notification/screens/notification_list_screen.dart",
-          "sha256": "1e084858731b59d046d14e13be3dea23f1779858f4214ac217ec5f8796762d9f"
+          "sha256": "3b584b6ea06ee4f445fa98014f893d2f700da8ea3f5a0c30af2fa3653404fca1",
+          "previousVersions": [
+            {
+              "sha256": "1e084858731b59d046d14e13be3dea23f1779858f4214ac217ec5f8796762d9f",
+              "reviewScope": null,
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
+          ],
+          "reviewScope": "기존 대조 근거; 0504cfb→e808058 전체 diff 대조: 분쟁 판정 되돌림→분쟁 판단 되돌림 그룹 이름 변경; 알림 유형/라우팅 계약 유지"
         },
         {
           "path": "community_app/lib/presentation/notification/screens/notification_settings_screen.dart",
@@ -16055,7 +16117,15 @@
         },
         {
           "path": "community_app/lib/presentation/event/widgets/event_fit_preview_section.dart",
-          "sha256": "2cc52ee234bdb2d638855f1482db06515aaaf08742234efde821ac77057e69ec"
+          "sha256": "f83db530cf46a2573d2027b7c8e5845a914ce9cb19a335ac0ce0a319f0ed9215",
+          "previousVersions": [
+            {
+              "sha256": "2cc52ee234bdb2d638855f1482db06515aaaf08742234efde821ac77057e69ec",
+              "reviewScope": null,
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
+          ],
+          "reviewScope": "기존 대조 근거; 0504cfb→e808058 전체 diff 대조: 적합도 배지 색을 현재 밝기에 맞는 상태색으로 변경; 후보/점수/행동 계약 유지, 이미지 검수 없음"
         },
         {
           "path": "community_app/lib/presentation/event/widgets/event_host_card.dart",
@@ -16890,7 +16960,15 @@
         },
         {
           "path": "community_app/lib/domain/providers/connectivity/met_people_provider.dart",
-          "sha256": "2d20dbe2c87013012dc4091dbee1e5a9a673cf3d4844d83022a860da9086e1d8"
+          "sha256": "d68e2fad07a2c1eca1b42e7b00e6450ce17f21a13232dfed54f0a871db7cbf8a",
+          "previousVersions": [
+            {
+              "sha256": "2d20dbe2c87013012dc4091dbee1e5a9a673cf3d4844d83022a860da9086e1d8",
+              "reviewScope": null,
+              "revalidatedBy": "people_block_source_advance_20261122"
+            }
+          ],
+          "reviewScope": "0504cfb→e808058 전체 diff: 만난 사람 내부/표시 목록에서 userId 제거 후 재조회; 재조회 중 추가 조회 차단 유지; 제품 실행 없음"
         },
         {
           "path": "community_app/lib/presentation/profile/screens/met_people_screen.dart",
@@ -16942,7 +17020,15 @@
         },
         {
           "path": "community_app/lib/domain/providers/profile/people_data_refresh_provider.dart",
-          "sha256": "6153e5ed4b32c935dcd8569e9e01e48171a1be5b7dc54c978a364449af6b778e"
+          "sha256": "3f13285aa374bc7432a5209173e2992c806f0a95588f9541abed1bb5a86c4917",
+          "previousVersions": [
+            {
+              "sha256": "6153e5ed4b32c935dcd8569e9e01e48171a1be5b7dc54c978a364449af6b778e",
+              "reviewScope": null,
+              "revalidatedBy": "people_block_source_advance_20261122"
+            }
+          ],
+          "reviewScope": "0504cfb→e808058 전체 변경과 현재 함수: 계정별 차단 성공 집합·새 차단만 hide→invalidate·해제는재조회·기존 표시값만거름·새목록에는 서버결과사용·현재계정ticket; 제품 실행 없음"
         },
         {
           "path": "community_app/lib/presentation/common/widgets/unsaved_leave_guard.dart",
@@ -17318,7 +17404,15 @@
         },
         {
           "path": "community_app/lib/domain/providers/profile/people_data_refresh_provider.dart",
-          "sha256": "6153e5ed4b32c935dcd8569e9e01e48171a1be5b7dc54c978a364449af6b778e"
+          "sha256": "3f13285aa374bc7432a5209173e2992c806f0a95588f9541abed1bb5a86c4917",
+          "previousVersions": [
+            {
+              "sha256": "6153e5ed4b32c935dcd8569e9e01e48171a1be5b7dc54c978a364449af6b778e",
+              "reviewScope": null,
+              "revalidatedBy": "people_block_source_advance_20261122"
+            }
+          ],
+          "reviewScope": "0504cfb→e808058 전체 변경과 현재 함수: 계정별 차단 성공 집합·새 차단만 hide→invalidate·해제는재조회·기존 표시값만거름·새목록에는 서버결과사용·현재계정ticket; 제품 실행 없음"
         },
         {
           "path": "community_app/lib/presentation/common/widgets/ability_source_refresher.dart",
@@ -17636,7 +17730,15 @@
         },
         {
           "path": "community_app/lib/domain/providers/search/search_typed_provider.dart",
-          "sha256": "3e98ca1a619cd682df79dba646926191e44c55a2f3785d501b2c2a622613cba4"
+          "sha256": "4538ff33ff62f0da06e26c82a581a70f99cdabd84ae5e1c3ca915ea76899c33c",
+          "previousVersions": [
+            {
+              "sha256": "3e98ca1a619cd682df79dba646926191e44c55a2f3785d501b2c2a622613cba4",
+              "reviewScope": null,
+              "revalidatedBy": "people_block_source_advance_20261122"
+            }
+          ],
+          "reviewScope": "0504cfb→e808058 전체 diff: 현재 사람 검색의 내부/표시 목록에서 userId 제거 뒤 현재 검색어 첫 쪽 재조회; 추가 조회 차단 유지; 제품 실행 없음"
         },
         {
           "path": "community_app/lib/domain/providers/search/search_suggest_provider.dart",
@@ -18068,7 +18170,15 @@
         },
         {
           "path": "community_app/lib/presentation/home/widgets/people_recommend_section.dart",
-          "sha256": "243d4a25ccd0ca4246bb74f2835dd134ea64b03703ac6dca3fb60363bc6de64b"
+          "sha256": "8025966d0676c9beb3c2e47e7641d60a874f363db8b4d364d802ec7049c1bc4d",
+          "previousVersions": [
+            {
+              "sha256": "243d4a25ccd0ca4246bb74f2835dd134ea64b03703ac6dca3fb60363bc6de64b",
+              "reviewScope": null,
+              "revalidatedBy": "people_block_source_advance_20261122"
+            }
+          ],
+          "reviewScope": "0504cfb→e808058 전체 diff: 홈 표시 구독을 원본 peopleRecommendationsProvider에서 shownPeopleRecommendationsProvider로 연결; 제품 실행 없음"
         },
         {
           "path": "community_app/lib/presentation/home/widgets/similar_event_section.dart",
@@ -18088,7 +18198,15 @@
         },
         {
           "path": "community_app/lib/domain/providers/connectivity/people_recommendation_provider.dart",
-          "sha256": "39a428b2e39b2729643d746163de8bb3dab777c423c12154ce970c6d0c32eec2"
+          "sha256": "2d96408bc9cf7fb048bd95267ca277bdf7a244dca8ab8408f018982142c06078",
+          "previousVersions": [
+            {
+              "sha256": "39a428b2e39b2729643d746163de8bb3dab777c423c12154ce970c6d0c32eec2",
+              "reviewScope": null,
+              "revalidatedBy": "people_block_source_advance_20261122"
+            }
+          ],
+          "reviewScope": "0504cfb→e808058 전체 diff와현재 함수: 추천 원본 재조회와 표시용 mirror 분리, 차단 성공 시 기존 목록 인스턴스에만 숨김 적용; 제품 실행 없음"
         },
         {
           "path": "community_app/lib/domain/providers/wishlist/wishlist_provider.dart",
@@ -18124,7 +18242,15 @@
         },
         {
           "path": "community_app/test/presentation/home/home_nav_test.dart",
-          "sha256": "5421264c84d20c1fdb05a4e98c896978b19d0a763f6420ee67fe3e47cff9a6d5"
+          "sha256": "7f63d53742f491f84901a7a8eff9088a460c8c00162e9423d4c3fb65795cfcc3",
+          "previousVersions": [
+            {
+              "sha256": "5421264c84d20c1fdb05a4e98c896978b19d0a763f6420ee67fe3e47cff9a6d5",
+              "reviewScope": null,
+              "revalidatedBy": "app_filter_sheet_source_advance_20261122"
+            }
+          ],
+          "reviewScope": "기존 대조 근거; e808058→42d3316 diff: 공통 시트 제목줄 초기화와 footer 결과보기의 기존 단언 추가. 기존 홈/이벤트 탐색 계약 변경 없음; 시험 재실행 없음"
         },
         {
           "path": "community_app/test/presentation/home/people_recommend_section_rebuild_test.dart",
@@ -18168,7 +18294,7 @@
         },
         {
           "path": "business_logic/prd/02_feature_prds/02_home_feed/F02-01_home-feed-main_prd.md",
-          "sha256": "a2fcc5c2331105a72223639cfaedb6b81303f50527db4d6cb1962d428a06624e"
+          "sha256": "c963f371cf9a7e18fb76ae2107d2fa501bb42b6467131926a405e8f14d605370"
         },
         {
           "path": "business_logic/prd/02_feature_prds/02_home_feed/F02-03_section-card-entry_prd.md",
@@ -19063,7 +19189,15 @@
         },
         {
           "path": "community_app/lib/data/models/common/api_error.dart",
-          "sha256": "5f4c4120be8fadad0877434fc3ed49055c5000f9e619c449b222a9f547c4b30b"
+          "sha256": "01e7c4bf8faf3ea611c0af9fb5a8c0ac05af04c96915b253b2b8d5793ad80493",
+          "previousVersions": [
+            {
+              "sha256": "5f4c4120be8fadad0877434fc3ed49055c5000f9e619c449b222a9f547c4b30b",
+              "reviewScope": null,
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
+          ],
+          "reviewScope": "기존 대조 근거; 0504cfb→e808058 전체 diff 대조: 선입금 오류 두 문장의 용어만 변경; 오류 코드와 처리 분기는 유지"
         },
         {
           "path": "community_app/lib/data/api/personal_subscription_api.dart",
@@ -19226,7 +19360,15 @@
         },
         {
           "path": "community_app/test/widget/event/refund_policy_form_test.dart",
-          "sha256": "eaf103c6335097bd50fd8118c64b2c5c4acb92bedfd167c59ba1a605513b3dc7"
+          "sha256": "7616048109b7d12cfeb66f6670bb16b18be7d666a8daff43932556055f3559e7",
+          "previousVersions": [
+            {
+              "sha256": "eaf103c6335097bd50fd8118c64b2c5c4acb92bedfd167c59ba1a605513b3dc7",
+              "reviewScope": null,
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
+          ],
+          "reviewScope": "기존 대조 근거; 0504cfb→e808058 전체 diff 대조: 공통 TextField 선택자와 오류 테두리/고정 줄 높이 단언 추가. 기존 환불 시간/비율 검증 단언 유지; 시험 실행 없음"
         }
       ],
       "reuses": [
@@ -19799,8 +19941,15 @@
         },
         {
           "path": "community_app/lib/domain/providers/attendance/attendee_list_provider.dart",
-          "sha256": "487761e3190bc6ccc937160a4931e903dbb0bf31076b2cd368fe99cf631d1d77",
-          "reviewScope": "125–167 회원 제거의 공통 요청·성공/반영 가능 오류 재조회 범위."
+          "sha256": "5c26c7ba3e3985a51a6bb1f89f00178f545e655e98886f7445f435b6ba46da2f",
+          "reviewScope": "125–167 회원 제거의 공통 요청·성공/반영 가능 오류 재조회 범위.; 0504cfb→e808058 전체 diff: partyOwnerUserId로 차단 회원과 예약 게스트 행을 기존 명단에서 제거한 뒤 재조회; 제품 실행 없음",
+          "previousVersions": [
+            {
+              "sha256": "487761e3190bc6ccc937160a4931e903dbb0bf31076b2cd368fe99cf631d1d77",
+              "reviewScope": "125–167 회원 제거의 공통 요청·성공/반영 가능 오류 재조회 범위.",
+              "revalidatedBy": "people_block_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/presentation/event/screens/attendee_list_screen.dart",
@@ -19904,7 +20053,7 @@
       "canonicalSources": [
         {
           "path": "business_logic/prd/02_feature_prds/03_event/F03-07_capacity-and-waitlist_prd.md",
-          "sha256": "53f273ed2e7db28c4fad27e7a6ba2046f60d4ac6f0b13274bdf0844476cc8274"
+          "sha256": "57550c551859139cf4771cba59ce6e55ea52266e836a0b95e7fa1d51afadbb69"
         }
       ],
       "retainedHtmlIds": {
@@ -20937,13 +21086,27 @@
         },
         {
           "path": "community_app/lib/presentation/event/widgets/event_plan_override_sheet.dart",
-          "sha256": "59bb6da8537dacfb84c28b7c12ed114d3d92530d24e162fad4e589235fc28825",
-          "reviewScope": "19–62 값/지우기 전송 변환, 98–193 기존 값·부분 시각 지우기 제한·시각 순서·완료 전에 창 닫기, 230–299 길이 제한·오류시 저장 차단·이탈 안내."
+          "sha256": "a75ddefbec3f373cc505f32423813e72511bfe5799efd676208e7550b5bf8352",
+          "reviewScope": "19–62 값/지우기 전송 변환, 98–193 기존 값·부분 시각 지우기 제한·시각 순서·완료 전에 창 닫기, 230–299 길이 제한·오류시 저장 차단·이탈 안내.; 0504cfb→e808058 전체 diff 대조: 시간 순서/짝 입력/플랜 기본값/지우기 안내의 시각→시간 용어만 변경; 검사와 값 처리 유지",
+          "previousVersions": [
+            {
+              "sha256": "59bb6da8537dacfb84c28b7c12ed114d3d92530d24e162fad4e589235fc28825",
+              "reviewScope": "19–62 값/지우기 전송 변환, 98–193 기존 값·부분 시각 지우기 제한·시각 순서·완료 전에 창 닫기, 230–299 길이 제한·오류시 저장 차단·이탈 안내.",
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/presentation/event/widgets/event_plan_card.dart",
-          "sha256": "b14be8c7439a8765c0af1573db6efcd839680ea27d749c74060575f7d78cc7b5",
-          "reviewScope": "50–131 제목 대체값·표시 순서·활성 스위치·수정/해제·연결별 장소/시각 표시."
+          "sha256": "85e4a84336cc830bc0f1f14236692cb59a61fa9e49fa0339be91073727a9fbde",
+          "reviewScope": "50–131 제목 대체값·표시 순서·활성 스위치·수정/해제·연결별 장소/시각 표시.; 0504cfb→e808058 전체 diff 대조: 준비 시각 고치기→준비 시간 고치기 도움말 변경; F03-10 입구 표현 갱신",
+          "previousVersions": [
+            {
+              "sha256": "b14be8c7439a8765c0af1573db6efcd839680ea27d749c74060575f7d78cc7b5",
+              "reviewScope": "50–131 제목 대체값·표시 순서·활성 스위치·수정/해제·연결별 장소/시각 표시.",
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/data/models/event/event_plan_map_add_param.dart",
@@ -21017,7 +21180,7 @@
       "canonicalSources": [
         {
           "path": "business_logic/prd/02_feature_prds/03_event/F03-10_event-plan-link_prd.md",
-          "sha256": "38bc9c707a7ad291c7e8f84fae8419bdf9f03b1f0a7457e0cd4f7b12671b23bf"
+          "sha256": "8705fb93ac20072c0b58897d194ace681fe8ba94db2cfbe5f1327cd689f8d123"
         }
       ],
       "retainedHtmlIds": {
@@ -22215,10 +22378,17 @@
         },
         {
           "path": "community_app/lib/presentation/event/screens/event_edit_screen.dart",
-          "sha256": "84a360abfc8a3e741903f4e207e3ebcf02eac22a6717627152f9920e5915fc63",
-          "reviewScope": "980–1025 제안 성공 시 현황 교체 이동·즉시 적용 작은 변경 토스트. 2026-11-22 앱 main 0504cfb36 추가 diff 대조: 공개 계좌이체/혼합 동결 안내는 현재 판매 허용 목록 밖일 때만 표시. 앞선 기재 범위는 그대로이며 현재 문서의 허용 목록 설명과 일치.",
+          "sha256": "622df876f5d209111be56e00b75f83ef2ea5fbcf9d12781a0210e7376e22a113",
+          "reviewScope": "980–1025 제안 성공 시 현황 교체 이동·즉시 적용 작은 변경 토스트. 2026-11-22 앱 main 0504cfb36 추가 diff 대조: 공개 계좌이체/혼합 동결 안내는 현재 판매 허용 목록 밖일 때만 표시. 앞선 기재 범위는 그대로이며 현재 문서의 허용 목록 설명과 일치.; 0504cfb→e808058 전체 diff 대조: 추가 장소 앞 중복 여백 제거만 변경; 편집 조건/값 처리 유지",
           "previousSourceDigests": [
             "df16c763232c75564911b5822f3dc6f0361cfe43ae4df2fa8824313953065a06"
+          ],
+          "previousVersions": [
+            {
+              "sha256": "84a360abfc8a3e741903f4e207e3ebcf02eac22a6717627152f9920e5915fc63",
+              "reviewScope": "980–1025 제안 성공 시 현황 교체 이동·즉시 적용 작은 변경 토스트. 2026-11-22 앱 main 0504cfb36 추가 diff 대조: 공개 계좌이체/혼합 동결 안내는 현재 판매 허용 목록 밖일 때만 표시. 앞선 기재 범위는 그대로이며 현재 문서의 허용 목록 설명과 일치.",
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
           ]
         },
         {
@@ -22502,8 +22672,15 @@
         },
         {
           "path": "community_app/lib/presentation/dispute/screens/dispute_case_detail_screen.dart",
-          "sha256": "da46dc46487816f138213294f70c87e20051cad47d0254f78ab38a2bdfe38aab",
-          "reviewScope": "316–345 회원 단건 확정 호출의 userId/사유/자료. 게스트 attendanceId 단건 UI로 확대하지 않음."
+          "sha256": "823bff3e9a6cc79f3d8eb14e2128bfb6196559e0f25ad5182b7f4ecb60293651",
+          "reviewScope": "316–345 회원 단건 확정 호출의 userId/사유/자료. 게스트 attendanceId 단건 UI로 확대하지 않음.; 0504cfb→e808058 전체 diff 대조: 상세/내 이의 카드 껍데기를 공통 AppSurfaceCard로 변경; 전달 자료·행동 조건 유지. 시각 완료 판정 아님",
+          "previousVersions": [
+            {
+              "sha256": "da46dc46487816f138213294f70c87e20051cad47d0254f78ab38a2bdfe38aab",
+              "reviewScope": "316–345 회원 단건 확정 호출의 userId/사유/자료. 게스트 attendanceId 단건 UI로 확대하지 않음.",
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/domain/providers/dispute/no_show_refund_form_provider.dart",
@@ -22512,8 +22689,15 @@
         },
         {
           "path": "community_app/lib/presentation/dispute/screens/no_show_refund_screen.dart",
-          "sha256": "ac0c39e4715823815ebd0d1e4d71f0e8304c999d622e2b4c046387ec3ada597d",
-          "reviewScope": "119–158 제출결과·조회실패 재시도/상한없을때 폼 미표시;347–365 실제자료공개 선택지 PARTIES/HOST_ONLY."
+          "sha256": "1e16552d88cbaab6d53a55ff3c1564fea6e3e0d6404939b4b83828b092e1b1b9",
+          "reviewScope": "119–158 제출결과·조회실패 재시도/상한없을때 폼 미표시;347–365 실제자료공개 선택지 PARTIES/HOST_ONLY.; 0504cfb→e808058 전체 diff 대조: 대상 카드 껍데기를 공통 AppSurfaceCard로 변경; 환불 업무 계약 유지. 시각 완료 판정 아님",
+          "previousVersions": [
+            {
+              "sha256": "ac0c39e4715823815ebd0d1e4d71f0e8304c999d622e2b4c046387ec3ada597d",
+              "reviewScope": "119–158 제출결과·조회실패 재시도/상한없을때 폼 미표시;347–365 실제자료공개 선택지 PARTIES/HOST_ONLY.",
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/data/models/dispute/no_show_refund_param.dart",
@@ -22733,8 +22917,15 @@
         },
         {
           "path": "community_app/lib/presentation/event/screens/event_list_screen.dart",
-          "sha256": "0170ae77e3b446b1744a907853e7046d1b5734ab5cd6263ac33dea00035ffaf5",
-          "reviewScope": "49–140 두 정렬·칩·시트 결과 병합;148–225 메뉴 기반 호스트 입구·제출 검색;242–260 카테고리 선택;360–501 빈 결과/새로고침/페이지 실패/카드·찜;515–618 시트 초안·초기화·적용."
+          "sha256": "60a668725bf5e2a1eb13370e3aa6a42a5842c64d062a0f64bd0318ebc5238ea2",
+          "reviewScope": "49–140 두 정렬·칩·시트 결과 병합;148–225 메뉴 기반 호스트 입구·제출 검색;242–260 카테고리 선택;360–501 빈 결과/새로고침/페이지 실패/카드·찜;515–618 시트 초안·초기화·적용.; e808058→42d3316 diff·현재520–604: 공통 시트·초기화 제목줄·적용 footer로 배치 변경. 날짜/가격/무료/지역 초안 초기화와 결과 반환 계약 동일. F03-01 필터 적용/취소 설명 유지. 이미지·제품 실행 없음",
+          "previousVersions": [
+            {
+              "sha256": "0170ae77e3b446b1744a907853e7046d1b5734ab5cd6263ac33dea00035ffaf5",
+              "reviewScope": "49–140 두 정렬·칩·시트 결과 병합;148–225 메뉴 기반 호스트 입구·제출 검색;242–260 카테고리 선택;360–501 빈 결과/새로고침/페이지 실패/카드·찜;515–618 시트 초안·초기화·적용.",
+              "revalidatedBy": "app_filter_sheet_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/presentation/event/screens/similar_events_screen.dart",
@@ -22930,8 +23121,15 @@
         },
         {
           "path": "community_app/lib/presentation/event/widgets/event_create_step2.dart",
-          "sha256": "628f3abe2d397a020bb648c1402d4e4b3eb639853b91fee5f9dda14a5cd5b045",
-          "reviewScope": "31–150 무료 클럽+poll 범위의 후보 입력·확정 일정·온라인/오프라인·출시 범위별 장소입력."
+          "sha256": "020700ffe2a2dd62c12303df3dc48b3160ac8140c45e9304c3e13a3c36c83184",
+          "reviewScope": "31–150 무료 클럽+poll 범위의 후보 입력·확정 일정·온라인/오프라인·출시 범위별 장소입력.; 0504cfb→e808058 전체 diff 대조: 추가 장소 앞 중복 여백 제거만 변경; 생성 입력 계약 유지",
+          "previousVersions": [
+            {
+              "sha256": "628f3abe2d397a020bb648c1402d4e4b3eb639853b91fee5f9dda14a5cd5b045",
+              "reviewScope": "31–150 무료 클럽+poll 범위의 후보 입력·확정 일정·온라인/오프라인·출시 범위별 장소입력.",
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/presentation/event/widgets/event_create_step3.dart",
@@ -23233,10 +23431,17 @@
         },
         {
           "path": "community_app/lib/presentation/event/screens/event_edit_screen.dart",
-          "sha256": "84a360abfc8a3e741903f4e207e3ebcf02eac22a6717627152f9920e5915fc63",
-          "reviewScope": "680–708 초안 요금·대기·위치 공유 입력;980–1025 공개 변경 제안 안내는 F03-19 기존 근거 재사용. 2026-11-22 앱 main 0504cfb36 추가 diff 대조: 공개 계좌이체/혼합 동결 안내는 현재 판매 허용 목록 밖일 때만 표시. 앞선 기재 범위는 그대로이며 현재 문서의 허용 목록 설명과 일치.",
+          "sha256": "622df876f5d209111be56e00b75f83ef2ea5fbcf9d12781a0210e7376e22a113",
+          "reviewScope": "680–708 초안 요금·대기·위치 공유 입력;980–1025 공개 변경 제안 안내는 F03-19 기존 근거 재사용. 2026-11-22 앱 main 0504cfb36 추가 diff 대조: 공개 계좌이체/혼합 동결 안내는 현재 판매 허용 목록 밖일 때만 표시. 앞선 기재 범위는 그대로이며 현재 문서의 허용 목록 설명과 일치.; 0504cfb→e808058 전체 diff 대조: 추가 장소 앞 중복 여백 제거만 변경; 편집 조건/값 처리 유지",
           "previousSourceDigests": [
             "df16c763232c75564911b5822f3dc6f0361cfe43ae4df2fa8824313953065a06"
+          ],
+          "previousVersions": [
+            {
+              "sha256": "84a360abfc8a3e741903f4e207e3ebcf02eac22a6717627152f9920e5915fc63",
+              "reviewScope": "680–708 초안 요금·대기·위치 공유 입력;980–1025 공개 변경 제안 안내는 F03-19 기존 근거 재사용. 2026-11-22 앱 main 0504cfb36 추가 diff 대조: 공개 계좌이체/혼합 동결 안내는 현재 판매 허용 목록 밖일 때만 표시. 앞선 기재 범위는 그대로이며 현재 문서의 허용 목록 설명과 일치.",
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
           ]
         },
         {
@@ -23453,10 +23658,17 @@
         },
         {
           "path": "community_app/lib/presentation/event/screens/event_edit_screen.dart",
-          "sha256": "84a360abfc8a3e741903f4e207e3ebcf02eac22a6717627152f9920e5915fc63",
-          "reviewScope": "879–920 포인트 전환 확인·저장되지 않은 입력 안내·요청 결과/새 입력 보존 검사 시작. 전체 편집은 F03-04 기존 근거. 2026-11-22 앱 main 0504cfb36 추가 diff 대조: 공개 계좌이체/혼합 동결 안내는 현재 판매 허용 목록 밖일 때만 표시. 앞선 기재 범위는 그대로이며 현재 문서의 허용 목록 설명과 일치.",
+          "sha256": "622df876f5d209111be56e00b75f83ef2ea5fbcf9d12781a0210e7376e22a113",
+          "reviewScope": "879–920 포인트 전환 확인·저장되지 않은 입력 안내·요청 결과/새 입력 보존 검사 시작. 전체 편집은 F03-04 기존 근거. 2026-11-22 앱 main 0504cfb36 추가 diff 대조: 공개 계좌이체/혼합 동결 안내는 현재 판매 허용 목록 밖일 때만 표시. 앞선 기재 범위는 그대로이며 현재 문서의 허용 목록 설명과 일치.; 0504cfb→e808058 전체 diff 대조: 추가 장소 앞 중복 여백 제거만 변경; 편집 조건/값 처리 유지",
           "previousSourceDigests": [
             "df16c763232c75564911b5822f3dc6f0361cfe43ae4df2fa8824313953065a06"
+          ],
+          "previousVersions": [
+            {
+              "sha256": "84a360abfc8a3e741903f4e207e3ebcf02eac22a6717627152f9920e5915fc63",
+              "reviewScope": "879–920 포인트 전환 확인·저장되지 않은 입력 안내·요청 결과/새 입력 보존 검사 시작. 전체 편집은 F03-04 기존 근거. 2026-11-22 앱 main 0504cfb36 추가 diff 대조: 공개 계좌이체/혼합 동결 안내는 현재 판매 허용 목록 밖일 때만 표시. 앞선 기재 범위는 그대로이며 현재 문서의 허용 목록 설명과 일치.",
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
           ]
         },
         {
@@ -23630,7 +23842,7 @@
         },
         {
           "path": "business_logic/prd/02_feature_prds/03_event/F03-07_capacity-and-waitlist_prd.md",
-          "sha256": "53f273ed2e7db28c4fad27e7a6ba2046f60d4ac6f0b13274bdf0844476cc8274"
+          "sha256": "57550c551859139cf4771cba59ce6e55ea52266e836a0b95e7fa1d51afadbb69"
         },
         {
           "path": "business_logic/prd/02_feature_prds/03_event/F03-08_qr-checkin_prd.md",
@@ -23642,7 +23854,7 @@
         },
         {
           "path": "business_logic/prd/02_feature_prds/03_event/F03-10_event-plan-link_prd.md",
-          "sha256": "38bc9c707a7ad291c7e8f84fae8419bdf9f03b1f0a7457e0cd4f7b12671b23bf"
+          "sha256": "8705fb93ac20072c0b58897d194ace681fe8ba94db2cfbe5f1327cd689f8d123"
         },
         {
           "path": "business_logic/prd/02_feature_prds/03_event/F03-11_wishlist_prd.md",
@@ -23929,8 +24141,15 @@
         },
         {
           "path": "community_app/lib/presentation/club/widgets/club_fit_preview_section.dart",
-          "sha256": "5790df55e88d9bc25a01e60bd336a3aff8b8fa0f517fa09d980c0c9cd57a4f44",
-          "reviewScope": "18–39 모든 신호 없음·최초 로딩·오류 숨김·keepPrevious."
+          "sha256": "cede5a23d950cec5c2a784be1b4d4ab13227ac8dd910fa275889a444d55c006f",
+          "reviewScope": "18–39 모든 신호 없음·최초 로딩·오류 숨김·keepPrevious.; 0504cfb→e808058 전체 diff 대조: 적합도 배지 색을 현재 밝기에 맞는 상태색으로 변경; 후보/점수/행동 계약 유지, 이미지 검수 없음",
+          "previousVersions": [
+            {
+              "sha256": "5790df55e88d9bc25a01e60bd336a3aff8b8fa0f517fa09d980c0c9cd57a4f44",
+              "reviewScope": "18–39 모든 신호 없음·최초 로딩·오류 숨김·keepPrevious.",
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/domain/providers/club/club_permission_provider.dart",
@@ -24194,8 +24413,15 @@
         },
         {
           "path": "community_app/lib/presentation/club/screens/club_management_screen.dart",
-          "sha256": "45c7fe4ea6154d00a90603e4fb6c0ea1c6954eb1bcdc35d2d83720a27e43deef",
-          "reviewScope": "206–211 정보·운영 설정 입구와 editClub 행동 허용."
+          "sha256": "8c768fdc2f8d1e874517a243a991801352b679ade0e38dac0ad9627dbe60230c",
+          "reviewScope": "206–211 정보·운영 설정 입구와 editClub 행동 허용.; 0504cfb→e808058 전체 diff 대조: 권한 콘솔 입구 label 권한 위임→권한 맡기기, 경로/허용 조건 유지; F04-04 입구 표현 갱신",
+          "previousVersions": [
+            {
+              "sha256": "45c7fe4ea6154d00a90603e4fb6c0ea1c6954eb1bcdc35d2d83720a27e43deef",
+              "reviewScope": "206–211 정보·운영 설정 입구와 editClub 행동 허용.",
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/presentation/club/widgets/club_delete_dialog.dart",
@@ -24259,13 +24485,27 @@
         },
         {
           "path": "community_app/test/audit/entry_paths_club_edit_test.dart",
-          "sha256": "d08443339d41260fc2ad8bd62ee09e79fa08e489a6b00e0af9a7c77dbee60b4c",
-          "reviewScope": "127–152 저장준비중 권한회수 미전송·원문보존·회복후저장 단언만 읽음;실행/캡처 없음."
+          "sha256": "2221fc5cd23d284bb4f997951f4cdc86aa21fa2f18cb171cf7b7f5d319446176",
+          "reviewScope": "127–152 저장준비중 권한회수 미전송·원문보존·회복후저장 단언만 읽음;실행/캡처 없음.; 0504cfb→e808058 전체 diff 대조: 입력 찾기 TextFormField→TextField; 기존 입력·이탈 단언 유지, 새 실행 없음",
+          "previousVersions": [
+            {
+              "sha256": "d08443339d41260fc2ad8bd62ee09e79fa08e489a6b00e0af9a7c77dbee60b4c",
+              "reviewScope": "127–152 저장준비중 권한회수 미전송·원문보존·회복후저장 단언만 읽음;실행/캡처 없음.",
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/test/widget/club/club_form_restart_test.dart",
-          "sha256": "e6cb31eac331d6599c69e29059edc6e9201b780d948e18bf71ef3d10d70237eb",
-          "reviewScope": "210–255 서명변경 초안보존·실제이미지경로변경 충돌 단언만 읽음;실행 없음."
+          "sha256": "d06543fd46dd0675e2cfdcf1fea4ebf11d2beb9f33384bcc1c91adb227df4070",
+          "reviewScope": "210–255 서명변경 초안보존·실제이미지경로변경 충돌 단언만 읽음;실행 없음.; 0504cfb→e808058 전체 diff 대조: 공통 입력 위젯 교체에 맞춘 TextField 선택자; 계정 변경 입력 폐기 단언 유지, 새 실행 없음",
+          "previousVersions": [
+            {
+              "sha256": "e6cb31eac331d6599c69e29059edc6e9201b780d948e18bf71ef3d10d70237eb",
+              "reviewScope": "210–255 서명변경 초안보존·실제이미지경로변경 충돌 단언만 읽음;실행 없음.",
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/test/audit/entry_paths_club_ownership_test.dart",
@@ -24478,8 +24718,15 @@
         },
         {
           "path": "community_app/lib/domain/providers/club/club_member_provider.dart",
-          "sha256": "badbd6cdca93fe7003c56a2800e309b34df73a2dbe6fdb47fb8a6a0d5b9ecac9",
-          "reviewScope": "85 페이지20;104–149 접근/차단 구독·조회·재가입자 이전 제거 의도 정리;159–218 추가 실패/접근실패·필터 초기화;221–233 역할 갱신;246–330 강퇴/차단 동일 명령;336–348 회원/기금 갱신."
+          "sha256": "98255f2013f6be0455e241dfb22bceaa3ef23465f537378f318faa7fcff1b663",
+          "reviewScope": "85 페이지20;104–149 접근/차단 구독·조회·재가입자 이전 제거 의도 정리;159–218 추가 실패/접근실패·필터 초기화;221–233 역할 갱신;246–330 강퇴/차단 동일 명령;336–348 회원/기금 갱신.; 0504cfb→e808058 전체 diff: 일반 회원 목록의 내부/표시 목록에서 userId 제거; 운영 목적 선택기는 별도이며 재조회 중 추가 조회 차단 유지; 제품 실행 없음",
+          "previousVersions": [
+            {
+              "sha256": "badbd6cdca93fe7003c56a2800e309b34df73a2dbe6fdb47fb8a6a0d5b9ecac9",
+              "reviewScope": "85 페이지20;104–149 접근/차단 구독·조회·재가입자 이전 제거 의도 정리;159–218 추가 실패/접근실패·필터 초기화;221–233 역할 갱신;246–330 강퇴/차단 동일 명령;336–348 회원/기금 갱신.",
+              "revalidatedBy": "people_block_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/presentation/club/widgets/club_membership_action_sheet.dart",
@@ -24615,8 +24862,15 @@
         },
         {
           "path": "community_app/lib/presentation/club/screens/club_management_screen.dart",
-          "sha256": "45c7fe4ea6154d00a90603e4fb6c0ea1c6954eb1bcdc35d2d83720a27e43deef",
-          "reviewScope": "88–118 회원·초대·권한위임·차단 입구와 능력값."
+          "sha256": "8c768fdc2f8d1e874517a243a991801352b679ade0e38dac0ad9627dbe60230c",
+          "reviewScope": "88–118 회원·초대·권한위임·차단 입구와 능력값.; 0504cfb→e808058 전체 diff 대조: 권한 콘솔 입구 label 권한 위임→권한 맡기기, 경로/허용 조건 유지; F04-04 입구 표현 갱신",
+          "previousVersions": [
+            {
+              "sha256": "45c7fe4ea6154d00a90603e4fb6c0ea1c6954eb1bcdc35d2d83720a27e43deef",
+              "reviewScope": "88–118 회원·초대·권한위임·차단 입구와 능력값.",
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/core/router/feature_routes/club_branch_routes.dart",
@@ -24637,7 +24891,7 @@
       "canonicalSources": [
         {
           "path": "business_logic/prd/02_feature_prds/04_club/F04-04_member-management_prd.md",
-          "sha256": "b90ddf37449a21158c8b2a76737874dc49ef5508013cebc82f9f78400faf77e7"
+          "sha256": "54c40c5beb03c524ed41462b839918b3a04b97686958db26e800f800d270777b"
         },
         {
           "path": "business_logic/prd/02_feature_prds/04_club/F04-06_ban-management_prd.md",
@@ -24868,8 +25122,15 @@
         },
         {
           "path": "community_app/lib/domain/providers/club/club_member_provider.dart",
-          "sha256": "badbd6cdca93fe7003c56a2800e309b34df73a2dbe6fdb47fb8a6a0d5b9ecac9",
-          "reviewScope": "351–361 초대 발송 성공/반영가능오류 클럽변경;club_members_20261122 동일 SHA의 목록/입구 관련 범위 재사용."
+          "sha256": "98255f2013f6be0455e241dfb22bceaa3ef23465f537378f318faa7fcff1b663",
+          "reviewScope": "351–361 초대 발송 성공/반영가능오류 클럽변경;club_members_20261122 동일 SHA의 목록/입구 관련 범위 재사용.; 0504cfb→e808058 전체 diff: 일반 회원 목록의 내부/표시 목록에서 userId 제거; 운영 목적 선택기는 별도이며 재조회 중 추가 조회 차단 유지; 제품 실행 없음",
+          "previousVersions": [
+            {
+              "sha256": "badbd6cdca93fe7003c56a2800e309b34df73a2dbe6fdb47fb8a6a0d5b9ecac9",
+              "reviewScope": "351–361 초대 발송 성공/반영가능오류 클럽변경;club_members_20261122 동일 SHA의 목록/입구 관련 범위 재사용.",
+              "revalidatedBy": "people_block_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/data/api/club_member_api.dart",
@@ -24888,8 +25149,15 @@
         },
         {
           "path": "community_app/lib/presentation/club/screens/club_management_screen.dart",
-          "sha256": "45c7fe4ea6154d00a90603e4fb6c0ea1c6954eb1bcdc35d2d83720a27e43deef",
-          "reviewScope": "club_members_20261122 동일 SHA의 88–118 회원/초대입구·능력값 범위 재사용."
+          "sha256": "8c768fdc2f8d1e874517a243a991801352b679ade0e38dac0ad9627dbe60230c",
+          "reviewScope": "club_members_20261122 동일 SHA의 88–118 회원/초대입구·능력값 범위 재사용.; 0504cfb→e808058 전체 diff 대조: 권한 콘솔 입구 label 권한 위임→권한 맡기기, 경로/허용 조건 유지; F04-04 입구 표현 갱신",
+          "previousVersions": [
+            {
+              "sha256": "45c7fe4ea6154d00a90603e4fb6c0ea1c6954eb1bcdc35d2d83720a27e43deef",
+              "reviewScope": "club_members_20261122 동일 SHA의 88–118 회원/초대입구·능력값 범위 재사용.",
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/presentation/club/widgets/gathering_tab_sections.dart",
@@ -25122,8 +25390,15 @@
         },
         {
           "path": "community_app/lib/presentation/club/screens/club_management_screen.dart",
-          "sha256": "45c7fe4ea6154d00a90603e4fb6c0ea1c6954eb1bcdc35d2d83720a27e43deef",
-          "reviewScope": "120–125 회원통계 입구·viewMemberStats·/members/stats."
+          "sha256": "8c768fdc2f8d1e874517a243a991801352b679ade0e38dac0ad9627dbe60230c",
+          "reviewScope": "120–125 회원통계 입구·viewMemberStats·/members/stats.; 0504cfb→e808058 전체 diff 대조: 권한 콘솔 입구 label 권한 위임→권한 맡기기, 경로/허용 조건 유지; F04-04 입구 표현 갱신",
+          "previousVersions": [
+            {
+              "sha256": "45c7fe4ea6154d00a90603e4fb6c0ea1c6954eb1bcdc35d2d83720a27e43deef",
+              "reviewScope": "120–125 회원통계 입구·viewMemberStats·/members/stats.",
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/core/router/feature_routes/club_branch_routes.dart",
@@ -25238,8 +25513,15 @@
         },
         {
           "path": "community_app/lib/presentation/club/community/screens/announcement_create_screen.dart",
-          "sha256": "46caf74c0ab6625ec7a2f4a2b7852e214ded2bb31977cc328e93be423ee611e3",
-          "reviewScope": "60–80 초안입력;124–130 유효/변경;196 제목100자;235–265 알림안내·예약선택·내예약입구;276–347 서울시각1분/사진키/기본고정false·pending/명확거절/불명확·완료정리."
+          "sha256": "f64691d8c4e085734ad4e1550b18df965fed905015e8c77d69fade44d51cbb63",
+          "reviewScope": "60–80 초안입력;124–130 유효/변경;196 제목100자;235–265 알림안내·예약선택·내예약입구;276–347 서울시각1분/사진키/기본고정false·pending/명확거절/불명확·완료정리.; 0504cfb→e808058 전체 diff 대조: 예약 알림 안내의 발행 시점→발행할 때 문구 변경; 게시/예약 시점 계약 유지",
+          "previousVersions": [
+            {
+              "sha256": "46caf74c0ab6625ec7a2f4a2b7852e214ded2bb31977cc328e93be423ee611e3",
+              "reviewScope": "60–80 초안입력;124–130 유효/변경;196 제목100자;235–265 알림안내·예약선택·내예약입구;276–347 서울시각1분/사진키/기본고정false·pending/명확거절/불명확·완료정리.",
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/presentation/club/community/screens/announcement_edit_screen.dart",
@@ -25288,8 +25570,15 @@
         },
         {
           "path": "community_app/test/widget/club/announcement_recovery_test.dart",
-          "sha256": "927c8b7de0da9820ab1c9104570641232d5eec21688fba5c741786f753c2867e",
-          "reviewScope": "342–364 결과불명확뒤재시작등록차단·전송1건 단언을 읽음. 실행 없음."
+          "sha256": "d04bf87418e249cce25de4ea54157916a93aa2b72827dbb05c0aa6920c3ffc62",
+          "reviewScope": "342–364 결과불명확뒤재시작등록차단·전송1건 단언을 읽음. 실행 없음.; 0504cfb→e808058 전체 diff 대조: 예약 발행 안내 문구 기대값만 같은 내용으로 변경; 새 실행 없음",
+          "previousVersions": [
+            {
+              "sha256": "927c8b7de0da9820ab1c9104570641232d5eec21688fba5c741786f753c2867e",
+              "reviewScope": "342–364 결과불명확뒤재시작등록차단·전송1건 단언을 읽음. 실행 없음.",
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/test/presentation/club/announcement_draft_test.dart",
@@ -25980,8 +26269,15 @@
         },
         {
           "path": "community_app/lib/presentation/club/screens/club_management_screen.dart",
-          "sha256": "45c7fe4ea6154d00a90603e4fb6c0ea1c6954eb1bcdc35d2d83720a27e43deef",
-          "reviewScope": "132–148 단일생성·초안목록·반복·통계의 실제 관리 메뉴."
+          "sha256": "8c768fdc2f8d1e874517a243a991801352b679ade0e38dac0ad9627dbe60230c",
+          "reviewScope": "132–148 단일생성·초안목록·반복·통계의 실제 관리 메뉴.; 0504cfb→e808058 전체 diff 대조: 권한 콘솔 입구 label 권한 위임→권한 맡기기, 경로/허용 조건 유지; F04-04 입구 표현 갱신",
+          "previousVersions": [
+            {
+              "sha256": "45c7fe4ea6154d00a90603e4fb6c0ea1c6954eb1bcdc35d2d83720a27e43deef",
+              "reviewScope": "132–148 단일생성·초안목록·반복·통계의 실제 관리 메뉴.",
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
+          ]
         }
       ],
       "reuses": [
@@ -27033,8 +27329,15 @@
         },
         {
           "path": "community_app/lib/presentation/club/screens/club_management_screen.dart",
-          "sha256": "45c7fe4ea6154d00a90603e4fb6c0ea1c6954eb1bcdc35d2d83720a27e43deef",
-          "reviewScope": "207–236: 재정 영역의 운영 구독 실제 진입 항목."
+          "sha256": "8c768fdc2f8d1e874517a243a991801352b679ade0e38dac0ad9627dbe60230c",
+          "reviewScope": "207–236: 재정 영역의 운영 구독 실제 진입 항목.; 0504cfb→e808058 전체 diff 대조: 권한 콘솔 입구 label 권한 위임→권한 맡기기, 경로/허용 조건 유지; F04-04 입구 표현 갱신",
+          "previousVersions": [
+            {
+              "sha256": "45c7fe4ea6154d00a90603e4fb6c0ea1c6954eb1bcdc35d2d83720a27e43deef",
+              "reviewScope": "207–236: 재정 영역의 운영 구독 실제 진입 항목.",
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/core/router/feature_routes/club_branch_routes.dart",
@@ -27128,7 +27431,7 @@
         },
         {
           "path": "business_logic/prd/02_feature_prds/04_club/F04-04_member-management_prd.md",
-          "sha256": "b90ddf37449a21158c8b2a76737874dc49ef5508013cebc82f9f78400faf77e7"
+          "sha256": "54c40c5beb03c524ed41462b839918b3a04b97686958db26e800f800d270777b"
         },
         {
           "path": "business_logic/prd/02_feature_prds/04_club/F04-05_waitlist-invitation_prd.md",
@@ -28011,8 +28314,15 @@
         },
         {
           "path": "community_app/lib/presentation/meeting_settlement/widgets/settlement_status_guidance_card.dart",
-          "sha256": "4c60ce7b87ecb9665ead2f9be4c626e9e5355f9fe60ad878d44e4c133c2bec26",
-          "reviewScope": "20–75: 현재 상태별 접힌 안내·외부 환불 경계; 안내문을 실제 서버 완료 정책의 대체로 쓰지 않음"
+          "sha256": "024bed4d727acaa357704a02a0888ea8a4c74aa3c49b670eabfbc03e4a0fa0aa",
+          "reviewScope": "20–75: 현재 상태별 접힌 안내·외부 환불 경계; 안내문을 실제 서버 완료 정책의 대체로 쓰지 않음; 0504cfb→e808058 전체 diff 대조: 진행 중 생성자 안내의 미완료→안 끝난 용어 변경; 상태별 조건 유지",
+          "previousVersions": [
+            {
+              "sha256": "4c60ce7b87ecb9665ead2f9be4c626e9e5355f9fe60ad878d44e4c133c2bec26",
+              "reviewScope": "20–75: 현재 상태별 접힌 안내·외부 환불 경계; 안내문을 실제 서버 완료 정책의 대체로 쓰지 않음",
+              "revalidatedBy": "app_label_layout_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_api/domain/src/test/java/com/endside/community/payment/meeting/service/MeetingSettlementSummaryPartiesTest.java",
@@ -28831,6 +29141,273 @@
         "community_app": "42d3316069aef5664e303d7fa93a6ec16db1168a",
         "community_api": "b9ee63f619eba6501f952fa663a243ac87d3573b"
       }
+    },
+    "app_filter_sheet_source_advance_20261122": {
+      "kind": "source_delta_review",
+      "scope": "최신 앱 변경18개 중 이미 대조한 문서 근거와 교차하는2개 파일/2개 묶음의 변경 대조. 나머지 경로의 미대조 문서를 완료 처리하지 않음. 공통 시트 배치 전환은 문서의 필터 업무 계약을 바꾸지 않음.",
+      "sources": [
+        {
+          "path": "community_app/lib/presentation/event/screens/event_list_screen.dart",
+          "sha256": "60a668725bf5e2a1eb13370e3aa6a42a5842c64d062a0f64bd0318ebc5238ea2",
+          "reviewScope": "e808058→42d3316 diff·현재520–604: 공통 시트·초기화 제목줄·적용 footer로 배치 변경. 날짜/가격/무료/지역 초안 초기화와 결과 반환 계약 동일. F03-01 필터 적용/취소 설명 유지. 이미지·제품 실행 없음"
+        },
+        {
+          "path": "community_app/test/presentation/home/home_nav_test.dart",
+          "sha256": "7f63d53742f491f84901a7a8eff9088a460c8c00162e9423d4c3fb65795cfcc3",
+          "reviewScope": "e808058→42d3316 diff: 공통 시트 제목줄 초기화와 footer 결과보기의 기존 단언 추가. 기존 홈/이벤트 탐색 계약 변경 없음; 시험 재실행 없음"
+        }
+      ],
+      "reusedSources": [],
+      "reuses": [
+        "event_discovery_20261122",
+        "home_feed_core_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-01_event-discovery_prd.md",
+          "sha256": "09b055b19b9d7f0db14535b032dc8e18c9ac87cd53afed9848f56b555a128b47"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/02_home_feed/F02-02_home-feed-refresh_prd.md",
+          "sha256": "bbd459650b18a8a0dfc943ac5b93688179bb42f463456604cf92bfc151d2fc7a"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/02_home_feed/F02-01_home-feed-main_prd.md",
+          "sha256": "c963f371cf9a7e18fb76ae2107d2fa501bb42b6467131926a405e8f14d605370"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/02_home_feed/F02-03_section-card-entry_prd.md",
+          "sha256": "f69096cf78b713e25acba928e13aab50f61f9ce268237a65633e27ee9e849c5a"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/02_home_feed/F02-05_search-notification-entry_prd.md",
+          "sha256": "0aa967b4b7126f20bb6b7ea6ccd3d01fc7ce94edc6d2fea72a36eba779c78bd8"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/02_home_feed/F02-04_recommend-events-more_prd.md",
+          "sha256": "8dbf6d3a5b6e6c8c8f4b5304f0ef26c3dd88c198299dc1781a3ebcba5679d7b7"
+        }
+      ],
+      "retainedHtmlIds": {},
+      "referenceChanges": [],
+      "followUpFindings": [],
+      "fromCommit": "e8080585bde129801c5ad1ce6ce1753be2796017",
+      "toCommit": "42d3316069aef5664e303d7fa93a6ec16db1168a"
+    },
+    "app_label_layout_source_advance_20261122": {
+      "kind": "source_delta_review",
+      "scope": "이전 앱 소스 전진의24개 영향 파일 중17개 문구·배치·선택자/기존 단언 변경 대조. 현재 업무 설명은 유지하고 권한 맡기기·준비 시간 고치기 입구 표현을 두 기능 문서 계열에 반영. 사람 차단/추천 등7개 행동 변경은 별도 대조 대기. 제품·이미지 실행 없음.",
+      "sources": [
+        {
+          "path": "community_app/lib/data/models/common/api_error.dart",
+          "sha256": "01e7c4bf8faf3ea611c0af9fb5a8c0ac05af04c96915b253b2b8d5793ad80493",
+          "reviewScope": "0504cfb→e808058 전체 diff 대조: 선입금 오류 두 문장의 용어만 변경; 오류 코드와 처리 분기는 유지"
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/screens/announcement_create_screen.dart",
+          "sha256": "f64691d8c4e085734ad4e1550b18df965fed905015e8c77d69fade44d51cbb63",
+          "reviewScope": "0504cfb→e808058 전체 diff 대조: 예약 알림 안내의 발행 시점→발행할 때 문구 변경; 게시/예약 시점 계약 유지"
+        },
+        {
+          "path": "community_app/lib/presentation/club/screens/club_management_screen.dart",
+          "sha256": "8c768fdc2f8d1e874517a243a991801352b679ade0e38dac0ad9627dbe60230c",
+          "reviewScope": "0504cfb→e808058 전체 diff 대조: 권한 콘솔 입구 label 권한 위임→권한 맡기기, 경로/허용 조건 유지; F04-04 입구 표현 갱신"
+        },
+        {
+          "path": "community_app/lib/presentation/dispute/screens/dispute_case_detail_screen.dart",
+          "sha256": "823bff3e9a6cc79f3d8eb14e2128bfb6196559e0f25ad5182b7f4ecb60293651",
+          "reviewScope": "0504cfb→e808058 전체 diff 대조: 상세/내 이의 카드 껍데기를 공통 AppSurfaceCard로 변경; 전달 자료·행동 조건 유지. 시각 완료 판정 아님"
+        },
+        {
+          "path": "community_app/lib/presentation/dispute/screens/no_show_refund_screen.dart",
+          "sha256": "1e16552d88cbaab6d53a55ff3c1564fea6e3e0d6404939b4b83828b092e1b1b9",
+          "reviewScope": "0504cfb→e808058 전체 diff 대조: 대상 카드 껍데기를 공통 AppSurfaceCard로 변경; 환불 업무 계약 유지. 시각 완료 판정 아님"
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_edit_screen.dart",
+          "sha256": "622df876f5d209111be56e00b75f83ef2ea5fbcf9d12781a0210e7376e22a113",
+          "reviewScope": "0504cfb→e808058 전체 diff 대조: 추가 장소 앞 중복 여백 제거만 변경; 편집 조건/값 처리 유지"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_create_step2.dart",
+          "sha256": "020700ffe2a2dd62c12303df3dc48b3160ac8140c45e9304c3e13a3c36c83184",
+          "reviewScope": "0504cfb→e808058 전체 diff 대조: 추가 장소 앞 중복 여백 제거만 변경; 생성 입력 계약 유지"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_plan_card.dart",
+          "sha256": "85e4a84336cc830bc0f1f14236692cb59a61fa9e49fa0339be91073727a9fbde",
+          "reviewScope": "0504cfb→e808058 전체 diff 대조: 준비 시각 고치기→준비 시간 고치기 도움말 변경; F03-10 입구 표현 갱신"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_plan_override_sheet.dart",
+          "sha256": "a75ddefbec3f373cc505f32423813e72511bfe5799efd676208e7550b5bf8352",
+          "reviewScope": "0504cfb→e808058 전체 diff 대조: 시간 순서/짝 입력/플랜 기본값/지우기 안내의 시각→시간 용어만 변경; 검사와 값 처리 유지"
+        },
+        {
+          "path": "community_app/lib/presentation/meeting_settlement/widgets/settlement_status_guidance_card.dart",
+          "sha256": "024bed4d727acaa357704a02a0888ea8a4c74aa3c49b670eabfbc03e4a0fa0aa",
+          "reviewScope": "0504cfb→e808058 전체 diff 대조: 진행 중 생성자 안내의 미완료→안 끝난 용어 변경; 상태별 조건 유지"
+        },
+        {
+          "path": "community_app/lib/presentation/notification/screens/notification_list_screen.dart",
+          "sha256": "3b584b6ea06ee4f445fa98014f893d2f700da8ea3f5a0c30af2fa3653404fca1",
+          "reviewScope": "0504cfb→e808058 전체 diff 대조: 분쟁 판정 되돌림→분쟁 판단 되돌림 그룹 이름 변경; 알림 유형/라우팅 계약 유지"
+        },
+        {
+          "path": "community_app/test/audit/entry_paths_club_edit_test.dart",
+          "sha256": "2221fc5cd23d284bb4f997951f4cdc86aa21fa2f18cb171cf7b7f5d319446176",
+          "reviewScope": "0504cfb→e808058 전체 diff 대조: 입력 찾기 TextFormField→TextField; 기존 입력·이탈 단언 유지, 새 실행 없음"
+        },
+        {
+          "path": "community_app/test/widget/club/announcement_recovery_test.dart",
+          "sha256": "d04bf87418e249cce25de4ea54157916a93aa2b72827dbb05c0aa6920c3ffc62",
+          "reviewScope": "0504cfb→e808058 전체 diff 대조: 예약 발행 안내 문구 기대값만 같은 내용으로 변경; 새 실행 없음"
+        },
+        {
+          "path": "community_app/test/widget/club/club_form_restart_test.dart",
+          "sha256": "d06543fd46dd0675e2cfdcf1fea4ebf11d2beb9f33384bcc1c91adb227df4070",
+          "reviewScope": "0504cfb→e808058 전체 diff 대조: 공통 입력 위젯 교체에 맞춘 TextField 선택자; 계정 변경 입력 폐기 단언 유지, 새 실행 없음"
+        },
+        {
+          "path": "community_app/lib/presentation/club/widgets/club_fit_preview_section.dart",
+          "sha256": "cede5a23d950cec5c2a784be1b4d4ab13227ac8dd910fa275889a444d55c006f",
+          "reviewScope": "0504cfb→e808058 전체 diff 대조: 적합도 배지 색을 현재 밝기에 맞는 상태색으로 변경; 후보/점수/행동 계약 유지, 이미지 검수 없음"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_fit_preview_section.dart",
+          "sha256": "f83db530cf46a2573d2027b7c8e5845a914ce9cb19a335ac0ce0a319f0ed9215",
+          "reviewScope": "0504cfb→e808058 전체 diff 대조: 적합도 배지 색을 현재 밝기에 맞는 상태색으로 변경; 후보/점수/행동 계약 유지, 이미지 검수 없음"
+        },
+        {
+          "path": "community_app/test/widget/event/refund_policy_form_test.dart",
+          "sha256": "7616048109b7d12cfeb66f6670bb16b18be7d666a8daff43932556055f3559e7",
+          "reviewScope": "0504cfb→e808058 전체 diff 대조: 공통 TextField 선택자와 오류 테두리/고정 줄 높이 단언 추가. 기존 환불 시간/비율 검증 단언 유지; 시험 실행 없음"
+        }
+      ],
+      "reusedSources": [],
+      "reuses": [
+        "club_announcements_20261122",
+        "club_calendar_20261122",
+        "club_detail_20261122",
+        "club_invitation_20261122",
+        "club_lifecycle_20261122",
+        "club_members_20261122",
+        "club_stats_20261122",
+        "club_subscription_20261122",
+        "event_creation_20261122",
+        "event_detail_complete_20261122",
+        "event_lifecycle_20261122",
+        "event_payment_cancel_refund_20261122",
+        "event_plan_link_20261122",
+        "event_prepayment_20261122",
+        "hosting_ticket_personal_subscription_20261122",
+        "no_show_20261122",
+        "notification_groups_settings_20261122",
+        "reschedule_20261122",
+        "settlement_status_summary_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-10_event-plan-link_prd.md",
+          "sha256": "8705fb93ac20072c0b58897d194ace681fe8ba94db2cfbe5f1327cd689f8d123"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-04_member-management_prd.md",
+          "sha256": "54c40c5beb03c524ed41462b839918b3a04b97686958db26e800f800d270777b"
+        }
+      ],
+      "retainedHtmlIds": {},
+      "referenceChanges": [],
+      "followUpFindings": [],
+      "fromCommit": "0504cfb36f006cd40e209f59c546f51dd384150d",
+      "toCommit": "e8080585bde129801c5ad1ce6ce1753be2796017"
+    },
+    "people_block_source_advance_20261122": {
+      "kind": "source_delta_review",
+      "scope": "최근 앱 변경 중 사람 차단 성공 후 기존 목록을 먼저 숨기고 재조회하는 7개 영향 파일과 실제 성공 신호 발행 경로 대조. 관련 기능 6개 정본·파생 문서에 적용 대상을 구분해 반영. 새 제품 실행·실기기·화면 검수 없음.",
+      "sources": [
+        {
+          "path": "community_app/lib/domain/providers/attendance/attendee_list_provider.dart",
+          "sha256": "5c26c7ba3e3985a51a6bb1f89f00178f545e655e98886f7445f435b6ba46da2f",
+          "reviewScope": "0504cfb→e808058 전체 diff: partyOwnerUserId로 차단 회원과 예약 게스트 행을 기존 명단에서 제거한 뒤 재조회; 제품 실행 없음"
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/club_member_provider.dart",
+          "sha256": "98255f2013f6be0455e241dfb22bceaa3ef23465f537378f318faa7fcff1b663",
+          "reviewScope": "0504cfb→e808058 전체 diff: 일반 회원 목록의 내부/표시 목록에서 userId 제거; 운영 목적 선택기는 별도이며 재조회 중 추가 조회 차단 유지; 제품 실행 없음"
+        },
+        {
+          "path": "community_app/lib/domain/providers/connectivity/met_people_provider.dart",
+          "sha256": "d68e2fad07a2c1eca1b42e7b00e6450ce17f21a13232dfed54f0a871db7cbf8a",
+          "reviewScope": "0504cfb→e808058 전체 diff: 만난 사람 내부/표시 목록에서 userId 제거 후 재조회; 재조회 중 추가 조회 차단 유지; 제품 실행 없음"
+        },
+        {
+          "path": "community_app/lib/domain/providers/connectivity/people_recommendation_provider.dart",
+          "sha256": "2d96408bc9cf7fb048bd95267ca277bdf7a244dca8ab8408f018982142c06078",
+          "reviewScope": "0504cfb→e808058 전체 diff와현재 함수: 추천 원본 재조회와 표시용 mirror 분리, 차단 성공 시 기존 목록 인스턴스에만 숨김 적용; 제품 실행 없음"
+        },
+        {
+          "path": "community_app/lib/domain/providers/profile/people_data_refresh_provider.dart",
+          "sha256": "3f13285aa374bc7432a5209173e2992c806f0a95588f9541abed1bb5a86c4917",
+          "reviewScope": "0504cfb→e808058 전체 변경과 현재 함수: 계정별 차단 성공 집합·새 차단만 hide→invalidate·해제는재조회·기존 표시값만거름·새목록에는 서버결과사용·현재계정ticket; 제품 실행 없음"
+        },
+        {
+          "path": "community_app/lib/domain/providers/search/search_typed_provider.dart",
+          "sha256": "4538ff33ff62f0da06e26c82a581a70f99cdabd84ae5e1c3ca915ea76899c33c",
+          "reviewScope": "0504cfb→e808058 전체 diff: 현재 사람 검색의 내부/표시 목록에서 userId 제거 뒤 현재 검색어 첫 쪽 재조회; 추가 조회 차단 유지; 제품 실행 없음"
+        },
+        {
+          "path": "community_app/lib/presentation/home/widgets/people_recommend_section.dart",
+          "sha256": "8025966d0676c9beb3c2e47e7641d60a874f363db8b4d364d802ec7049c1bc4d",
+          "reviewScope": "0504cfb→e808058 전체 diff: 홈 표시 구독을 원본 peopleRecommendationsProvider에서 shownPeopleRecommendationsProvider로 연결; 제품 실행 없음"
+        },
+        {
+          "path": "community_app/lib/domain/providers/connectivity/community_block_provider.dart",
+          "sha256": "1261a50eb13c93556cc38364730690c2607d03e93d381522ab79a749c22b18d2",
+          "reviewScope": "현재 파일 전체: 서버 차단/해제 성공에만 blocked값과 현재 계정 ticket으로 갱신; 동일 대상 중복 요청 병합/상반 요청 거절. 제품 실행 없음"
+        }
+      ],
+      "reusedSources": [],
+      "reuses": [
+        "club_invitation_20261122",
+        "club_members_20261122",
+        "event_capacity_waitlist_20261122",
+        "home_feed_core_20261122",
+        "privacy_visibility_20261122",
+        "profile_hub_edit_addresses_20261122",
+        "search_workflows_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/02_home_feed/F02-01_home-feed-main_prd.md",
+          "sha256": "c963f371cf9a7e18fb76ae2107d2fa501bb42b6467131926a405e8f14d605370"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-01_profile-hub_prd.md",
+          "sha256": "73b0db9e10fed64cf4361233bed2f293e503e4c28673064823524051e9537ec7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/05_search/F05-01_keyword-search_prd.md",
+          "sha256": "2299cbc6d3e2cbf93e6d19ae2ddc040ef0e8c7509245175fac31eeb05b25f7e5"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-07_capacity-and-waitlist_prd.md",
+          "sha256": "57550c551859139cf4771cba59ce6e55ea52266e836a0b95e7fa1d51afadbb69"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-04_member-management_prd.md",
+          "sha256": "54c40c5beb03c524ed41462b839918b3a04b97686958db26e800f800d270777b"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/19_favorite/F19-03_privacy-visibility-settings_prd.md",
+          "sha256": "36890a5f27ca3d2fd28a790e43fa46ec2e7271503f189f4113ad145167672798"
+        }
+      ],
+      "retainedHtmlIds": {},
+      "referenceChanges": [],
+      "followUpFindings": [],
+      "fromCommit": "0504cfb36f006cd40e209f59c546f51dd384150d",
+      "toCommit": "e8080585bde129801c5ad1ce6ce1753be2796017"
     }
   },
   "currentSourceVersions": {
@@ -28847,8 +29424,8 @@
       "observation": "로컬 main; 최초 원격 대조 이후 다른 세션 변경 반영"
     },
     "community_app": {
-      "commit": "0504cfb36f006cd40e209f59c546f51dd384150d",
-      "observation": "로컬 main; 기존 대조 이후 다른 세션 변경을 diff와 기존 근거 경로로 대조"
+      "commit": "42d3316069aef5664e303d7fa93a6ec16db1168a",
+      "observation": "로컬 main; 기존 근거가 있는 변경 경로를 diff로 대조하고 전체 기존 앱 근거 SHA 일치를 확인했다. 아직 미검토한 기능·문서의 완료를 뜻하지 않으며 원격 재조회하지 않음"
     },
     "community-realtime": {
       "commit": "83b145969779e0fe0236441cdcdd3f15678037b2",
@@ -29175,9 +29752,34 @@
         "tool/design_tokens_baseline.txt",
         "tool/test_text_finders_baseline.txt"
       ],
-      "status": "pending_affected_scope_review",
+      "status": "reviewed_for_existing_evidence",
       "reviewedCurrentGroup": "settlement_pay_20261122",
-      "reviewedScope": "F07-05 소스 목록 중 변경 파일은 transfer_list_screen.dart. 만료 이의 표지 diff 확인; 납부·혼합·자체 반환 계약 변화 없음. 나머지 기존 그룹은 영향 범위 재대조 대기."
+      "reviewedScope": "F07-05 소스 목록 중 변경 파일은 transfer_list_screen.dart. 만료 이의 표지 diff 확인; 납부·혼합·자체 반환 계약 변화 없음. 나머지 기존 그룹은 영향 범위 재대조 대기.",
+      "reviewedSourcePaths": [
+        "community_app/lib/data/models/common/api_error.dart",
+        "community_app/lib/presentation/club/community/screens/announcement_create_screen.dart",
+        "community_app/lib/presentation/club/screens/club_management_screen.dart",
+        "community_app/lib/presentation/club/widgets/club_fit_preview_section.dart",
+        "community_app/lib/presentation/dispute/screens/dispute_case_detail_screen.dart",
+        "community_app/lib/presentation/dispute/screens/no_show_refund_screen.dart",
+        "community_app/lib/presentation/event/screens/event_edit_screen.dart",
+        "community_app/lib/presentation/event/widgets/event_create_step2.dart",
+        "community_app/lib/presentation/event/widgets/event_fit_preview_section.dart",
+        "community_app/lib/presentation/event/widgets/event_plan_card.dart",
+        "community_app/lib/presentation/event/widgets/event_plan_override_sheet.dart",
+        "community_app/lib/presentation/meeting_settlement/widgets/settlement_status_guidance_card.dart",
+        "community_app/lib/presentation/notification/screens/notification_list_screen.dart",
+        "community_app/test/audit/entry_paths_club_edit_test.dart",
+        "community_app/test/widget/club/announcement_recovery_test.dart",
+        "community_app/test/widget/club/club_form_restart_test.dart",
+        "community_app/test/widget/event/refund_policy_form_test.dart"
+      ],
+      "remainingSourcePaths": [],
+      "deltaEvidenceGroups": [
+        "app_label_layout_source_advance_20261122",
+        "people_block_source_advance_20261122"
+      ],
+      "disposition": "17개 경로 대조 및 두 기능 입구 표현 교정. 나머지7개 사람 목록/차단/추천 동작 경로의 영향 대조 필요."
     },
     "community_app_e808058_to_42d3316": {
       "repository": "community_app",
@@ -29211,8 +29813,10 @@
           "community_app/lib/presentation/event/screens/event_list_screen.dart"
         ]
       },
-      "status": "pending_affected_scope_review",
-      "currentFeatureScope": "F07-07 관련 경로 변경 없음; 18개 변경 중 기존2개 근거 묶음은 별도 재대조 대기"
+      "status": "reviewed_for_existing_evidence",
+      "currentFeatureScope": "F07-07 관련 경로 변경 없음; 18개 변경 중 기존2개 근거 묶음은 별도 재대조 대기",
+      "reviewEvidenceGroup": "app_filter_sheet_source_advance_20261122",
+      "disposition": "기존2개 근거 묶음·필터 설명 유지. 16개 다른 변경 경로는 기존 완료 근거와 교차하지 않으며 해당 미대조 문서 작업에서 현재 소스로 확인."
     }
   }
 }
