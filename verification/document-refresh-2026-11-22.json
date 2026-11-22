@@ -444,7 +444,8 @@
         "authoring_navigation_20261122",
         "planning_decisions_20261122",
         "historical_source_notes_20261122",
-        "onboarding_core_20261122"
+        "onboarding_core_20261122",
+        "overview_identity_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5044,9 +5045,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "d09bd06aaaab0b6ec2485dc3391014a87e8a25d255d4ffaa0292c82cb6505e14",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "overview_identity_20261122"
+      ],
+      "reviewedSha256": "0ef556652bd357de5d58e84ca16097f9353e519fb8f203c7a7ceeeb3cfcf53d3"
     },
     {
       "path": "docs/overview/service.html",
@@ -5054,9 +5058,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "0dfad827819fecd2222e24e71ed854c76ecdf564b702ee83afb054b04bfe5268",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "overview_identity_20261122"
+      ],
+      "reviewedSha256": "e1d1b96672e244cbc07594b18737721c78c9b33fe1be4e86d71a19ea0f994113"
     },
     {
       "path": "docs/policies/notification.html",
@@ -5483,10 +5490,12 @@
       "kind": "supporting_document_or_tool",
       "document": true,
       "baselineSha256": "e31fce90baa47b76e215a887aaf4dc3d2e1694a07725163a8e5e948d622cc299",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "overview_identity_20261122"
+      ],
+      "reviewedSha256": "37bcaeccbbd5a281fd9b0748fa9c0dff5c552f62ed73a397bb32014e9128cf9a"
     },
     {
       "path": "prd/00_prd_items/02_user_personas.md",
@@ -5494,10 +5503,12 @@
       "kind": "supporting_document_or_tool",
       "document": true,
       "baselineSha256": "313ce6919c7cc49b7f398ed4efafa51831c2722c2ad2799ab6a29ede67ccca27",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "overview_identity_20261122"
+      ],
+      "reviewedSha256": "770937cdcc789fd8004e873f84501c58c70b9e5af003202ca805a492aee7ecf5"
     },
     {
       "path": "prd/00_prd_items/03_information_architecture.md",
@@ -50072,6 +50083,119 @@
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; document semantics, retained anchors, local links and static diagram references only; no browser/screenshot"
+      },
+      "observedSourceVersions": {
+        "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
+        "community_app": "a412d4489de36c985715480d0936740121c94609"
+      }
+    },
+    "overview_identity_20261122": {
+      "kind": "source_review",
+      "scope": "서비스/사용자 유형 Markdown2개와 HTML2개 전체 본문·기존 도식 읽기. 현행 출시 범위·집계·권한 정책/온보딩 정본을 재사용해 잘못된 일반화와 오래된 수치를 제거.",
+      "sources": [],
+      "reusedSources": [],
+      "reuses": [
+        "feature_inventory_20261122",
+        "onboarding_core_20261122",
+        "permission_guides_20261122",
+        "permission_policy_20261122",
+        "planning_decisions_20261122",
+        "prd/FEATURE_PRD_STANDARD.md",
+        "privacy_policy_20261122",
+        "qa_acceptance_20261122",
+        "saisoop_docs:docs/development/DOCUMENTATION_GUIDE.md",
+        "state_policy_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/00_prd_items/01_service_overview.md",
+          "sha256": "37bcaeccbbd5a281fd9b0748fa9c0dff5c552f62ed73a397bb32014e9128cf9a"
+        },
+        {
+          "path": "business_logic/prd/00_prd_items/02_user_personas.md",
+          "sha256": "770937cdcc789fd8004e873f84501c58c70b9e5af003202ca805a492aee7ecf5"
+        },
+        {
+          "path": "business_logic/prd/README.md",
+          "sha256": "a9a9be47f6f7240011309b6d512d280d76a87601f733e23c8437f570aa33297f"
+        },
+        {
+          "path": "business_logic/prd/PRD_MIGRATION_STATUS.md",
+          "sha256": "2210a92de3a6e3cc5a5d7e5e90491c782b3a13556ce8891b15e0876027cc07bb"
+        },
+        {
+          "path": "business_logic/prd/00_prd_items/05_feature_definitions.md",
+          "sha256": "fe6ce989f6085734f481dd3b623f39eeaf88a2ec8e0449721276d5b8b722feef"
+        },
+        {
+          "path": "business_logic/prd/00_prd_items/07_role_action_matrix.md",
+          "sha256": "90d862a248691b8c40d10b043e11ca12f00298eed0933f13f90ab2bb3b0e98e1"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/permission_policy_prd.md",
+          "sha256": "00bfa2fb180e8406a83d29f19b10fb4e3fff91ecb5d1fa32ffc635ba878651b7"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/state_policy_prd.md",
+          "sha256": "a152a81cde350dd31ef599ceb41ef7d2d1ce7c254e4479ad6bed5f493f5ade90"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/privacy_safety_policy_prd.md",
+          "sha256": "0742e1a59c020577ddefa437af8d1488ab244abf36091acb93f9c8757ae561d2"
+        },
+        {
+          "path": "business_logic/prd/04_qa_acceptance/scenario_coverage_matrix.md",
+          "sha256": "2fa260f97f026e7023189a6281de747baaaac267a5098fbabaefd881acd9a600"
+        },
+        {
+          "path": "business_logic/prd/05_planning_artifacts/mvp_scope_matrix.md",
+          "sha256": "ba14645586e6e1a85edba0e817162f937e968cdc59d53796d8feed8bb9bbaf36"
+        },
+        {
+          "path": "business_logic/prd/05_planning_artifacts/decision_register.md",
+          "sha256": "b941cae80ec690d0b1bae66ec63fa9bffcde8f2f2a8453f5229edb4b48efcae3"
+        },
+        {
+          "path": "business_logic/planner_onboarding/00_start_here.md",
+          "sha256": "0c5ae88b99edca3a74a4be0b32ef3ccd8b5317352c889a4ee35577c2bee786b3"
+        },
+        {
+          "path": "business_logic/planner_onboarding/02_core_journeys.md",
+          "sha256": "c34207b1fdd8b19eb2a47aab30c08713d05e1934b37043a7db5bde9fc0ceb187"
+        },
+        {
+          "path": "business_logic/planner_onboarding/09_actor_permission_matrix.md",
+          "sha256": "2c6095ffa3ac9028ad0778a14bd89facc0a1bf52b56e915e4ee479665707b6a9"
+        },
+        {
+          "path": "business_logic/planner_onboarding/11_feature_coverage_index.md",
+          "sha256": "7e3119780ae867b4581318658c8b28d8847682929953f036a30d97ceacb3758a"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/overview/service.html": [
+          "sidebar",
+          "current-scope"
+        ],
+        "docs/overview/personas.html": [
+          "sidebar"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "안전/품질·경쟁사 대비 우월성·모든 기능의 동일상태 보장 제거",
+        "비로그인 방문자와 동반 게스트를 분리하고 금전·제공자·분쟁 당사자 추가",
+        "운영권한 보편우선·차단 전역적용·삭제예약 전행동차단 정정",
+        "시나리오1403/1086·도식552 고정 수치를 현재 원천별 등록/상세 집계와 링크로 대체"
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "16 source/canonical digests; 3 retained HTML IDs",
+        "derivedDocuments": "4 documents; shared batch verified 4 paths, 42 relative links/anchors and 2 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; Markdown-to-HTML semantic and link/hash checks; no browser/render/screenshot"
       },
       "observedSourceVersions": {
         "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",

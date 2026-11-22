@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>사용자 유형 — community PRD</title>
+  <title>사용자 유형과 기대 경험</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -13,145 +13,21 @@
     <main>
       <header class="page-head">
         <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>제품 이해<span>›</span>사용자 유형</div>
-        <h1>9개 사용자 역할과 기대 경험</h1>
-        <p class="lede">
-          같은 화면이라도 누가 보느냐에 따라 버튼이 달라진다. 이 페이지는
-          “이 기능의 주 사용자는 누구인가”를 합의하기 위한 기준표다.
-          새 화면의 버튼을 그리기 전에 여기부터 본다.
-        </p>
+        <h1>사용자 유형과 기대 경험</h1>
+        <p class="lede">2026-11-22 현재 정본을 대조한 제품 안내입니다. 문서 대조·제품 실행·공개 상태를 구분합니다.</p>
       </header>
 
-      <section>
-        <h2>왜 역할부터 잡는가</h2>
-        <p>
-          community에는 한 사용자가 동시에 여러 역할을 가질 수 있다. 같은 사람이
-          어떤 이벤트의 호스트이면서 다른 이벤트의 참가자, 어떤 클럽의 멤버이면서
-          다른 클럽의 소유자일 수 있다. 그래서 “로그인 사용자”만으로 권한을 판단하면
-          버튼 노출이 어긋난다. 모든 화면은 “이 사용자가 이 콘텐츠와 어떤 관계인가”를
-          묻고, 관계에 따라 다른 UI를 보여준다.
-        </p>
-        <div class="callout">
-          <span class="label">기획 체크</span>
-          <p>새 화면을 잡을 때 항상 다음 두 가지를 함께 정한다. <strong>(1)</strong> 이 화면을 가장 자주 보는 사용자,
-          <strong>(2)</strong> 이 화면의 결과를 받는 다른 사용자. 두 명이 서로 다른 정보를 봐야 할 때가 대부분이다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>9개 사용자 유형</h2>
-        <p class="subtitle">각 역할의 목적과 핵심 기능을 모았다. 권한 매트릭스는 <a href="../policies/permission.html">권한 정책</a>에서 자세히 본다.</p>
-
-        <div class="cards">
-          <div class="card">
-            <div class="eyebrow">탐색만</div>
-            <h3>게스트</h3>
-            <p>서비스를 둘러보고 가입 여부를 판단한다. 홈·검색·일부 상세 페이지까지 본다.</p>
-            <div class="meta"><span class="pill">공개 정보</span><span class="pill">가입 유도</span></div>
-          </div>
-          <div class="card">
-            <div class="eyebrow">기본</div>
-            <h3>참가자</h3>
-            <p>이벤트·클럽·플랜을 찾아 안전하게 참여한다. 신청·결제·캘린더·길찾기·리뷰까지 거친다.</p>
-            <div class="meta"><span class="pill">이벤트</span><span class="pill money">결제</span><span class="pill">리뷰</span></div>
-          </div>
-          <div class="card">
-            <div class="eyebrow">운영</div>
-            <h3>호스트</h3>
-            <p>이벤트를 만들고 신청자를 관리한다. 정원·대기열·체크인·정산까지 한 화면에서 본다.</p>
-            <div class="meta"><span class="pill warn">운영</span><span class="pill money">정산</span></div>
-          </div>
-          <div class="card">
-            <div class="eyebrow">커뮤니티</div>
-            <h3>클럽 멤버</h3>
-            <p>장기 커뮤니티에 참여한다. 공지·게시판·정기모임·기금에 접근한다.</p>
-            <div class="meta"><span class="pill">게시판</span><span class="pill">정기모임</span></div>
-          </div>
-          <div class="card">
-            <div class="eyebrow">관리</div>
-            <h3>클럽 운영자</h3>
-            <p>가입 승인·역할 변경·차단·구독·기금 인출 등 클럽 단위 책임을 진다.</p>
-            <div class="meta"><span class="pill warn">권한</span><span class="pill money">기금</span></div>
-          </div>
-          <div class="card">
-            <div class="eyebrow">제작</div>
-            <h3>플랜 크리에이터</h3>
-            <p>코스·모임 계획을 상품화한다. 블록 에디터로 작성하고 마켓에 발행한다.</p>
-            <div class="meta"><span class="pill violet">콘텐츠</span><span class="pill money">판매</span></div>
-          </div>
-          <div class="card">
-            <div class="eyebrow">소비</div>
-            <h3>플랜 구매자</h3>
-            <p>검증된 계획을 사서 자기 이벤트 만들기에 활용한다. 컬렉션을 가진다.</p>
-            <div class="meta"><span class="pill">탐색</span><span class="pill money">구매</span></div>
-          </div>
-          <div class="card">
-            <div class="eyebrow">민감</div>
-            <h3>데이팅 사용자</h3>
-            <p>본인 인증 후에만 진입한다. 매칭·채팅·만남 제안·차단·안전 흐름을 사용한다.</p>
-            <div class="meta"><span class="pill danger">안전</span><span class="pill">매칭</span></div>
-          </div>
-          <div class="card">
-            <div class="eyebrow">관리</div>
-            <h3>운영자</h3>
-            <p>신고·환불·이의제기·계정 상태 등 플랫폼 안전과 분쟁을 처리한다. 일반 사용자 흐름과 별개.</p>
-            <div class="meta"><span class="pill warn">CS</span><span class="pill">정책</span></div>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>Persona별 기대 경험</h2>
-        <p class="subtitle">같은 역할이라도 숙련도에 따라 기대치가 다르다. 카피·CTA를 결정할 때의 톤 기준.</p>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:24%">Persona</th><th>기대 경험</th></tr></thead>
-            <tbody>
-              <tr><td><strong>처음 온 사용자</strong></td><td>어떤 활동이 있는지 빠르게 이해하고, 어디서부터 가입이 필요한지 납득한다. 게스트 노출 정책이 핵심.</td></tr>
-              <tr><td><strong>반복 참가자</strong></td><td>관심 있는 이벤트를 빠르게 찾고, 신청→결제→일정 등록이 끊김 없이 이어진다. 추천·캘린더 품질이 핵심.</td></tr>
-              <tr><td><strong>숙련 호스트</strong></td><td>모집 상태, 참가자 상태, 결제·정산 상태를 한 눈에 본다. 알림보다 “지금 처리해야 할 일” 대시보드가 핵심.</td></tr>
-              <tr><td><strong>커뮤니티 운영자</strong></td><td>멤버 권한·게시판·공지·기금을 안정적으로 관리한다. 위임·이전 등 권한 안전망이 핵심.</td></tr>
-              <tr><td><strong>민감 기능 사용자</strong></td><td>데이팅·위치 공유·신고에서 자기 통제권을 명확히 가진다. 직접 동의·즉시 중지가 핵심.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>역할 간 관계</h2>
-        <p class="subtitle">한 명의 사용자가 여러 역할을 동시에 가지는 게 기본이다. 화살표는 역할 진입 경로다.</p>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart TD
-    G["게스트"] --> U["로그인 사용자"]
-    U --> P["참가자"]
-    U --> H["호스트"]
-    U --> M["클럽 멤버"]
-    M --> O["클럽 운영자"]
-    U --> C["플랜 크리에이터"]
-    U --> B["플랜 구매자"]
-    U --> D["데이팅 사용자"]
-    P --> R["리뷰/신고 작성자"]
-    H --> S["정산 요청자"]
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>역할이 겹칠 때의 우선순위</h2>
-        <div class="callout warn">
-          <span class="label">우선순위 규칙</span>
-          <p>같은 사용자가 한 화면에서 호스트이면서 참가자라면, <strong>“운영 권한”이 “참여 권한”보다 우선</strong>한다.
-          예: 호스트는 자기 이벤트에 신청할 수 없다. 호스트 → 참가자 전환은 불가하며, 호스트 본인이 신청 시도하면
-          “자기 이벤트는 신청할 수 없습니다” 메시지가 나온다.</p>
-        </div>
-        <ul>
-          <li><strong>호스트 ＞ 참가자</strong> — 호스트 액션이 우선. 자기 이벤트 신청·리뷰는 차단.</li>
-          <li><strong>클럽 소유자 ＞ 관리자 ＞ 멤버</strong> — 위임은 “수락”이 있어야만 권한 이전.</li>
-          <li><strong>차단 관계는 모든 역할을 덮어쓴다</strong> — 차단된 사용자에게는 멤버여도 게시글이 보이지 않는다.</li>
-          <li><strong>탈퇴 예약/비활성 계정</strong>은 모든 활성 액션을 차단하고, 데이터 조회만 허용한다.</li>
-        </ul>
-      </section>
-    </main>
+      <!-- derived-from: prd/00_prd_items/02_user_personas.md; sha256: 770937cdcc789fd8004e873f84501c58c70b9e5af003202ca805a492aee7ecf5 -->
+<section id="overview-1"><h2>사용자 유형을 읽는 기준</h2><p>한 사람은 대상에 따라 참가자·호스트·클럽 회원·판매자·구매자일 수 있다. 아래는 기획 관점의 분류이며 서버 역할 값 목록이나 전 기능의 허용표가 아니다. 먼저 행동하는 사람과 결과를 받는 사람을 나누고 대상과의 현재 관계를 확인한다.</p>
+<p><strong>비로그인 방문자</strong>와 회원에게 연결된 <strong>동반 게스트</strong>를 구분한다. 동반 게스트는 독립 회원 계정이 아니며 책임 회원의 예매·출석·변경 흐름에 연결된다. ‘게스트’라는 단어 하나로 공개 탐색과 동반 참여를 합치지 않는다.</p></section>
+<section id="overview-2"><h2>역할별 목적과 검토 조건</h2><div class="table-wrap"><table><thead><tr><th>사용자 관점</th><th>하려는 일</th><th>현재 확인할 조건</th></tr></thead><tbody><tr><td>비로그인 방문자</td><td>공개 활동을 탐색하고 가입 여부 판단</td><td>공개 조회와 로그인 필요 시점, 가입 후 원래 목적지 복귀</td></tr><tr><td>신청자·납부 대기자·참석자</td><td>신청·납부·참여·취소</td><td>승인·정원·대기열·실제 참석·환불의 서로 다른 상태</td></tr><tr><td>동반 게스트의 책임 회원</td><td>동반 예매·체크인·변경·소명</td><td>게스트 수와 책임, 허용된 변경·금전 경로</td></tr><tr><td>호스트·공동호스트</td><td>모집·회차·참가자·출석·반환 운영</td><td>현재 주최권과 유효한 위임, 명령별 권한</td></tr><tr><td>클럽 회원</td><td>게시글·사진·모임·활동 제도 이용</td><td>현재 회원 자격·차단·공개 조건과 활동 제도 상태</td></tr><tr><td>클럽 운영진·소유자</td><td>가입·운영·역할·기금 관리</td><td>위임과 소유자 전용 행동, 역할 제한·소유권 이전</td></tr><tr><td>정기모임 등록자·회차 운영자</td><td>코스 등록·회차 참석·출석·종료</td><td>고정/가변 유형, 등록과 실제 회차, 변경된 호스트 책임</td></tr><tr><td>작성자·판매자·구매자</td><td>플랜 제작·상품 판매·구매 활용</td><td>콘텐츠 공개·심사·판매·현재 구매 권리와 소유자별 환불 책임</td></tr><tr><td>데이팅 당사자</td><td>후보·매칭·대화·만남</td><td>본인확인·프로필 활성·공개 범위·현재 관계·차단</td></tr><tr><td>제공자·부담자·수취자</td><td>계약·분담·이행·정산·회수</td><td>계약 당사자와 실제 돈의 원천, 정산 확정·지급의 차이</td></tr><tr><td>신고·문의·분쟁 당사자</td><td>문제 접수·자료 제출·결과와 이의 확인</td><td>원천별 관할·기한·열람·처리 상태</td></tr><tr><td>플랫폼 관리자</td><td>허용된 심사·제재·금전·개인정보 작업</td><td>관리자 인증·작업별 권한·재인증·운영 관문. 클럽 운영진과 별개</td></tr></tbody></table></div>
+<p>기능 연결은 <a href="../features/catalog.html">175개 기능 목록</a>, 실제 허용 조건은 <a href="../policies/permission.html">역할별 행동 표</a>와 <a href="../policies/permission.html">권한 정책</a>을 따른다.</p></section>
+<section id="overview-3"><h2>이용 상황별 기대 경험</h2><div class="table-wrap"><table><thead><tr><th>상황</th><th>설계할 경험과 확인할 결과</th></tr></thead><tbody><tr><td>처음 온 사람</td><td>공개 정보와 가입 필요 시점을 이해하고 가입·로그인 뒤 목적을 이어감</td></tr><tr><td>반복 참가자</td><td>원래 찾던 활동에 신청한 결과와 남은 납부·확인·참석 조건을 알 수 있음</td></tr><tr><td>숙련 호스트</td><td>모집·신청·참석·입금·출석·정산의 현재 차이와 처리할 대상을 구분</td></tr><tr><td>클럽 운영 담당</td><td>현재 위임 범위와 소유자 전용 행동을 알고 권한 변경 후 결과를 재조회</td></tr><tr><td>판매자·제공자·수취자</td><td>승인·이행·매출·정산·지급·반환을 각각 추적</td></tr><tr><td>민감 기능 이용자</td><td>현재 공개·동의·차단·중지 범위와 보존되는 기록을 이해</td></tr><tr><td>오류나 응답 유실을 겪은 사람</td><td>확정 실패·결과 불명·부분 처리를 구분하고 중복 행동 없이 복구</td></tr></tbody></table></div>
+<p>이 표는 설계 목표다. 관측 없이 경험이 달성됐다고 기록하거나 심사된 상품·인증된 상대의 품질·안전을 보증하지 않는다.</p></section>
+<section id="overview-4"><h2>역할이 겹칠 때의 판단</h2><p>현재 계정 → 대상과의 관계 → 유효한 위임 → 대상 상태·공개 범위 → 해당 명령의 조건 순서로 확인한다. 운영자 역할이 모든 참가·조회 권한을 항상 덮는 보편 우선순위를 두지 않는다.</p>
+<ul><li>클럽의 역할 변경·세부 권한 위임은 현재 소유자 전용이다. 소유권 이전은 별도 절차이며 일반 위임과 수락 조건을 섞지 않는다.</li><li>공동호스트와 클럽 운영진의 권한은 현재 효력을 검사한다. 운영 권한 제한이 일반 회원 자격 상실이나 모든 행동 금지와 같은 뜻은 아니다.</li><li>차단·공개 범위는 탐색·직접 조회·운영 대상 선택 등 기능별로 적용한다. 모든 역할과 모든 경로에 같은 규칙이라고 단정하지 않는다.</li><li>계정 삭제 예약은 즉시 비활성화가 아니다. 예약만으로 모든 활성 행동이 차단된다고 안내하지 않으며, 현재 계정 제한과 명령 조건을 따른다. 예약 취소·실행 전 의무·후속 파기는 <a href="../policies/privacy.html">개인정보·안전 정책</a>을 따른다.</li><li>버튼 노출·화면 진입·과거의 역할은 다음 명령의 허용 근거를 대신하지 않는다. 권한 변경·거절·결과 불명에서 재조회·복귀를 안내한다.</li></ul></section>
+<section id="overview-5"><h2>다음으로 확인할 것</h2><p>실제 업무 흐름은 <a href="journeys.html">대표 사용자 여정</a>, 조건과 완료 단계는 <a href="../policies/state.html">상태 정책</a>을 따른다. 화면 문구·수용 기준을 고치면 사용자 역할뿐 아니라 영향을 받는 다른 당사자와 원래 화면의 갱신도 대조한다.</p></section>
+</main>
   </div>
   <script src="../assets/sidebar.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>

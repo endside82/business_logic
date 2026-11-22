@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>서비스 정의 — community PRD</title>
+  <title>사이숲 서비스 개요</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -13,148 +13,21 @@
     <main>
       <header class="page-head">
         <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>제품 이해<span>›</span>서비스 정의</div>
-        <h1>community는 어떤 제품인가</h1>
-        <p class="lede">
-          한 줄 정의, 풀고 있는 문제 5가지, 전체 플로우, 그리고 이 문서로는 확정하지 않는 영역까지
-          명시한다. 새 기능을 검토하기 전에 “이게 우리 제품이 풀어야 하는 문제인가”를 빠르게 확인한다.
-        </p>
+        <h1>사이숲 서비스 개요</h1>
+        <p class="lede">2026-11-22 현재 정본을 대조한 제품 안내입니다. 문서 대조·제품 실행·공개 상태를 구분합니다.</p>
       </header>
-      <section id="current-scope"><h2>지금 제공하려는 범위</h2>
-        <p>사이숲의 첫 출시는 무료 이벤트·클럽·정기모임, 주최자 계좌 직접 송금과 모임 정산, 이동·투표·마일리지·스탬프·프로필·공유를 중심으로 준비합니다. 플랫폼 결제·마켓·데이트·Google Calendar와 추가 소셜 로그인은 후속 공개 조건을 따릅니다.</p>
-        <p>아래 설명은 전체 제품의 책임 범위입니다. <a href="architecture.html#app-navigation">현재 앱 메뉴</a>와 <a href="../qa/launch-status.html#development-current">현재 구현·배포 상태</a>를 함께 확인합니다. 내부 테스트 배포와 정식 공개는 별도입니다.</p></section>
-
-      <section>
-        <h2>한 줄 정의</h2>
-        <p>
-          community는 <strong>관심사 기반의 오프라인 활동을 발견·참여하고, 관계 유지·결제·정산·리뷰·신뢰 관리까지
-          하나의 흐름으로 처리하는 커뮤니티 플랫폼</strong>이다.
-        </p>
-        <p>
-          “모임을 찾고 끝”이 아니라, 발견부터 결제·정산까지를 한 앱에서 끝까지 책임진다는 점이
-          비교 대상 플랫폼들과의 가장 큰 차이다. 그래서 우리 제품의 무게중심은 콘텐츠보다
-          <strong>상태·돈·신뢰의 일관성</strong>에 있다.
-        </p>
-      </section>
-
-      <section>
-        <h2>풀고 있는 문제 5가지</h2>
-        <p class="subtitle">제품이 존재하는 이유. 새 기능이 들어올 때 이 표의 어느 줄을 강화하는지를 먼저 묻는다.</p>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:32%">사용자가 느끼는 문제</th><th>제품 안에서의 해결 방식</th></tr></thead>
-            <tbody>
-              <tr>
-                <td><strong>모임 발견이 흩어져 있다</strong></td>
-                <td>홈 피드, 검색, 이벤트·클럽·플랜 마켓을 같은 탐색 축으로 통합한다. 같은 키워드로 이벤트·클럽·코스가 한 번에 잡힌다.</td>
-              </tr>
-              <tr>
-                <td><strong>참여 전에 신뢰 판단이 어렵다</strong></td>
-                <td>리뷰, 신고, 신뢰점수, 데이팅 본인 인증, 차단 정책으로 “이 호스트/모임이 안전한가”를 사전에 보여준다.</td>
-              </tr>
-              <tr>
-                <td><strong>모임 운영이 손으로 굴러간다</strong></td>
-                <td>생성·신청·승인·정원·대기열·QR 체크인·공지·알림을 같은 상태 모델로 연결해, 호스트가 단톡방 대신 앱에서 운영한다.</td>
-              </tr>
-              <tr>
-                <td><strong>돈 흐름이 불투명하다</strong></td>
-                <td>지갑 잔액·결제·환불·모임 정산·호스트 정산금·클럽 기금·구독을 별개 상태로 다룬다. 한 줄이 다른 줄을 오염시키지 않는다.</td>
-              </tr>
-              <tr>
-                <td><strong>활동 이후 관계가 끊긴다</strong></td>
-                <td>클럽 가입, 캘린더 등록, 알림, 리뷰 작성, 플랜 마켓이 “이번 모임 다음”의 재참여 동선을 만든다.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>전체 제품 흐름</h2>
-        <p class="subtitle">각 노드는 도메인 한 개에 해당한다. 다이어그램이 닫힌 루프인 이유는, 리뷰가 다시 탐색 품질로 돌아오기 때문이다.</p>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart LR
-    A["가입·온보딩"] --> B["홈·검색 탐색"]
-    B --> C{"참여 대상 선택"}
-    C --> D["이벤트 참여"]
-    C --> E["클럽 가입"]
-    C --> F["플랜 구매"]
-    C --> G["데이팅 매칭"]
-    D --> H["결제·정산"]
-    E --> H
-    F --> H
-    G --> I["만남 조율"]
-    H --> J["캘린더·알림"]
-    I --> J
-    J --> K["리뷰·신고·신뢰"]
-    K --> B
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>제품 규모</h2>
-        <div class="metrics">
-          <div class="metric"><div class="label">도메인</div><div class="value">21</div><div class="hint">7개 줄기로 묶는 책임 단위</div></div>
-          <div class="metric"><div class="label">기능</div><div class="value">175</div><div class="hint">PRD ID가 부여된 단위</div></div>
-          <div class="metric"><div class="label">시나리오 등록 숫자</div><div class="value">1403</div><div class="hint">목록 숫자의 합 · 통과 건수 아님</div></div>
-          <div class="metric"><div class="label">도식</div><div class="value">552</div><div class="hint">상태·흐름·시퀀스 다이어그램</div></div>
-        </div>
-      </section>
-
-      <section>
-        <h2>이 문서로 확정 가능한 것</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>항목</th><th>이 문서로 확정 가능 여부</th></tr></thead>
-            <tbody>
-              <tr><td>기능 구조 (도메인·기능 ID)</td><td><span class="pill brand">가능</span></td></tr>
-              <tr><td>주요 사용자와 역할</td><td><span class="pill brand">가능</span></td></tr>
-              <tr><td>기능별 기본·예외 시나리오</td><td><span class="pill brand">가능</span></td></tr>
-              <tr><td>상태 전이와 권한 분기</td><td><span class="pill brand">가능</span></td></tr>
-              <tr><td>알림·결제·위치·리뷰 부수효과</td><td><span class="pill brand">1차 가능</span></td></tr>
-              <tr><td>QA 수용 기준</td><td><span class="pill brand">가능</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>이 문서가 결정하지 않는 것</h2>
-        <p class="subtitle">아래 항목들은 별도 의사결정이 필요하다. PRD가 정해줘서는 안 되거나, 정해줄 수 없는 영역이다.</p>
-        <div class="callout warn">
-          <span class="label">PRD 밖의 결정</span>
-          <ul>
-            <li><strong>사업 KPI와 목표 수치</strong> — 가입 전환율, 이벤트 신청률, 결제 전환율, 리텐션 등은 사업 측 의사결정.</li>
-            <li><strong>릴리즈 우선순위와 MVP 범위</strong> — P0/P1/P2 분류는 사업·운영 판단.</li>
-            <li><strong>법무 최종 문구</strong> — 개인정보 동의, 위치 공유 고지, 데이팅 안전 문구, 데이터 삭제 안내는 법무 검토를 거친 뒤 확정한다.</li>
-            <li><strong>운영 SLA</strong> — 신고 처리 시간, 환불 처리 기준, CS 대응 기준은 운영조직과 합의한다.</li>
-            <li><strong>최종 UX 카피</strong> — 버튼·토스트·빈 상태·에러 문구의 톤은 디자인·카피라이팅 단계에서 다듬는다.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>다음에 읽을 것</h2>
-        <div class="hub-grid">
-          <a class="card" href="personas.html">
-            <div class="eyebrow">다음 단계</div>
-            <h3>9개 사용자 역할</h3>
-            <p>참가자·호스트·클럽 운영자·크리에이터·데이팅 사용자 등. 권한 정의의 출발점.</p>
-          </a>
-          <a class="card" href="architecture.html">
-            <div class="eyebrow">다음 단계</div>
-            <h3>21개 도메인의 책임</h3>
-            <p>이 기능을 어느 영역에 둘지 판단할 때 본다.</p>
-          </a>
-          <a class="card" href="journeys.html">
-            <div class="eyebrow">다음 단계</div>
-            <h3>7대 사용자 여정</h3>
-            <p>기능 목록이 아닌 사용자 행동 흐름으로 제품을 본다.</p>
-          </a>
-        </div>
-      </section>
-    </main>
+      <!-- derived-from: prd/00_prd_items/01_service_overview.md; sha256: 37bcaeccbbd5a281fd9b0748fa9c0dff5c552f62ed73a397bb32014e9128cf9a -->
+<section id="overview-1"><h2>제품 정의</h2><p>사이숲은 관심사에 맞는 오프라인 모임을 발견하고 참여하며, 클럽 관계와 후속 운영·정산·안전 절차를 이어 가는 커뮤니티 서비스다. 전체 제품에는 플랜 마켓·데이팅·제공자 거래도 포함하지만 문서와 코드의 존재가 현재 공개를 의미하지는 않는다.</p></section>
+<section id="overview-2"><h2>사용자의 문제와 제품의 역할</h2><div class="table-wrap"><table><thead><tr><th>사용자의 문제</th><th>관련 제품 책임</th><th>구분할 경계</th></tr></thead><tbody><tr><td>원하는 활동을 찾기 어려움</td><td>홈·검색·이벤트·클럽·관심인으로 탐색과 재방문을 연결</td><td>대상별 공개·접근 권한이 다르며 한 검색이 모든 영역을 같은 조건으로 찾는 것은 아님</td></tr><tr><td>참여와 운영 절차가 분산됨</td><td>신청·승인·정원·대기열·교통편·출석·일정 변경을 연결</td><td>신청 승인·납부·실제 참석·체크인과 모집 마감·활동 종료는 각각 판단</td></tr><tr><td>돈의 책임과 결과가 불명확함</td><td>직접 송금·지갑·환불·모임 정산·수익·기금의 원천과 상태를 구분</td><td>신청·승인·지급·실제 입금·반환을 한 가지 완료로 합치지 않음</td></tr><tr><td>활동 후 관계를 이어가기 어려움</td><td>클럽 활동·마일리지·스탬프·일정·관심인·후기로 후속 이용을 지원</td><td>활동 점수·무료 포인트·신뢰점수는 다르며 모든 피드백이 모든 추천으로 이어지는 것은 아님</td></tr><tr><td>문제 상황의 통제권이 부족함</td><td>동의·공개 설정·차단·신고·문의·분쟁·자료 관리 경로를 제공</td><td>본인확인·심사·점수는 안전 보증이 아님. 접수·제재·보상·파기를 구분</td></tr></tbody></table></div></section>
+<section id="current-scope"><h2>현재 공개 범위와 확인 상태</h2><p>첫 출시의 무료 모임·클럽·정기모임, 주최자 계좌 직접 송금, 교통편·투표·마일리지·스탬프·프로필·공유 등과 플랫폼 결제·마켓·데이트·제공자 거래 같은 후속 공개 범위를 구분한다. 세부 포함·예외는 <a href="../qa/launch-status.html">현재 범위 검토표</a>에서 정본으로 연결한다.</p>
+<p>공개 범위, 소스 구현, 기존 실행 기록, 같은 배포본에서 남은 실제 확인은 서로 다르다. 문서가 최신이거나 시험 파일이 있다는 이유로 공개 준비를 완료 처리하지 않는다. <a href="../qa/migration-status.html">문서 전환·대조 상태</a>를 함께 확인한다.</p></section>
+<section id="overview-4"><h2>대표 사용자 흐름</h2><p>탐색·공유 링크 → 현재 접근 조건 → 대상과 행동 선택 → 필요한 신청·승인·납부 → 실제 상태 확인 → 활동·운영 → 해당 후기·정산·문의로 이어진다. 돈·후기·매칭을 모든 사용자가 반드시 거치는 순서로 그리지 않는다.</p>
+<p>취소·권한 상실·연결 실패·응답 유실에서는 남은 의무와 현재 상태를 확인하고 원래 화면으로 복귀한다. <a href="journeys.html">대표 사용자 여정</a>과 <a href="../policies/state.html">상태 정책</a>에 구체적인 경계를 둔다.</p></section>
+<section id="overview-5"><h2>제품과 문서의 범위</h2><div class="table-wrap"><table><thead><tr><th>집계 대상</th><th>현재 문서 기준</th><th>해석</th></tr></thead><tbody><tr><td>업무 영역</td><td>21개</td><td>제품 책임의 분류</td></tr><tr><td>기능 PRD</td><td>175개</td><td>기능별 정본 인벤토리. 전체 공개·실행 성공 수가 아님</td></tr><tr><td>등록 확인 항목</td><td>1,654개</td><td>기능 목록의 등록값 합</td></tr><tr><td>별도 상세 시나리오 문서</td><td>117개</td><td>그 문서에서 식별한 제목 1,276개</td></tr><tr><td>별도 상세 원천 문서가 없는 기능</td><td>58개</td><td>해당 기능 PRD와 소스·제품 결정에서 수용 조건을 확인</td></tr></tbody></table></div>
+<p>원천은 <a href="../features/catalog.html">전체 기능 목록</a>과 <a href="../qa/coverage.html">시나리오 커버리지</a>다. 등록 항목·상세 제목·도식의 집계는 서로 다르고 시험 통과율의 분모로 자동 전환하지 않는다. 도식 수와 원천은 <a href="../features/catalog.html">기능별 시나리오·도식 인덱스</a>를 따른다.</p></section>
+<section id="overview-6"><h2>결정과 다음 문서</h2><p>이 개요는 제품 방향과 문서의 입구다. 세부 권한·상태·수용 기준을 이 요약만으로 확정하지 않는다. <a href="personas.html">사용자 유형</a>, <a href="../features/catalog.html">기능 목록</a>, <a href="../policies/state.html">상태 정책</a>·<a href="../policies/permission.html">권한 정책</a>과 해당 기능 PRD를 함께 읽는다.</p>
+<p>기존 출시 범위를 미결정으로 되돌리지 않는다. KPI·운영 응답 기한·문구 등 변경 질문은 <a href="../qa/launch-status.html">결정 등록부</a>에서 현재 근거와 구분한다. 승인하지 않은 수치·담당·공개 약속을 새로 정하지 않는다.</p></section>
+</main>
   </div>
   <script src="../assets/sidebar.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
