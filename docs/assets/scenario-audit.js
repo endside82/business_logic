@@ -1325,7 +1325,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F03-01",
       "domain": "이벤트",
-      "name": "이벤트 발견 & 탐색",
+      "name": "이벤트 발견과 탐색",
       "scenarioCount": 14,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-01_event-discovery/scenarios.md",
@@ -1585,7 +1585,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F03-03",
       "domain": "이벤트",
-      "name": "이벤트 생성",
+      "name": "이벤트 생성과 다음 일정·반복 일정",
       "scenarioCount": 16,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-03_event-creation/scenarios.md",
@@ -1734,7 +1734,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F03-04",
       "domain": "이벤트",
-      "name": "이벤트 수정/생명주기 관리",
+      "name": "이벤트 수정·공개·종료·취소",
       "scenarioCount": 17,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-04_event-lifecycle/scenarios.md",
@@ -1949,7 +1949,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F03-05",
       "domain": "이벤트",
-      "name": "이벤트 신청 & 참석",
+      "name": "이벤트 신청·참석·본인 취소",
       "scenarioCount": 14,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-05_event-attendance/scenarios.md",
@@ -2102,7 +2102,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F03-06",
       "domain": "이벤트",
-      "name": "신청서 승인/거절",
+      "name": "신청서 승인·거절과 일괄 처리",
       "scenarioCount": 13,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-06_application-review/scenarios.md",
@@ -2198,7 +2198,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F03-07",
       "domain": "이벤트",
-      "name": "정원 & 대기열 관리",
+      "name": "정원 설정·대기열·모집 관리",
       "scenarioCount": 14,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-07_capacity-and-waitlist/scenarios.md",
@@ -2396,7 +2396,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F03-08",
       "domain": "이벤트",
-      "name": "QR 체크인",
+      "name": "QR·코드·직접 체크인",
       "scenarioCount": 15,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-08_qr-checkin/scenarios.md",
@@ -2810,7 +2810,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F03-10",
       "domain": "이벤트",
-      "name": "이벤트-플랜 연결",
+      "name": "이벤트와 플랜 연결",
       "scenarioCount": 14,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-10_event-plan-link/scenarios.md",
@@ -2954,7 +2954,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F03-11",
       "domain": "이벤트",
-      "name": "위시리스트",
+      "name": "찜한 이벤트",
       "scenarioCount": 12,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-11_wishlist/scenarios.md",
@@ -3053,7 +3053,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F03-12",
       "domain": "이벤트",
-      "name": "내 이벤트 관리 & 참석 로그",
+      "name": "내 이벤트와 참석 변경 기록",
       "scenarioCount": 14,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-12_my-events/scenarios.md",
@@ -3180,7 +3180,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F03-13",
       "domain": "이벤트",
-      "name": "이벤트 참가 선입금",
+      "name": "이벤트 참가비 선입금·은행 확인·환불 기록",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/03_event/F03-13_event-prepayment_prd.md",
@@ -3562,7 +3562,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F03-15",
       "domain": "이벤트",
-      "name": "카풀·개별 이동",
+      "name": "카풀 지원·개별 이동",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/03_event/F03-15_event-carpool_prd.md",
@@ -4156,7 +4156,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F03-18",
       "domain": "이벤트",
-      "name": "구성인원 인구통계",
+      "name": "이벤트 구성 통계",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/03_event/F03-18_event-demographics_prd.md",
@@ -4218,7 +4218,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F03-19",
       "domain": "이벤트",
-      "name": "일정 변경 제안·참가자 합의",
+      "name": "일정 변경 제안·참가자 합의 (RS-002)",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/03_event/F03-19_event-reschedule-consent_prd.md",

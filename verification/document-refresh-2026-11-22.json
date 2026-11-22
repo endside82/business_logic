@@ -259,7 +259,8 @@
         "event_discovery_20261122",
         "event_creation_20261122",
         "event_lifecycle_20261122",
-        "event_prepayment_20261122"
+        "event_prepayment_20261122",
+        "event_domain_rollup_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -2209,11 +2210,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "2308729c1ce508f09ba94f4dd19384f13cce62fdd4af8c0d7a0e5f379cf149d2",
-      "review": "pending",
-      "disposition": "partially_updated",
+      "review": "source_verified",
+      "disposition": "updated",
       "evidence": [
-        "event_detail_complete_20261122"
-      ]
+        "event_domain_rollup_20261122"
+      ],
+      "reviewedSha256": "decc8d9c639833647fbbb82648e837cb8fbe95d18c7e39407c0df9173554f6bc"
     },
     {
       "path": "docs/domains/04-club.html",
@@ -4832,7 +4834,8 @@
         "event_discovery_20261122",
         "event_creation_20261122",
         "event_lifecycle_20261122",
-        "event_prepayment_20261122"
+        "event_prepayment_20261122",
+        "event_domain_rollup_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -4887,7 +4890,8 @@
         "event_discovery_20261122",
         "event_creation_20261122",
         "event_lifecycle_20261122",
-        "event_prepayment_20261122"
+        "event_prepayment_20261122",
+        "event_domain_rollup_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -4965,7 +4969,8 @@
         "event_discovery_20261122",
         "event_creation_20261122",
         "event_lifecycle_20261122",
-        "event_prepayment_20261122"
+        "event_prepayment_20261122",
+        "event_domain_rollup_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5100,12 +5105,12 @@
       "kind": "domain_prd",
       "document": true,
       "baselineSha256": "95dbf38cea86789fd8df991b9f861844c8f30b20b101e794d2e0403c55cc0f1d",
-      "review": "pending",
-      "disposition": "partially_updated",
+      "review": "source_verified",
+      "disposition": "updated",
       "evidence": [
-        "event_detail_complete_20261122"
+        "event_domain_rollup_20261122"
       ],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "reviewedSha256": "788c2e0d3b3b0e2840b7a6fc036068484aeee8d90dff0e340b7a57b6d51b2d6f"
     },
     {
       "path": "prd/01_domain_prds/04_클럽_prd.md",
@@ -8656,9 +8661,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "b9158540d7d68ca58e5345f11e938d58ee68eacba40f3e0b8323db8713eaa89d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_domain_rollup_20261122"
+      ],
+      "reviewedSha256": "5212adef9bd33fb11ff2ed0c24a01121d3f63b9ee15dab65fbd94670ef08b386"
     },
     {
       "path": "units/03_event/F03-01_event-discovery/backend.md",
@@ -14959,6 +14967,11 @@
       "command": "F03-13 소스참조/시나리오 재생성·검사, source reference tests, 문서 경로·정본 SHA·HTML 절 링크 대조, git diff --check",
       "result": "코드 위치 표 109개 일치; 참조 검사 11개 통과; 상대 경로 1836개·파생 정본 SHA 222개 오류 0; 이번 근거 41개 지문 일치; 원래 HTML ID 4개 유지·중복/로컬 절 링크 오류 0. 기능 PRD 65/175 소스 대조; 이벤트 영역 개별 PRD pending 없음",
       "scope": "event_prepayment_20261122. 제품 시험·실기기·실제 송금/수령/운영 설정 조회 아님. source-first 기능으로 별도 units 파일을 생성하지 않음."
+    },
+    {
+      "command": "이벤트 영역 정본 rollup·시나리오 색인 재생성/검사, 문서 상대 경로·정본 SHA·HTML 링크·20행 온보딩 목록·과거 이력 보존 검사, git diff --check",
+      "result": "상대 경로 1969개·파생 정본 SHA 223개 오류 0; 이벤트 기능 정본 20개 SHA 일치; 원래 HTML ID 4개 유지; 로컬 링크 정상; 온보딩 두 표 모두 20개 고유 기능 포함; 날짜별 기존 이력 원문 보존. 완료 372·과거 보존 33·pending 597",
+      "scope": "event_domain_rollup_20261122. 이미 검수한 정본 재사용; 새 제품 실행 없음. ignored units/03_event/00_overview.md는 최종 원본 반영 대상."
     }
   ],
   "evidenceGroups": {
@@ -22889,6 +22902,122 @@
           "reason": "참가비 납부·은행 운영·반환 상태의 현행 창구 연결"
         }
       ]
+    },
+    "event_domain_rollup_20261122": {
+      "kind": "canonical_source_rollup",
+      "scope": "이벤트 20개 기능의 소스 대조 완료 정본에서 영역 PRD·기존 units 개요·HTML과 온보딩/기능 색인을 동기화. 과거 날짜별 작성 이력 보존. 새 소스 조사·제품 실행 없음.",
+      "sources": [],
+      "reusedSources": [],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-01_event-discovery_prd.md",
+          "sha256": "09b055b19b9d7f0db14535b032dc8e18c9ac87cd53afed9848f56b555a128b47"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-02_event-detail_prd.md",
+          "sha256": "1d6ab9ac555188045fb69f313258bb664b0bbf5da0f42e1b55267a8fd04f50a9"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-03_event-creation_prd.md",
+          "sha256": "db82859cb0cfccfd5a9a983614559edd5733424fdb62cc4d0919664d3581590a"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-04_event-lifecycle_prd.md",
+          "sha256": "db71640ec99214f345562c0b3a4669c700f9a57312e27b8a22f5f7bfee459a49"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-05_event-attendance_prd.md",
+          "sha256": "799076936d67da78ae845e6923ba087a88307a0fbd0f1f6ce23001407aed84ff"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-06_application-review_prd.md",
+          "sha256": "7298cd7164059cd04b9d206553cdbea296fd2078f14c8cd1d7b226077ae1ea49"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-07_capacity-and-waitlist_prd.md",
+          "sha256": "53f273ed2e7db28c4fad27e7a6ba2046f60d4ac6f0b13274bdf0844476cc8274"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-08_qr-checkin_prd.md",
+          "sha256": "c2487e00ea1e1d05e63a93c190ea0b795becc60ea9af7370d80a1d2271a91a1f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-09_event-photos_prd.md",
+          "sha256": "9382ac752350441a40a1ec02372ba1038d0e3dee850d34c4e2049bf1602ff2c5"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-10_event-plan-link_prd.md",
+          "sha256": "38bc9c707a7ad291c7e8f84fae8419bdf9f03b1f0a7457e0cd4f7b12671b23bf"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-11_wishlist_prd.md",
+          "sha256": "be3f4a15722488f755ac41feefd9e409b29558772a4b29ea29c7fc522fffd88d"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-12_my-events_prd.md",
+          "sha256": "1dcea9c3094c0a44429a57ee6afc18ec4ba4d359b4718eb62ed01ff6b799404f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-13_event-prepayment_prd.md",
+          "sha256": "573e9cc90bc6448fefed647f28c18569028c2b345aa24f42e85d2623a94b034f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-14_event-transport-mode_prd.md",
+          "sha256": "9b97e8ec0a3613a6d1c66d38a21dba5082872607e54d989994bd04b190992d1f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-15_event-carpool_prd.md",
+          "sha256": "d42329b306b225e07f6abf3cb9b4aa4fd50a8ce6b0ba0c8da3043d2c42c9c176"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-16_event-bus-charter_prd.md",
+          "sha256": "5ab0ea7e9083ad3bba0114e858e55e0372a7d4b68d5449a5f09c84e9030de000"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md",
+          "sha256": "67b8ed73dd6bc845e8d7a05284343b1bd54b33e971cd93640c44bbad4f530f71"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-18_event-demographics_prd.md",
+          "sha256": "ed166e464eb55e12210cdb30e6d74ac2410e4a854f648920cd1c0290b17621a3"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-19_event-reschedule-consent_prd.md",
+          "sha256": "9b8afb186e1ec189d2a1b96a37e2d390c76a1f74fcce2f8b9da8a27cea63e8a9"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-20_event-no-show_prd.md",
+          "sha256": "4da44066b2bea91a5c87daf303c4a4cf045bd7bd8b1afa1213515c767c849e58"
+        }
+      ],
+      "reuses": [
+        "bus_allocation_20261122",
+        "carpool_20261122",
+        "demographics_20261122",
+        "event_application_participation_review_20261122",
+        "event_capacity_waitlist_20261122",
+        "event_checkin_20261122",
+        "event_creation_20261122",
+        "event_detail_complete_20261122",
+        "event_discovery_20261122",
+        "event_lifecycle_20261122",
+        "event_photos_20261122",
+        "event_plan_link_20261122",
+        "event_prepayment_20261122",
+        "layout_catalog_20261122",
+        "no_show_20261122",
+        "reschedule_20261122",
+        "transport_policy_20261122",
+        "wishlist_my_events_20261122"
+      ],
+      "retainedHtmlIds": {
+        "docs/domains/03-event.html": [
+          "sidebar",
+          "content-photos",
+          "action-permission-current",
+          "launch-strip"
+        ]
+      }
     }
   },
   "currentSourceVersions": {
