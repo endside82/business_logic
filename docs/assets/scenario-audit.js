@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,174개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,182개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1174,
+    "documentedScenarioItems": 1182,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
@@ -17,9 +17,9 @@ window.SCENARIO_AUDIT = {
     "directlyLinkedAutomatedTests": 60,
     "automatedFeatureMarkers": 68,
     "automatedScenarioReferences": 60,
-    "directlyLinkedJourneys": 28,
+    "directlyLinkedJourneys": 27,
     "journeyFeatureMarkers": 34,
-    "journeyScenarioReferences": 28,
+    "journeyScenarioReferences": 27,
     "featureLevelAutomatedProof": 126,
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 39,
     "partialEvidenceChain": 53,
     "definitionOnlyEvidence": 83,
-    "traceMarkers": 481,
-    "verifiedTraceRecords": 479,
+    "traceMarkers": 487,
+    "verifiedTraceRecords": 485,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -4852,19 +4852,19 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F04-03",
       "domain": "클럽",
-      "name": "클럽 생성·수정·삭제·소유권 이전",
-      "scenarioCount": 12,
+      "name": "클럽 생성·수정·폐쇄와 소유권 이전",
+      "scenarioCount": 20,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-03_club-crud-transfer/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-03_club-crud-transfer_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12
+        "documentScenarioCount": 20
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-03_club-crud-transfer/backend.md",
-        "total": 4,
-        "verified": 4,
+        "total": 10,
+        "verified": 10,
         "retired": 0,
         "entries": [
           {
@@ -4934,31 +4934,131 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 253
               }
             ]
+          },
+          {
+            "id": "F04-03:5",
+            "label": "GET /api/v1/clubs/ownership-transfers/me — 클럽 폐쇄·소유권 이전",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "controller": "ClubController",
+                "method": "getMyOwnershipTransfers",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/ownership-transfers/me",
+                "targetLine": 261,
+                "methodLine": 262
+              }
+            ]
+          },
+          {
+            "id": "F04-03:6",
+            "label": "GET /api/v1/clubs/ownership-transfers/{transferId} — 클럽 폐쇄·소유권 이전",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "controller": "ClubController",
+                "method": "getOwnershipTransfer",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/ownership-transfers/{transferId}",
+                "targetLine": 268,
+                "methodLine": 269
+              }
+            ]
+          },
+          {
+            "id": "F04-03:7",
+            "label": "POST /api/v1/clubs/ownership-transfers/{transferId}/accept — 클럽 폐쇄·소유권 이전",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "controller": "ClubController",
+                "method": "acceptOwnershipTransfer",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/clubs/ownership-transfers/{transferId}/accept",
+                "targetLine": 275,
+                "methodLine": 276
+              }
+            ]
+          },
+          {
+            "id": "F04-03:8",
+            "label": "POST /api/v1/clubs/ownership-transfers/{transferId}/decline — 클럽 폐쇄·소유권 이전",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "controller": "ClubController",
+                "method": "declineOwnershipTransfer",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/clubs/ownership-transfers/{transferId}/decline",
+                "targetLine": 284,
+                "methodLine": 285
+              }
+            ]
+          },
+          {
+            "id": "F04-03:9",
+            "label": "POST /api/v1/clubs/ownership-transfers/{transferId}/cancel — 클럽 폐쇄·소유권 이전",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "controller": "ClubController",
+                "method": "cancelOwnershipTransfer",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/clubs/ownership-transfers/{transferId}/cancel",
+                "targetLine": 293,
+                "methodLine": 294
+              }
+            ]
+          },
+          {
+            "id": "F04-03:10",
+            "label": "GET /api/v1/clubs/{id}/fund/debt — 클럽 폐쇄·소유권 이전",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "controller": "ClubController",
+                "method": "getFundDebt",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{id}/fund/debt",
+                "targetLine": 598,
+                "methodLine": 599
+              }
+            ]
           }
         ]
       },
       "automated": {
         "directlyLinked": true,
-        "count": 2,
+        "count": 3,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 2,
+        "scenarioReferenceCount": 3,
         "files": [
-          "community_app/integration_test/seed_club_authoring_gap_test.dart",
-          "community_app/integration_test/seed_club_list_settings_surface_test.dart"
+          "community_app/test/audit/entry_paths_club_edit_test.dart",
+          "community_app/test/audit/entry_paths_club_ownership_test.dart",
+          "community_app/test/widget/club/club_form_restart_test.dart"
         ],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_club_mutation_test.dart"
         ]
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 2,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 2,
-        "files": [
-          "community_app/integration_test/seed_club_authoring_gap_test.dart",
-          "community_app/integration_test/seed_club_list_settings_surface_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_club_mutation_test.dart"
         ]

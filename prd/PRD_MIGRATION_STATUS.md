@@ -256,7 +256,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F03-20 | 이벤트 | [F03-20_event-no-show_prd.md](02_feature_prds/03_event/F03-20_event-no-show_prd.md) | `source-first` | source-first 구현 확인 | 12 | 6 |
 | F04-01 | 클럽 | [F04-01_club-discovery_prd.md](02_feature_prds/04_club/F04-01_club-discovery_prd.md) | `F04-01_club-discovery` | 실사 기반 전환본 | 1 | 2 |
 | F04-02 | 클럽 | [F04-02_club-detail-join_prd.md](02_feature_prds/04_club/F04-02_club-detail-join_prd.md) | `F04-02_club-detail-join` | 실사 기반 전환본 | 6 | 4 |
-| F04-03 | 클럽 | [F04-03_club-crud-transfer_prd.md](02_feature_prds/04_club/F04-03_club-crud-transfer_prd.md) | `F04-03_club-crud-transfer` | 실사 기반 전환본 | 4 | 11 |
+| F04-03 | 클럽 | [F04-03_club-crud-transfer_prd.md](02_feature_prds/04_club/F04-03_club-crud-transfer_prd.md) | `F04-03_club-crud-transfer` | 실사 기반 전환본 | 10 | 4 |
 | F04-04 | 클럽 | [F04-04_member-management_prd.md](02_feature_prds/04_club/F04-04_member-management_prd.md) | `F04-04_member-management` | 실사 기반 전환본 | 3 | 0 |
 | F04-05 | 클럽 | [F04-05_waitlist-invitation_prd.md](02_feature_prds/04_club/F04-05_waitlist-invitation_prd.md) | `F04-05_waitlist-invitation` | 실사 기반 전환본 | 6 | 1 |
 | F04-06 | 클럽 | [F04-06_ban-management_prd.md](02_feature_prds/04_club/F04-06_ban-management_prd.md) | `F04-06_ban-management` | 실사 기반 전환본 | 4 | 0 |
