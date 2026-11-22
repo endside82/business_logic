@@ -479,7 +479,8 @@
         "screen_review_current_20261122",
         "private_meeting_current_20261122",
         "completion_criteria_current_20261122",
-        "feature_status_current_20261122"
+        "feature_status_current_20261122",
+        "changelog_current_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5058,9 +5059,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "23ff1dd3de857de7b291bae56067f62b32699dff32830c5440bd6e4265187e17",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "changelog_current_20261122"
+      ],
+      "reviewedSha256": "366e9aa43ab139c2618644091f94d436c3723346017c77a5d8a2f68ad66a4c8c"
     },
     {
       "path": "docs/overview/journeys.html",
@@ -53548,6 +53552,112 @@
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; VM document rendering and local links only"
+      },
+      "observedSourceVersions": {
+        "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
+        "community_app": "e2f2e16574cf68ea7c2be179f726a1c392bf49a1"
+      }
+    },
+    "changelog_current_20261122": {
+      "kind": "source_review",
+      "scope": "현재 문서 최신화 요약을 검증된 정본에 연결. 과거 날짜별 본문 전체를 바이트 동일 보존하고 역사 기록으로 범위 지정; 당시 모든 실행 주장의 현재 재검증은 하지 않음.",
+      "sources": [],
+      "reusedSources": [],
+      "reuses": [],
+      "canonicalSources": [
+        {
+          "path": "business_logic/docs/features/catalog.html",
+          "sha256": "ce9642c1c564f209575be27af76a439deede99fd331045f435f58791bc6bffad"
+        },
+        {
+          "path": "business_logic/docs/features/impact.html",
+          "sha256": "279a26579a14ef77efbe7a356f06bb376826bac56a89c6f17662745730ec14de"
+        },
+        {
+          "path": "business_logic/docs/features/private-meeting.html",
+          "sha256": "49b0d6add369032c66e41a1ce10057cbbbbc4362fdb9cf7e5ba813c7f655986a"
+        },
+        {
+          "path": "business_logic/docs/policies/payment.html",
+          "sha256": "aa73dc4b7b7abe8b0452a6988bb5025466fdbe7378e2f4cfdaa56f8d0b0c1e5a"
+        },
+        {
+          "path": "business_logic/docs/policies/privacy.html",
+          "sha256": "edbb92832d776d06f72ae5f2e59c9fc8016b25fbf2eb7c6152ac8f6c15aaaa8e"
+        },
+        {
+          "path": "business_logic/docs/policies/permission.html",
+          "sha256": "9419a6c4dc8a5152bf969bad9a041a743d0c3efea78b166fe0c49922ec771adc"
+        },
+        {
+          "path": "business_logic/docs/qa/completion-criteria.html",
+          "sha256": "e3fff22d97f7038fa425b06e530bfb217eadd150200190c1246b146c1cd01921"
+        },
+        {
+          "path": "business_logic/docs/qa/feature-status.html",
+          "sha256": "d88e88f7da41763e6053250a57d00aff08e2b028e56a200c85ed11834ac34811"
+        },
+        {
+          "path": "business_logic/docs/tour/index.html",
+          "sha256": "e7214646501316c38feeefac42f6de31f624a8e6a0cd6d3d79a69ada5e4d8365"
+        },
+        {
+          "path": "business_logic/docs/qa/screen-review.html",
+          "sha256": "3b5b7620711ad1215572746371f2772f681a7b50b7f1db3c6b6627e4ccfbe11a"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/overview/changelog.html": [
+          "sidebar",
+          "current-2026-11-06",
+          "current-2026-11-02",
+          "update-2026-10-29",
+          "operating-readiness-2026-10-26",
+          "source-range-2026-10-26",
+          "round8-2026-10-26",
+          "release-criteria-2026-10-13",
+          "source-sync-2026-10-13",
+          "external-readiness-2026-10-12",
+          "remittance-convenience-2026-10-12",
+          "external-readiness-2026-10-07",
+          "source-sync-2026-10-07",
+          "source-sync-2026-09-26",
+          "settlement-ux-2026-09-24",
+          "release-candidate-2026-09-12",
+          "source-sync-2026-09-06",
+          "seal-code-gap-current-2026-09-05",
+          "mileage-release-ready-2026-09-03",
+          "mileage-released-2026-09-04",
+          "mileage-photo-code-complete-2026-09-04",
+          "identity-manual-approval-2026-08-30",
+          "w1-closed-2026-09-05",
+          "transport-unified-2026-09-02",
+          "payment-provider-state-e2e-2026-09-04",
+          "provider-code-complete-2026-09-04",
+          "source-recheck-2026-08-30"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "이전 현재/최신/완료/남은 일은 당시 표현으로 보존",
+        "문서 진행과 제품 배포·시험 결과 분리",
+        "전체 문서 마감·원래 경로 반영은 최종 감사 뒤 판단"
+      ],
+      "retainedHistoricalQuotes": [],
+      "retainedHistoricalHtml": [
+        {
+          "path": "docs/overview/changelog.html",
+          "pattern": "<div id=\"historical-changes-body\">([\\s\\S]*?)</div></details>",
+          "sha256": "a6e39acf1cbc153f219017270ce838f2a7d79a00cbd7c685982aa86138430b14"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "10 source/canonical digests; 27 retained HTML IDs",
+        "derivedDocuments": "1 documents; shared batch verified 1 paths, 93 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; current canonical links and historical body identity only"
       },
       "observedSourceVersions": {
         "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
