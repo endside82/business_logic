@@ -10,21 +10,28 @@
     return base + 'assets/screenshots/app-tour/' + (shot?.date || '2026-09-15') + '/' + id + '.' + (shot?.format || 'jpg');
   };
   const prose = value => escape(value).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  const isProductionCapture = shot => shot.captureSource === 'production-api' && shot.captureDevice === 'android-emulator';
   const orderedGroups = review ? data.groups : [...data.groups].sort((a, b) =>
     data.guideOrder.indexOf(a.id) - data.guideOrder.indexOf(b.id));
   const groupsWithShots = data.groups.filter(group => data.shots.some(shot => shot.group === group.id));
   const showcase = data.shots.filter(shot => shot.showcase);
   const summary = document.getElementById('tour-summary');
   summary.innerHTML = review
-    ? '<div><strong>' + data.shots.length + '장</strong>전체 촬영 기록</div><div><strong>' + groupsWithShots.length + '묶음</strong>촬영을 시작한 이용 흐름</div><div><strong>' + showcase.length + '장</strong>소개용으로 골랐던 화면</div>'
-    : '<div><strong>' + showcase.length + '장</strong>날짜와 함께 보는 촬영 기록</div><div><strong>' + new Set(showcase.map(shot => shot.group)).size + '묶음</strong>먼저 촬영한 이용 흐름</div><div><strong>21개 영역</strong><a href="' + base + 'tour/coverage.html">현재 정본과 촬영 기록</a></div>';
+    ? '<div><strong>' + data.shots.length + '장</strong>전체 촬영 기록</div><div><strong>' + groupsWithShots.length + '묶음</strong>촬영을 시작한 이용 흐름</div><div><strong>' + showcase.length + '장</strong>소개용으로 고른 화면</div>'
+    : '<div><strong>' + showcase.length + '장</strong>날짜와 함께 보는 촬영 기록</div><div><strong>' + new Set(showcase.map(shot => shot.group)).size + '묶음</strong>소개에 담은 이용 흐름</div><div><strong>21개 영역</strong><a href="' + base + 'tour/coverage.html">현재 정본과 촬영 기록</a></div>';
   function figure(shot) {
     const proof = { form: '입력·선택 화면 확인', read: '조회 화면 확인', saved: '명시된 조작·저장 결과 확인' }[shot.kind];
+    const production = isProductionCapture(shot);
+    const capture = production
+      ? '촬영 날짜 ' + shot.date + ' · 운영 데이터 · Android 에뮬레이터 직접 촬영'
+      : '보관 날짜 ' + (shot.date || '2026-09-15 (기존 기본 경로)') + ' · 촬영 당시 기록';
+    const resolution = production && shot.format === 'png' && shot.pixelRatio === 2
+      ? ' · 390×844 화면·780×1688 PNG 원본' : '';
     return '<figure class="tour-shot" id="shot-' + escape(shot.id) + '"><a class="tour-image-link" href="' + imagePath(shot.id) + '" target="_blank" rel="noopener" aria-label="' + escape(shot.title) + ' 원본 사진 열기">' +
       '<img src="' + imagePath(shot.id) + '" width="390" height="844" loading="lazy" alt="' + escape(shot.title + '. ' + shot.action) + '"></a><figcaption>' +
-      '<p class="tour-boundary">보관 날짜 ' + escape(shot.date || '2026-09-15 (기존 기본 경로)') + ' · 촬영 당시 기록</p><span class="tour-role">' + escape(shot.role) + '의 화면</span><h3>' + escape(shot.title) + '</h3><p>' + prose(!review && shot.guideAction || shot.action) + '</p>' +
+      '<p class="tour-boundary">' + escape(capture + resolution) + '</p><span class="tour-role">' + escape(shot.role) + '의 화면</span><h3>' + escape(shot.title) + '</h3><p>' + prose(!review && shot.guideAction || shot.action) + '</p>' +
       '<p class="tour-result">' + prose(!review && shot.guideResult || shot.result) + '</p>' +
-      (review ? '<p class="tour-boundary">' + escape(proof) + ' · 실제 휴대전화 확인 대기</p>' : '') + '</figcaption></figure>';
+      (review ? '<p class="tour-boundary">' + escape(proof) + (production ? ' · Android 에뮬레이터에서 확인' : ' · 실제 휴대전화 확인 대기') + '</p>' : '') + '</figcaption></figure>';
   }
   function render(selected) {
     const visible = orderedGroups.filter(group => selected === 'all' || group.id === selected);

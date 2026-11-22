@@ -6,15 +6,15 @@
   <title>실제 화면으로 보는 앱 기능 — community</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
-  <link rel="stylesheet" href="../assets/app-tour.css?v=20261122-docs">
+  <link rel="stylesheet" href="../assets/app-tour.css?v=20261123-live">
 </head>
 <body data-document-kind="reference" data-base="../" data-tour-view="guide">
   <div class="layout">
     <aside class="sidebar" id="sidebar"></aside>
     <main>
- <header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>앱 촬영 기록</div><h1>촬영 기록으로 보는 앱 기능</h1><p class="lede">실제 앱에 가상의 회원·모임·예시 사진을 넣어 촬영한 기록입니다. 보관 날짜와 당시 조작 범위를 보여 주며, 현재 앱 화면·기능 전체 통과·출시 완료를 증명하지 않습니다.</p><p><a href="coverage.html">현재 기능 정본과 촬영 기록</a> · <a href="#tour-filter">촬영한 이용 흐름</a> · <a href="../qa/screen-review.html#captures">전체 촬영본과 당시 검수</a></p></header>
- <section id="auth-capture-current"><h2>현재 기능은 정본에서 확인합니다</h2><p>2026-11-22 문서 대조. 보관된 화면은 2026년 9~10월 자료이며, 현재 다섯 탭·전체 메뉴와 이후 변경을 다시 촬영한 자료가 아닙니다. <a href="../overview/architecture.html#app-navigation">현재 앱 입구</a>와 각 이용 흐름의 기능 정본을 함께 읽습니다.</p><p>가입·복구의 이전 이메일 링크·미인증 제한 화면은 과거 기록입니다. 현재는 <a href="../domains/01-auth.html">번호 확인·가입·세션·선택형 온보딩 계약</a>을 따릅니다. 사진이나 코드 설정만으로 번호 메일·푸시의 실제 수신을 확인했다고 판단하지 않습니다.</p></section>
- <section aria-labelledby="tour-story-title"><h2 id="tour-story-title">사진과 확인 기록을 읽는 방법</h2><p>예시로 촬영한 비용·참가자·금액은 설명을 위한 가상 자료입니다. 실제 은행 거래를 보낸 기록이 아닙니다. <a href="../domains/07-settlement.html">현재 모임 정산 계약</a>에서는 실제 수취인·납부·확인·반환을 구분합니다.</p><p>화면 캡처는 기존 기록을 유지합니다. 표지·활동 소재의 출처는 <a href="../assets/app-tour-samples/README.md">가상 예시 사진 안내</a>에 있습니다. 기존 소재·캡처를 새로 생성·합성·촬영하거나 현재 화면으로 재검증하지 않았습니다.</p><p>자료가 없다는 이유로 모든 화면을 새로 촬영하지 않습니다. 화면 배치·잘림·표시 상태 등 실제 시각 질문이 있으면 해당 장면을 고르고, 요청·권한·저장 상태는 적합한 소스와 실행 근거로 확인합니다.</p></section>
+ <header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>앱 촬영 기록</div><h1>촬영 기록으로 보는 앱 기능</h1><p class="lede">운영 API의 실사진 데이터가 표시된 Android 앱의 새 직접 촬영본과 가상 자료를 사용한 과거 기록을 함께 제공합니다. 사진마다 촬영 날짜와 환경을 표시합니다.</p><p><a href="coverage.html">현재 기능 정본과 촬영 기록</a> · <a href="#tour-filter">촬영한 이용 흐름</a> · <a href="../qa/screen-review.html#captures">전체 촬영본과 확인 범위</a></p></header>
+ <section id="auth-capture-current"><h2>촬영 날짜와 환경을 함께 확인합니다</h2><p>2026-11-23 촬영본은 운영 API에 연결한 Android 에뮬레이터의 앱 화면입니다. 기본 390×844 화면을 780×1688 PNG로 직접 촬영했습니다. 물리 기기·Play 배포본 검증이나 기능 전체 통과·출시 완료를 뜻하지 않습니다. 2026년 9~10월 촬영본은 과거 기록으로 구분하며, <a href="../overview/architecture.html#app-navigation">현재 앱 입구</a>와 각 이용 흐름의 기능 정본을 함께 읽습니다.</p><p>가입·복구의 이전 이메일 링크·미인증 제한 화면은 과거 기록입니다. 현재는 <a href="../domains/01-auth.html">번호 확인·가입·세션·선택형 온보딩 계약</a>을 따릅니다. 사진이나 코드 설정만으로 번호 메일·푸시의 실제 수신을 확인했다고 판단하지 않습니다.</p></section>
+ <section aria-labelledby="tour-story-title"><h2 id="tour-story-title">사진과 확인 기록을 읽는 방법</h2><p>과거 예시로 촬영한 비용·참가자·금액은 설명을 위한 가상 자료입니다. 실제 은행 거래를 보낸 기록이 아닙니다. <a href="../domains/07-settlement.html">현재 모임 정산 계약</a>에서는 실제 수취인·납부·확인·반환을 구분합니다.</p><p>새 촬영본은 운영 API에서 조회한 사진을 앱이 표시한 화면입니다. 과거 촬영본도 원래 설명·확인 범위와 함께 보존합니다. 과거 표지·활동 소재의 출처는 <a href="../assets/app-tour-samples/README.md">가상 예시 사진 안내</a>에 있습니다.</p><p>자료가 없다는 이유로 모든 화면을 새로 촬영하지 않습니다. 화면 배치·잘림·표시 상태 등 실제 시각 질문이 있으면 해당 장면을 고르고, 요청·권한·저장 상태는 적합한 소스와 실행 근거로 확인합니다.</p></section>
  <div class="tour-summary" id="tour-summary"></div><nav id="tour-filter" class="tour-filter" aria-label="촬영 기록 묶음"></nav><div id="tour-content"></div>
  <section class="tour-pending"><h2>소개용으로 고르지 않았던 묶음</h2><p>아래 내용은 당시 남긴 확인 범위입니다. 현재 작업·결함·필수 촬영 목록으로 자동 이월하지 않습니다.</p><div id="tour-pending"></div></section>
  <noscript><p>촬영 목록은 JavaScript가 필요합니다. <a href="../qa/screen-review.html">당시 화면 검수 기록</a>과 <a href="../features/catalog.html">현재 기능 정본 목록</a>을 확인할 수 있습니다.</p></noscript>
@@ -22,7 +22,7 @@
   </div>
   <script src="../assets/sidebar.js"></script>
   <script src="../assets/app.js"></script>
-  <script src="../assets/app-tour-data.js?v=20261122-docs"></script>
-  <script src="../assets/app-tour.js?v=20261122-docs"></script>
+  <script src="../assets/app-tour-data.js?v=20261123-live"></script>
+  <script src="../assets/app-tour.js?v=20261123-live"></script>
 </body>
 </html>

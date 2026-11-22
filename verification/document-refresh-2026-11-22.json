@@ -150,13 +150,14 @@
       "document": false,
       "baselineSha256": "4a944ca7fc9caa6770e04d17e11af2732fb13a27f467a724be25cb1bef7cbbb4",
       "review": "source_verified",
-      "disposition": "historical_records_retained_with_current_navigation",
+      "disposition": "updated_with_live_capture_followup",
       "evidence": [
         "tour_current_20261122",
-        "final_integration_20261123"
+        "final_integration_20261123",
+        "production_screenshots_20261123"
       ],
-      "reviewedSha256": "7c52e354a710bc9a72a0cb458a05d1db92daf7757ed5788ef847329f3745dcc1",
-      "note": "현재 이름·정본 연결·렌더 로직 검토. 과거 촬영 데이터는 원문 동일성으로 보존; 이미지/제품 재검증 아님."
+      "reviewedSha256": "e8de41c2f4ddfd02a7a161a0347dc2d8833e79bd51ac12018eb575d570aa75ad",
+      "note": "현재 이름·정본 연결·렌더 로직 검토. 과거 촬영 데이터는 원문 동일성으로 보존; 이미지/제품 재검증 아님. 후속 운영 사진 촬영·등록 근거: verification/production-screenshots-2026-11-23.json"
     },
     {
       "path": "docs/assets/app-tour-coverage.js",
@@ -165,14 +166,15 @@
       "document": false,
       "baselineSha256": "2585ab6201d055416a9370539d9484bdecb5317dcc46bfa3ba933ee37220b923",
       "review": "source_verified",
-      "disposition": "historical_records_retained_with_current_navigation",
+      "disposition": "updated_with_live_capture_followup",
       "evidence": [
         "tour_current_20261122",
         "private_meeting_current_20261122",
-        "final_integration_20261123"
+        "final_integration_20261123",
+        "production_screenshots_20261123"
       ],
-      "reviewedSha256": "7a1b19853e5bfe000303aa96b09481c2a2585817d5cd38686c63d7a8b5207709",
-      "note": "현재 이름·정본 연결·렌더 로직 검토. 과거 촬영 데이터는 원문 동일성으로 보존; 이미지/제품 재검증 아님."
+      "reviewedSha256": "13529c39e691d78b4b25c6c09ca6b6214dd4317647542b8d5493921d49d4e771",
+      "note": "현재 이름·정본 연결·렌더 로직 검토. 과거 촬영 데이터는 원문 동일성으로 보존; 이미지/제품 재검증 아님. 후속 운영 사진 촬영·등록 근거: verification/production-screenshots-2026-11-23.json"
     },
     {
       "path": "docs/assets/app-tour-data.js",
@@ -181,13 +183,14 @@
       "document": false,
       "baselineSha256": "8b9d4e766985b918af1647a18c2259efb365ca836f1ce42ff31c33c5ad5d9374",
       "review": "source_verified",
-      "disposition": "historical_records_retained_with_current_navigation",
+      "disposition": "updated_with_live_capture_followup",
       "evidence": [
         "tour_current_20261122",
-        "final_integration_20261123"
+        "final_integration_20261123",
+        "production_screenshots_20261123"
       ],
-      "reviewedSha256": "0776b266b429919c9f237cd633ac6d048a856736fb72ef6b9737fb03f762f7c9",
-      "note": "현재 이름·정본 연결·렌더 로직 검토. 과거 촬영 데이터는 원문 동일성으로 보존; 이미지/제품 재검증 아님."
+      "reviewedSha256": "5c436cdcc2f9e916ff08e976f6f47e0833eb7baf5170e2a29a9119589288ceef",
+      "note": "현재 이름·정본 연결·렌더 로직 검토. 과거 촬영 데이터는 원문 동일성으로 보존; 이미지/제품 재검증 아님. 후속 운영 사진 촬영·등록 근거: verification/production-screenshots-2026-11-23.json"
     },
     {
       "path": "docs/assets/app-tour-samples/README.md",
@@ -262,13 +265,14 @@
       "document": false,
       "baselineSha256": "38c62cb017a4e324fccfc4ee26904ec7da1544f52df089f9be0832e95762a851",
       "review": "source_verified",
-      "disposition": "historical_records_retained_with_current_navigation",
+      "disposition": "updated_with_live_capture_followup",
       "evidence": [
         "tour_current_20261122",
-        "final_integration_20261123"
+        "final_integration_20261123",
+        "production_screenshots_20261123"
       ],
-      "reviewedSha256": "61d7228adafc9f4200185594fbbd7a62a349d76d23a9381e6fb46e5644577dfe",
-      "note": "현재 이름·정본 연결·렌더 로직 검토. 과거 촬영 데이터는 원문 동일성으로 보존; 이미지/제품 재검증 아님."
+      "reviewedSha256": "c10ea6464aa99478662c93caedae24f8fd9d7a07f52a9eb26b9b595b0a46fecc",
+      "note": "현재 이름·정본 연결·렌더 로직 검토. 과거 촬영 데이터는 원문 동일성으로 보존; 이미지/제품 재검증 아님. 후속 운영 사진 촬영·등록 근거: verification/production-screenshots-2026-11-23.json"
     },
     {
       "path": "docs/assets/app.js",
@@ -6185,12 +6189,14 @@
       "document": true,
       "baselineSha256": "3bc71c816f66101539c9ff63b635980ab707f628329782dd220cda262a52eb92",
       "review": "source_verified",
-      "disposition": "updated",
+      "disposition": "updated_with_live_capture_followup",
       "evidence": [
         "screen_review_current_20261122",
-        "final_integration_20261123"
+        "final_integration_20261123",
+        "production_screenshots_20261123"
       ],
-      "reviewedSha256": "3b5b7620711ad1215572746371f2772f681a7b50b7f1db3c6b6627e4ccfbe11a"
+      "reviewedSha256": "dedc9922216eeaa08112dfed5e2f4061924f9c8b58a838b9f62a6ecdd74bde62",
+      "note": "후속 운영 사진 촬영·등록 근거: verification/production-screenshots-2026-11-23.json"
     },
     {
       "path": "docs/qa/sharing-plan.html",
@@ -6227,12 +6233,14 @@
       "document": true,
       "baselineSha256": "94345b4048b0c93b6bda45a99395173410a7f93cfd0e0dc31eba6d6f7324c9f8",
       "review": "source_verified",
-      "disposition": "updated",
+      "disposition": "updated_with_live_capture_followup",
       "evidence": [
         "tour_current_20261122",
-        "final_integration_20261123"
+        "final_integration_20261123",
+        "production_screenshots_20261123"
       ],
-      "reviewedSha256": "e4998ba584ea3d69d88e73aa54d600e4292c9513296cb285bb9d4ce117134cc9"
+      "reviewedSha256": "e6e1d68629b042546fee15dea8c24d5bd135c164008d6049a3c94de77b1e4392",
+      "note": "후속 운영 사진 촬영·등록 근거: verification/production-screenshots-2026-11-23.json"
     },
     {
       "path": "docs/tour/index.html",
@@ -6241,12 +6249,14 @@
       "document": true,
       "baselineSha256": "f8d6bf572b2e8cba99da59214e31fa93b5008136834c84ea3ca923349a753e12",
       "review": "source_verified",
-      "disposition": "updated",
+      "disposition": "updated_with_live_capture_followup",
       "evidence": [
         "tour_current_20261122",
-        "final_integration_20261123"
+        "final_integration_20261123",
+        "production_screenshots_20261123"
       ],
-      "reviewedSha256": "e7214646501316c38feeefac42f6de31f624a8e6a0cd6d3d79a69ada5e4d8365"
+      "reviewedSha256": "507cadabd6a9ec5828b1e7624d2d68c6c5050fe7498f8ac2441ff93b79ad9d64",
+      "note": "후속 운영 사진 촬영·등록 근거: verification/production-screenshots-2026-11-23.json"
     },
     {
       "path": "planner_onboarding/00_start_here.md",
@@ -17925,6 +17935,123 @@
       ],
       "note": "문서 전용 검사/생성 도구; 제품 실행 없음",
       "reviewedSha256": "f4c74535e6a50a658d3fd8f8ad6923c4b0e16fe9c4b6aaa5cc373d16173a194d"
+    },
+    {
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-club-discovery-20261123.png",
+      "tracking": "new",
+      "kind": "site_asset_or_data",
+      "document": false,
+      "baselineSha256": null,
+      "review": "runtime_capture_verified",
+      "disposition": "new_production_capture",
+      "evidence": [
+        "production_screenshots_20261123"
+      ],
+      "reviewedSha256": "7be91e682f1cb81237fdaa832bfe75f40537a2edee145e02e5279ed5865716d6"
+    },
+    {
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-club-home-20261123.png",
+      "tracking": "new",
+      "kind": "site_asset_or_data",
+      "document": false,
+      "baselineSha256": null,
+      "review": "runtime_capture_verified",
+      "disposition": "new_production_capture",
+      "evidence": [
+        "production_screenshots_20261123"
+      ],
+      "reviewedSha256": "f181dfe6667f5aee5e4d533a6d2f7b4fd40d0a7581ca4a6d53550ebe5cc67a41"
+    },
+    {
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-event-cover-20261123.png",
+      "tracking": "new",
+      "kind": "site_asset_or_data",
+      "document": false,
+      "baselineSha256": null,
+      "review": "runtime_capture_verified",
+      "disposition": "new_production_capture",
+      "evidence": [
+        "production_screenshots_20261123"
+      ],
+      "reviewedSha256": "568143d1dd1abde5391c3660e4830fc2cf908fa1a5f68254d39d3d0b7138c4b1"
+    },
+    {
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-event-description-20261123.png",
+      "tracking": "new",
+      "kind": "site_asset_or_data",
+      "document": false,
+      "baselineSha256": null,
+      "review": "runtime_capture_verified",
+      "disposition": "new_production_capture",
+      "evidence": [
+        "production_screenshots_20261123"
+      ],
+      "reviewedSha256": "91f330de4e18f5569c568f58a31ea34f78db4ad4cba88b6b836a6e53176a9916"
+    },
+    {
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-event-list-20261123.png",
+      "tracking": "new",
+      "kind": "site_asset_or_data",
+      "document": false,
+      "baselineSha256": null,
+      "review": "runtime_capture_verified",
+      "disposition": "new_production_capture",
+      "evidence": [
+        "production_screenshots_20261123"
+      ],
+      "reviewedSha256": "2d30612e71c4106ce016565cd7deb359b0fb953a09a27734aed519b5a4f0e820"
+    },
+    {
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-home-discovery-20261123.png",
+      "tracking": "new",
+      "kind": "site_asset_or_data",
+      "document": false,
+      "baselineSha256": null,
+      "review": "runtime_capture_verified",
+      "disposition": "new_production_capture",
+      "evidence": [
+        "production_screenshots_20261123"
+      ],
+      "reviewedSha256": "909939a4149e6b4d7bc6379ea931036afcc51403b8de09a1af21a01b0e65bb00"
+    },
+    {
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-open-event-20261123.png",
+      "tracking": "new",
+      "kind": "site_asset_or_data",
+      "document": false,
+      "baselineSha256": null,
+      "review": "runtime_capture_verified",
+      "disposition": "new_production_capture",
+      "evidence": [
+        "production_screenshots_20261123"
+      ],
+      "reviewedSha256": "95447c689060664c594af54fac1dae75bdace065de84cf994e0415057c1abb5c"
+    },
+    {
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-search-results-20261123.png",
+      "tracking": "new",
+      "kind": "site_asset_or_data",
+      "document": false,
+      "baselineSha256": null,
+      "review": "runtime_capture_verified",
+      "disposition": "new_production_capture",
+      "evidence": [
+        "production_screenshots_20261123"
+      ],
+      "reviewedSha256": "50f23ace21c89ba8acd2e91e28abb8985bce5009b72dabd1da079901b586722e"
+    },
+    {
+      "path": "verification/production-screenshots-2026-11-23.json",
+      "tracking": "new",
+      "kind": "verification_evidence",
+      "document": false,
+      "baselineSha256": null,
+      "review": "source_verified",
+      "disposition": "new_capture_provenance",
+      "evidence": [
+        "production_screenshots_20261123"
+      ],
+      "reviewedSha256": "d1d1ec3c52241d7f964676e86c17e9b5f25f33119d6bcd92afdff6853eeeee95"
     }
   ],
   "checks": [
@@ -70384,6 +70511,127 @@
       "reviewedAt": "2026-11-23",
       "report": "business_logic/verification/document-refresh-final-2026-11-23.json",
       "earlierEvidence": "이전 그룹의 관찰 SHA/당시 기록은 덮어쓰지 않는다. 현재 파일 해시는 최종 기록을 따른다."
+    },
+    "production_screenshots_20261123": {
+      "kind": "runtime_capture_and_document_update",
+      "scope": "사용자 후속 요청에 따른 실제 운영 API 앱 화면 8장 촬영·대표 사진 5장 교체와 과거 원본 보존. 기존 전체 문서/제품 검사를 다시 수행한 것이 아님.",
+      "record": "verification/production-screenshots-2026-11-23.json",
+      "runtimeAppCommit": "6dd20503642e3ea0d4db5951472d100fc1daefaf",
+      "canonicalSources": [
+        {
+          "path": "business_logic/docs/assets/app-tour-coverage-data.js",
+          "sha256": "e8de41c2f4ddfd02a7a161a0347dc2d8833e79bd51ac12018eb575d570aa75ad"
+        },
+        {
+          "path": "business_logic/docs/assets/app-tour-coverage.js",
+          "sha256": "13529c39e691d78b4b25c6c09ca6b6214dd4317647542b8d5493921d49d4e771"
+        },
+        {
+          "path": "business_logic/docs/assets/app-tour-data.js",
+          "sha256": "5c436cdcc2f9e916ff08e976f6f47e0833eb7baf5170e2a29a9119589288ceef"
+        },
+        {
+          "path": "business_logic/docs/assets/app-tour.js",
+          "sha256": "c10ea6464aa99478662c93caedae24f8fd9d7a07f52a9eb26b9b595b0a46fecc"
+        },
+        {
+          "path": "business_logic/docs/assets/screenshots/app-tour/2026-11-23/live-club-discovery-20261123.png",
+          "sha256": "7be91e682f1cb81237fdaa832bfe75f40537a2edee145e02e5279ed5865716d6"
+        },
+        {
+          "path": "business_logic/docs/assets/screenshots/app-tour/2026-11-23/live-club-home-20261123.png",
+          "sha256": "f181dfe6667f5aee5e4d533a6d2f7b4fd40d0a7581ca4a6d53550ebe5cc67a41"
+        },
+        {
+          "path": "business_logic/docs/assets/screenshots/app-tour/2026-11-23/live-event-cover-20261123.png",
+          "sha256": "568143d1dd1abde5391c3660e4830fc2cf908fa1a5f68254d39d3d0b7138c4b1"
+        },
+        {
+          "path": "business_logic/docs/assets/screenshots/app-tour/2026-11-23/live-event-description-20261123.png",
+          "sha256": "91f330de4e18f5569c568f58a31ea34f78db4ad4cba88b6b836a6e53176a9916"
+        },
+        {
+          "path": "business_logic/docs/assets/screenshots/app-tour/2026-11-23/live-event-list-20261123.png",
+          "sha256": "2d30612e71c4106ce016565cd7deb359b0fb953a09a27734aed519b5a4f0e820"
+        },
+        {
+          "path": "business_logic/docs/assets/screenshots/app-tour/2026-11-23/live-home-discovery-20261123.png",
+          "sha256": "909939a4149e6b4d7bc6379ea931036afcc51403b8de09a1af21a01b0e65bb00"
+        },
+        {
+          "path": "business_logic/docs/assets/screenshots/app-tour/2026-11-23/live-open-event-20261123.png",
+          "sha256": "95447c689060664c594af54fac1dae75bdace065de84cf994e0415057c1abb5c"
+        },
+        {
+          "path": "business_logic/docs/assets/screenshots/app-tour/2026-11-23/live-search-results-20261123.png",
+          "sha256": "50f23ace21c89ba8acd2e91e28abb8985bce5009b72dabd1da079901b586722e"
+        },
+        {
+          "path": "business_logic/docs/qa/screen-review.html",
+          "sha256": "dedc9922216eeaa08112dfed5e2f4061924f9c8b58a838b9f62a6ecdd74bde62"
+        },
+        {
+          "path": "business_logic/docs/tour/coverage.html",
+          "sha256": "e6e1d68629b042546fee15dea8c24d5bd135c164008d6049a3c94de77b1e4392"
+        },
+        {
+          "path": "business_logic/docs/tour/index.html",
+          "sha256": "507cadabd6a9ec5828b1e7624d2d68c6c5050fe7498f8ac2441ff93b79ad9d64"
+        },
+        {
+          "path": "business_logic/verification/production-screenshots-2026-11-23.json",
+          "sha256": "d1d1ec3c52241d7f964676e86c17e9b5f25f33119d6bcd92afdff6853eeeee95"
+        }
+      ],
+      "previousReviewedHashes": {
+        "docs/assets/app-tour-coverage-data.js": "7c52e354a710bc9a72a0cb458a05d1db92daf7757ed5788ef847329f3745dcc1",
+        "docs/assets/app-tour-coverage.js": "7a1b19853e5bfe000303aa96b09481c2a2585817d5cd38686c63d7a8b5207709",
+        "docs/assets/app-tour-data.js": "0776b266b429919c9f237cd633ac6d048a856736fb72ef6b9737fb03f762f7c9",
+        "docs/assets/app-tour.js": "61d7228adafc9f4200185594fbbd7a62a349d76d23a9381e6fb46e5644577dfe",
+        "docs/qa/screen-review.html": "3b5b7620711ad1215572746371f2772f681a7b50b7f1db3c6b6627e4ccfbe11a",
+        "docs/tour/coverage.html": "e4998ba584ea3d69d88e73aa54d600e4292c9513296cb285bb9d4ce117134cc9",
+        "docs/tour/index.html": "e7214646501316c38feeefac42f6de31f624a8e6a0cd6d3d79a69ada5e4d8365"
+      },
+      "checks": [
+        {
+          "command": "node verification/check_app_tour.mjs",
+          "result": "PASS",
+          "registeredShots": 170,
+          "showcaseShots": 97
+        },
+        {
+          "command": "node verification/check_app_tour_catalog.mjs --strict-unregistered",
+          "result": "PASS",
+          "unregisteredImages": 0,
+          "localReferences": 79
+        },
+        {
+          "command": "node verification/check_app_tour_coverage.mjs",
+          "result": "PASS",
+          "areas": 21,
+          "features": 175
+        },
+        {
+          "command": "node --test verification/check_app_tour_catalog.test.mjs",
+          "result": "PASS",
+          "tests": 14
+        },
+        {
+          "check": "historical records and original bytes against document base commit",
+          "result": "PASS",
+          "captures": 162,
+          "allowedChanges": "5 guide selections retired and replacedBy links added; original captions, findings, original image bytes retained"
+        },
+        {
+          "check": "new repository images equal reviewed original screenshots",
+          "result": "PASS",
+          "captures": 8
+        },
+        {
+          "command": "git diff --check",
+          "result": "PASS"
+        }
+      ]
     }
   },
   "currentSourceVersions": {

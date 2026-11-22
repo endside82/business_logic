@@ -1,0 +1,208 @@
+{
+  "schemaVersion": 1,
+  "task": "운영 사진이 표시된 실제 앱 화면으로 문서 소개 사진 교체",
+  "date": "2026-11-23",
+  "status": "public_capture_update_complete",
+  "documentBaseCommit": "aeaea3c9a77f687f1adb27a2e99e433ded9de372",
+  "appSourceCommit": "6dd20503642e3ea0d4db5951472d100fc1daefaf",
+  "runtime": {
+    "app": "Flutter lib/main.dart production-config debug APK",
+    "apiBaseUrl": "https://api.saisoop.co.kr",
+    "device": "Android emulator Saisoop_Plan_Read_API_36",
+    "logicalViewport": [
+      390,
+      844
+    ],
+    "pixelRatio": 2,
+    "fontScale": 1.0,
+    "fixturesOrProviderOverrides": false,
+    "newImagesGeneratedOrUploaded": false,
+    "captureMethod": "adb exec-out screencap -p"
+  },
+  "account": {
+    "type": "new dedicated documentation capture account",
+    "signupCompleted": true,
+    "mailVerification": "normal delivery to user-managed Oracle domain mailbox",
+    "requiredConsent": "explicit user approval before selection and signup submission",
+    "marketingConsent": false
+  },
+  "journeys": [
+    {
+      "path": "홈 → 추천 카드 → 추천 상세 → 이벤트 상세 → 추천 상세 → 홈",
+      "result": "공개 모임 표지·일정·장소·정원 읽기와 원래 입구 복귀 확인"
+    },
+    {
+      "path": "홈 검색 → 운영 인기 검색어 → 검색 결과 → 이벤트 상세 → 검색 결과",
+      "result": "같은 검색어·1건 결과 복귀 확인"
+    },
+    {
+      "path": "모임 탭 → 인기 클럽 → 모임 홈 → 모임 정보 → 모임 홈 → 모임 탭",
+      "result": "운영 클럽 소개·사진·공개 회원 수 조회와 목록 복귀 확인"
+    },
+    {
+      "path": "이벤트 탭 → 두 번째 공개 모임 → 상세 → 이벤트 목록",
+      "result": "사진·일정·참석 가능 상태 조회, 신청 제출 없음"
+    }
+  ],
+  "unavailableScenes": [
+    {
+      "scene": "클럽 사진첩·게시글",
+      "reason": "새 촬영 계정은 미가입 회원; 앱이 가입 후 이용 안내",
+      "state": "기존 시험 계정의 운영 로그인·열람 승인 질문 대기"
+    },
+    {
+      "scene": "공개 정기모임",
+      "reason": "운영 목록에 진행 중 정기모임 없음",
+      "state": "빈 목록을 사진이 있는 운영 사례로 대체하지 않음"
+    }
+  ],
+  "captures": [
+    {
+      "id": "live-club-discovery-20261123",
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-club-discovery-20261123.png",
+      "sha256": "7be91e682f1cb81237fdaa832bfe75f40537a2edee145e02e5279ed5865716d6",
+      "bytes": 979500,
+      "width": 780,
+      "height": 1688,
+      "capturedAt": "2026-11-23T01:48:30.388494+09:00",
+      "originalUnedited": true,
+      "visuallyReviewed": true
+    },
+    {
+      "id": "live-club-home-20261123",
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-club-home-20261123.png",
+      "sha256": "f181dfe6667f5aee5e4d533a6d2f7b4fd40d0a7581ca4a6d53550ebe5cc67a41",
+      "bytes": 251659,
+      "width": 780,
+      "height": 1688,
+      "capturedAt": "2026-11-23T01:44:06.717247+09:00",
+      "originalUnedited": true,
+      "visuallyReviewed": true
+    },
+    {
+      "id": "live-event-cover-20261123",
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-event-cover-20261123.png",
+      "sha256": "568143d1dd1abde5391c3660e4830fc2cf908fa1a5f68254d39d3d0b7138c4b1",
+      "bytes": 890706,
+      "width": 780,
+      "height": 1688,
+      "capturedAt": "2026-11-23T01:41:07.699421+09:00",
+      "originalUnedited": true,
+      "visuallyReviewed": true
+    },
+    {
+      "id": "live-event-description-20261123",
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-event-description-20261123.png",
+      "sha256": "91f330de4e18f5569c568f58a31ea34f78db4ad4cba88b6b836a6e53176a9916",
+      "bytes": 138140,
+      "width": 780,
+      "height": 1688,
+      "capturedAt": "2026-11-23T01:41:58.781263+09:00",
+      "originalUnedited": true,
+      "visuallyReviewed": true
+    },
+    {
+      "id": "live-event-list-20261123",
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-event-list-20261123.png",
+      "sha256": "2d30612e71c4106ce016565cd7deb359b0fb953a09a27734aed519b5a4f0e820",
+      "bytes": 838896,
+      "width": 780,
+      "height": 1688,
+      "capturedAt": "2026-11-23T01:45:45.610260+09:00",
+      "originalUnedited": true,
+      "visuallyReviewed": true
+    },
+    {
+      "id": "live-home-discovery-20261123",
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-home-discovery-20261123.png",
+      "sha256": "909939a4149e6b4d7bc6379ea931036afcc51403b8de09a1af21a01b0e65bb00",
+      "bytes": 528629,
+      "width": 780,
+      "height": 1688,
+      "capturedAt": "2026-11-23T01:39:44.430297+09:00",
+      "originalUnedited": true,
+      "visuallyReviewed": true
+    },
+    {
+      "id": "live-open-event-20261123",
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-open-event-20261123.png",
+      "sha256": "95447c689060664c594af54fac1dae75bdace065de84cf994e0415057c1abb5c",
+      "bytes": 756723,
+      "width": 780,
+      "height": 1688,
+      "capturedAt": "2026-11-23T01:46:16.412201+09:00",
+      "originalUnedited": true,
+      "visuallyReviewed": true
+    },
+    {
+      "id": "live-search-results-20261123",
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-search-results-20261123.png",
+      "sha256": "50f23ace21c89ba8acd2e91e28abb8985bce5009b72dabd1da079901b586722e",
+      "bytes": 670001,
+      "width": 780,
+      "height": 1688,
+      "capturedAt": "2026-11-23T01:43:13.977415+09:00",
+      "originalUnedited": true,
+      "visuallyReviewed": true
+    }
+  ],
+  "checks": [
+    {
+      "command": "node verification/check_app_tour.mjs",
+      "result": "PASS",
+      "registeredShots": 170,
+      "showcaseShots": 97
+    },
+    {
+      "command": "node verification/check_app_tour_catalog.mjs --strict-unregistered",
+      "result": "PASS",
+      "unregisteredImages": 0,
+      "localReferences": 79
+    },
+    {
+      "command": "node verification/check_app_tour_coverage.mjs",
+      "result": "PASS",
+      "areas": 21,
+      "features": 175
+    },
+    {
+      "command": "node --test verification/check_app_tour_catalog.test.mjs",
+      "result": "PASS",
+      "tests": 14
+    },
+    {
+      "check": "historical records and original bytes against document base commit",
+      "result": "PASS",
+      "captures": 162,
+      "allowedChanges": "5 guide selections retired and replacedBy links added; original captions, findings, original image bytes retained"
+    },
+    {
+      "check": "new repository images equal reviewed original screenshots",
+      "result": "PASS",
+      "captures": 8
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "historicalCapturesPreserved": true,
+  "deploymentPerformed": false,
+  "updatedAt": "2026-11-23T01:53:51.460579+09:00",
+  "updatedDocumentation": [
+    "docs/assets/app-tour-coverage-data.js",
+    "docs/assets/app-tour-coverage.js",
+    "docs/assets/app-tour-data.js",
+    "docs/assets/app-tour.js",
+    "docs/qa/screen-review.html",
+    "docs/tour/coverage.html",
+    "docs/tour/index.html"
+  ],
+  "replacedGuideCaptures": [
+    "showcase-home-discovery",
+    "showcase-search-walk-results",
+    "showcase-event-cover",
+    "showcase-event-description",
+    "showcase-club-introduction"
+  ]
+}

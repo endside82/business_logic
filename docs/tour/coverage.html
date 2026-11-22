@@ -6,12 +6,12 @@
   <title>전체 업무별 소개와 촬영 현황 — community</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
-  <link rel="stylesheet" href="../assets/app-tour.css?v=20261122-docs">
+  <link rel="stylesheet" href="../assets/app-tour.css?v=20261123-live">
 </head>
 <body data-document-kind="reference" data-base="../" data-tour-view="coverage">
   <div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
- <header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="index.html">앱 촬영 기록</a><span>›</span>기능 정본과 기록</div><h1>현재 기능 정본과 과거 촬영 기록</h1><p class="lede">현재 21개 업무 영역·175개 기능 정본에 보관된 촬영 기록을 연결합니다. 기능 이름·확인 범위는 현재 정본 데이터에서 읽고, 촬영 구상·사진·막혔던 단계는 당시 기록으로 구분합니다.</p><p><a href="index.html">촬영한 이용 흐름</a> · <a href="../qa/screen-review.html#captures">전체 촬영본</a> · <a href="../features/catalog.html">현재 기능 목록</a></p></header>
- <section id="auth-capture-current"><h2>촬영 상태와 현재 기능은 다릅니다</h2><p>2026-11-22 문서 대조. 과거 이메일 링크 인증·탭·메뉴·이동 조율 화면을 현재 앱의 증거로 쓰지 않습니다. 현재 계약은 <a href="../domains/01-auth.html">인증·온보딩</a>과 <a href="../overview/architecture.html#app-navigation">현재 앱 입구</a>, 각 기능 정본을 따릅니다.</p><p>‘당시 장면 확보’는 현재 화면 일치·검사 통과가 아닙니다. ‘당시 막힘’도 현재 결함 수가 아닙니다. 별도 소개 여정 9개는 175개 기능 수에 더하지 않으며, 폐기된 타인 가능 시간 조회를 복구 대상으로 삼지 않습니다.</p></section>
+ <header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="index.html">앱 촬영 기록</a><span>›</span>기능 정본과 기록</div><h1>현재 기능 정본과 촬영 기록</h1><p class="lede">현재 21개 업무 영역·175개 기능 정본에 보관된 촬영 기록을 연결합니다. 소개에는 2026-11-23 운영 API 연결 Android 에뮬레이터 직접 촬영본과 과거 기록이 함께 있습니다. 기능 이름·확인 범위는 현재 정본 데이터에서 읽고, 아래 촬영 구상·기록 분류·막혔던 단계는 기존 이력으로 구분합니다.</p><p><a href="index.html">촬영한 이용 흐름</a> · <a href="../qa/screen-review.html#captures">전체 촬영본</a> · <a href="../features/catalog.html">현재 기능 목록</a></p></header>
+ <section id="auth-capture-current"><h2>촬영 상태와 현재 기능은 다릅니다</h2><p>새 촬영 날짜·환경·확인 범위는 각 사진에 표시합니다. 새 촬영본도 물리 기기·Play 배포본 검증이나 출시 완료를 뜻하지 않습니다. 과거 이메일 링크 인증·탭·메뉴·이동 조율 화면을 현재 앱의 증거로 쓰지 않습니다. 현재 계약은 <a href="../domains/01-auth.html">인증·온보딩</a>과 <a href="../overview/architecture.html#app-navigation">현재 앱 입구</a>, 각 기능 정본을 따릅니다.</p><p>‘당시 장면 확보’는 현재 화면 일치·검사 통과가 아닙니다. ‘당시 막힘’도 현재 결함 수가 아닙니다. 별도 소개 여정 9개는 175개 기능 수에 더하지 않으며, 폐기된 타인 가능 시간 조회를 복구 대상으로 삼지 않습니다.</p></section>
  <section id="next-captures"><h2>새 자료가 필요한지 판단하는 기준</h2><p>변경한 기능과 실제로 남은 질문을 먼저 확인합니다. 촬영 빈칸을 채우기 위해 제품을 실행하지 않습니다. 시각 판단이 필요한 장면만 선택하고, 권한·요청·저장·돈 이동은 해당 소스와 실행 증거로 확인합니다. 이전 촬영 구상은 각 카드에서 따로 펼칠 수 있습니다.</p></section>
  <div id="coverage-summary" class="tour-summary"></div><p id="coverage-status-summary"></p>
  <div class="toolbar"><label>업무 찾기 <input id="coverage-search" type="search" placeholder="기능 ID·이름·설명"></label><label>업무 영역 <select id="coverage-area"><option value="">전체 업무 영역</option></select></label><label>기록 분류 <select id="coverage-state"><option value="">모든 기록</option><option value="complete">당시 소개 장면 확보</option><option value="partial">일부 촬영 기록</option><option value="missing">연결된 기록 없음</option><option value="blocked">당시 막힌 단계 기록</option><option value="unavailable">폐기된 기능</option></select></label><button id="coverage-reset" type="button">전체로 되돌리기</button></div>
@@ -22,8 +22,8 @@
   <script src="../assets/app.js"></script>
   <script src="../assets/features.js"></script>
   <script src="../assets/launch-status.js?v=20261122-docs"></script>
-  <script src="../assets/app-tour-data.js?v=20261122-docs"></script>
-  <script src="../assets/app-tour-coverage-data.js?v=20261122-docs"></script>
-  <script src="../assets/app-tour-coverage.js?v=20261122-docs"></script>
+  <script src="../assets/app-tour-data.js?v=20261123-live"></script>
+  <script src="../assets/app-tour-coverage-data.js?v=20261123-live"></script>
+  <script src="../assets/app-tour-coverage.js?v=20261123-live"></script>
 </body>
 </html>

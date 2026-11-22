@@ -33,7 +33,7 @@
   const sourceLink = feature => base + (feature.doc || 'features/' + feature.id + '.html');
   function shotLinks(feature) {
     if (!feature.shots.length) return '<p class="coverage-missing">아직 연결된 사진이 없습니다.</p>';
-    return '<details><summary>과거 촬영 기록 ' + feature.shots.length + '장 보기</summary><ul>' + feature.shots.map(id => {
+    return '<details><summary>촬영 기록 ' + feature.shots.length + '장 보기</summary><ul>' + feature.shots.map(id => {
       const shot = tour.shots.find(item => item.id === id);
       return '<li><a href="' + base + 'qa/screen-review.html#shot-' + esc(id) + '">' + esc(shot.title) + '</a></li>';
     }).join('') + '</ul></details>';

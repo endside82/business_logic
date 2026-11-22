@@ -20143,17 +20143,17 @@
     },
     {
       "path": "docs/assets/app-tour-coverage-data.js",
-      "sha256": "7c52e354a710bc9a72a0cb458a05d1db92daf7757ed5788ef847329f3745dcc1",
+      "sha256": "e8de41c2f4ddfd02a7a161a0347dc2d8833e79bd51ac12018eb575d570aa75ad",
       "review": "source_verified"
     },
     {
       "path": "docs/assets/app-tour-coverage.js",
-      "sha256": "7a1b19853e5bfe000303aa96b09481c2a2585817d5cd38686c63d7a8b5207709",
+      "sha256": "13529c39e691d78b4b25c6c09ca6b6214dd4317647542b8d5493921d49d4e771",
       "review": "source_verified"
     },
     {
       "path": "docs/assets/app-tour-data.js",
-      "sha256": "0776b266b429919c9f237cd633ac6d048a856736fb72ef6b9737fb03f762f7c9",
+      "sha256": "5c436cdcc2f9e916ff08e976f6f47e0833eb7baf5170e2a29a9119589288ceef",
       "review": "source_verified"
     },
     {
@@ -20183,7 +20183,7 @@
     },
     {
       "path": "docs/assets/app-tour.js",
-      "sha256": "61d7228adafc9f4200185594fbbd7a62a349d76d23a9381e6fb46e5644577dfe",
+      "sha256": "c10ea6464aa99478662c93caedae24f8fd9d7a07f52a9eb26b9b595b0a46fecc",
       "review": "source_verified"
     },
     {
@@ -22303,7 +22303,7 @@
     },
     {
       "path": "docs/qa/screen-review.html",
-      "sha256": "3b5b7620711ad1215572746371f2772f681a7b50b7f1db3c6b6627e4ccfbe11a",
+      "sha256": "dedc9922216eeaa08112dfed5e2f4061924f9c8b58a838b9f62a6ecdd74bde62",
       "review": "source_verified"
     },
     {
@@ -22318,12 +22318,12 @@
     },
     {
       "path": "docs/tour/coverage.html",
-      "sha256": "e4998ba584ea3d69d88e73aa54d600e4292c9513296cb285bb9d4ce117134cc9",
+      "sha256": "e6e1d68629b042546fee15dea8c24d5bd135c164008d6049a3c94de77b1e4392",
       "review": "source_verified"
     },
     {
       "path": "docs/tour/index.html",
-      "sha256": "e7214646501316c38feeefac42f6de31f624a8e6a0cd6d3d79a69ada5e4d8365",
+      "sha256": "507cadabd6a9ec5828b1e7624d2d68c6c5050fe7498f8ac2441ff93b79ad9d64",
       "review": "source_verified"
     },
     {
@@ -26375,6 +26375,51 @@
       "path": "verification/check_document_refresh.py",
       "sha256": "f4c74535e6a50a658d3fd8f8ad6923c4b0e16fe9c4b6aaa5cc373d16173a194d",
       "review": "support_verified"
+    },
+    {
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-club-discovery-20261123.png",
+      "sha256": "7be91e682f1cb81237fdaa832bfe75f40537a2edee145e02e5279ed5865716d6",
+      "review": "runtime_capture_verified"
+    },
+    {
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-club-home-20261123.png",
+      "sha256": "f181dfe6667f5aee5e4d533a6d2f7b4fd40d0a7581ca4a6d53550ebe5cc67a41",
+      "review": "runtime_capture_verified"
+    },
+    {
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-event-cover-20261123.png",
+      "sha256": "568143d1dd1abde5391c3660e4830fc2cf908fa1a5f68254d39d3d0b7138c4b1",
+      "review": "runtime_capture_verified"
+    },
+    {
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-event-description-20261123.png",
+      "sha256": "91f330de4e18f5569c568f58a31ea34f78db4ad4cba88b6b836a6e53176a9916",
+      "review": "runtime_capture_verified"
+    },
+    {
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-event-list-20261123.png",
+      "sha256": "2d30612e71c4106ce016565cd7deb359b0fb953a09a27734aed519b5a4f0e820",
+      "review": "runtime_capture_verified"
+    },
+    {
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-home-discovery-20261123.png",
+      "sha256": "909939a4149e6b4d7bc6379ea931036afcc51403b8de09a1af21a01b0e65bb00",
+      "review": "runtime_capture_verified"
+    },
+    {
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-open-event-20261123.png",
+      "sha256": "95447c689060664c594af54fac1dae75bdace065de84cf994e0415057c1abb5c",
+      "review": "runtime_capture_verified"
+    },
+    {
+      "path": "docs/assets/screenshots/app-tour/2026-11-23/live-search-results-20261123.png",
+      "sha256": "50f23ace21c89ba8acd2e91e28abb8985bce5009b72dabd1da079901b586722e",
+      "review": "runtime_capture_verified"
+    },
+    {
+      "path": "verification/production-screenshots-2026-11-23.json",
+      "sha256": "d1d1ec3c52241d7f964676e86c17e9b5f25f33119d6bcd92afdff6853eeeee95",
+      "review": "source_verified"
     }
   ],
   "limits": [
@@ -26383,5 +26428,33 @@
     "과거 실행·사진은 당시 기록이며 새 실행으로 합산하지 않는다.",
     "검사 범위는 기록한 로컬 소스 버전과 파일 지문이다. 이후 소스 변경은 별도 대조한다.",
     "검사 도구는 문서 전용이며 기존 제품 코드·서비스·계정·배포를 변경하지 않았다."
+  ],
+  "subsequentWork": [
+    {
+      "date": "2026-11-23",
+      "scope": "User-requested production screenshot update after completed document refresh",
+      "record": "verification/production-screenshots-2026-11-23.json",
+      "newCaptures": 8,
+      "retiredGuideSelections": 5,
+      "historicalCapturesPreserved": 162,
+      "updatedArtifactCount": 16,
+      "previousArtifactHashes": {
+        "docs/assets/app-tour-coverage-data.js": "7c52e354a710bc9a72a0cb458a05d1db92daf7757ed5788ef847329f3745dcc1",
+        "docs/assets/app-tour-coverage.js": "7a1b19853e5bfe000303aa96b09481c2a2585817d5cd38686c63d7a8b5207709",
+        "docs/assets/app-tour-data.js": "0776b266b429919c9f237cd633ac6d048a856736fb72ef6b9737fb03f762f7c9",
+        "docs/assets/app-tour.js": "61d7228adafc9f4200185594fbbd7a62a349d76d23a9381e6fb46e5644577dfe",
+        "docs/qa/screen-review.html": "3b5b7620711ad1215572746371f2772f681a7b50b7f1db3c6b6627e4ccfbe11a",
+        "docs/tour/coverage.html": "e4998ba584ea3d69d88e73aa54d600e4292c9513296cb285bb9d4ce117134cc9",
+        "docs/tour/index.html": "e7214646501316c38feeefac42f6de31f624a8e6a0cd6d3d79a69ada5e4d8365"
+      },
+      "validation": "targeted screenshot catalogue, references and preservation checks passed; source-wide review not repeated",
+      "pending": "member-only capture scope awaits explicit existing-account access approval",
+      "documentHashVerification": {
+        "result": "PASS",
+        "artifactDigests": 1261,
+        "derivedDigests": 486,
+        "productSourceAuditRepeated": false
+      }
+    }
   ]
 }
