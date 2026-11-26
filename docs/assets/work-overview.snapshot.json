@@ -1859,10 +1859,10 @@
       "commit": "231ecae"
     }
   ],
-  "sourceDigest": "0487074a10ed8592e4de82bef931d01ed73ad2347070ad46a3486145436fde76",
+  "sourceDigest": "104f701959e8ba42343d14d832cef6e54781187015575fa64bcadab11bd0586c",
   "sourceDeclaredDate": "2026-11-15",
   "summary": {
-    "lead": "현재 작업 정본의 추적 항목과 배포 기록을 구분합니다. 공개·관리자 API는 11월 15일, MCP 허용 설정과 소개 웹 분석은 11월 22일의 반영 기록입니다. 그 뒤 소스 변경과 남은 실제 이용 확인은 작업별 조건을 따릅니다.",
+    "lead": "현재 작업 정본의 추적 항목과 배포 기록을 구분합니다. 공개·관리자 API는 11월 15일, MCP 허용 설정과 소개 웹 분석은 11월 22일의 반영 기록입니다. 그 뒤 소스 변경과 남은 실제 이용 확인은 작업별 조건을 따릅니다. 11월 26일에는 감시 스택에 발송 실패 복구 메일 중지를 반영했습니다.",
     "updates": [
       "서버: 공개·관리자 API와 관리자 웹은 prd-20261115a 기록입니다. 11월 22일 MCP 서버 67d6d47과 허용 AI 클라이언트 넷을 운영에 반영했습니다. 네 서비스의 로그인·동의·읽기·연결 해제와 개인정보 검토 후 가이드 공개는 남아 있습니다.",
       "Android: 11월 12일 내부 테스트 1.0.0 (16) 기록입니다. iOS는 10월 27일 서명 IPA 1까지의 기록이며 업로드·설치·APNs·정식 공개를 따로 확인합니다.",
@@ -1957,20 +1957,21 @@
     "decisions": "후보 고정·운영 서버 확정 뒤 복구 규약·기기 연결의 사용자 보류와 작업별 착수 조건을 유지합니다. 내부 테스트·임시 결제·소스 대조를 정식 공개로 확대하지 않습니다."
   },
   "publication": {
-    "updatedAt": "2026-11-26T10:30:21+09:00",
+    "updatedAt": "2026-11-26T10:43:01+09:00",
     "sourceBranch": "local docs worktree reference",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "da37cb9cc42f412138fc69862fd7904bb3ebcbb9",
+    "sourceCommit": "5b6150bab56ce69c57340131f956f468b1a56d62",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "9fa1ba99562e7c1153194e2170daffffe522aafae276fc24023fd0371fb2036a",
-    "worklistSha256": "96c8425b179254bd2ac7748f63e263437b7c9674736335ef828a9d0774a30fae",
+    "sourceSha256": "f299424621e552ba0a5783fccf6c1d57a99a05cf6dfdf21d1eea4cbab81b0fa1",
+    "worklistSha256": "85508e4b9159132d7ec3628a4b5a93c856e35a6b0ca56ed1558c90d9d4210227",
     "evidenceSha256": {
-      "docs/plan/NEXT_WORK.md": "9fa1ba99562e7c1153194e2170daffffe522aafae276fc24023fd0371fb2036a",
-      "docs/plan/WORKLIST.md": "96c8425b179254bd2ac7748f63e263437b7c9674736335ef828a9d0774a30fae",
+      "docs/plan/NEXT_WORK.md": "f299424621e552ba0a5783fccf6c1d57a99a05cf6dfdf21d1eea4cbab81b0fa1",
+      "docs/plan/WORKLIST.md": "85508e4b9159132d7ec3628a4b5a93c856e35a6b0ca56ed1558c90d9d4210227",
       "docs/release-gate/evidence/API-RELEASE-20261115a.json": "3577220a651c1d65997d57067f6d668894ba1b489fac9ceb688b1099624e551d",
       "docs/release-gate/evidence/MCP-RELEASE-20261115m.json": "14b8676f51b639e4669c74bfffc5195952ed7aa30058e7dea3acc9f69a8aff00",
       "docs/release-gate/evidence/GA4-CONNECTION-20261122.json": "111659d4cdfe4eabf48a403251fdf4928f0553c003975b6a533e59c02572186f",
-      "docs/release-gate/evidence/ADMIN-GAPS-20261122.json": "b305a117b85ec339f679435e298eb9aa71ed6f6db228483bc804abc05300ed12"
+      "docs/release-gate/evidence/ADMIN-GAPS-20261122.json": "b305a117b85ec339f679435e298eb9aa71ed6f6db228483bc804abc05300ed12",
+      "docs/release-gate/evidence/MONITOR-RECOVERY-EMAIL-20261126.json": "804d622d896bfc60f617d19d44781876e5577f6e5b62137f7bf7da4833a90b97"
     },
     "method": "2026-11-26 H-529 완료와 H-557 코드 생성기 호환 상한 해제 반영. 기존 배포·제품 검증 기록은 해당 실행 시점의 근거로 유지한다.",
     "regenerate": "python3 verification/refresh_work_overview.py",
