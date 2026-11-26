@@ -118,6 +118,8 @@ PlanStatus는 DRAFT·PUBLISHED·HIDDEN·DELETED다. 플랜 본문 공개, 마켓
 
 DateBlockStatus는 BLOCKED·UNBLOCKED다. 해제는 이전 매칭·채팅방 복원을 뜻하지 않고 상대방이 설정한 차단까지 해제하지 않는다. [프라이빗 데이트 차단](../02_feature_prds/09_private_date/F09-07_block_prd.md)의 현재 관계·소프트 기록 정책을 따른다.
 
+차단 출처 DateBlockSource는 DATING과 COMMUNITY다. 커뮤니티 차단이 데이트 쪽에 만든 행은 COMMUNITY이며, 데이트에서 명시적으로 다시 차단하면 DATING으로 바뀐다. 데이트 해제는 DATING만 대상으로 하고 같은 방향의 커뮤니티 차단이 남으면 BLOCKED·COMMUNITY로 바꾼다. 커뮤니티 해제는 별도로 건 DATING을 풀지 않는다. 이미 데이트에서 차단한 상대에게 안전 신고를 추가하는 요청은 차단 상태·최초 시각을 유지하며, 중복 신고의 거절은 요청 전체를 되돌린다.
+
 ## 데이터 내보내기·삭제 예약·탈퇴
 
 | 대상 | 상태 | 사용자에게 설명할 경계 |

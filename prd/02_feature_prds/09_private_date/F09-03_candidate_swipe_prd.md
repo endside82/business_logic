@@ -49,6 +49,8 @@ excludeSmoker는 SMOKER, excludeHeavyDrinker는 OFTEN, excludeCasualPurpose는 C
 
 후보 메뉴에는 차단과 대표 사진 신고가 연결돼 있다. 사진 신고는 대표 또는 첫 사진의 사진 ID를 사용하고 복귀 후 후보를 다시 읽는다. 차단 성공 시 관련 목록을 갱신하고 현재 후보를 뺀다. 차단 사유·안전 신고·실패 입력 유지는 [데이트 차단과 안전 신고](F09-07_block_prd.md)를 따른다.
 
+이미 데이트에서 차단한 상대라는 일반 CONFLICT도 차단된 상태로 처리해 현재 후보를 넘긴다. 안전 신고 중복 REPORT_ALREADY_EXISTS는 별도 실패이며 사유 시트를 유지하고 후보를 빼지 않는다.
+
 ## 코드 위치
 
 서버: DateProfileController#getCandidates, DateMatchController#performAction, DateMatchingService, DateProfileQueryRepository, MatchScoringService, MatchActionParam, MatchAction, DateBlockGuard, DateMatchQueryRepository, DateMatchExpirationScheduler, DateMatchExpirationWorker. 앱: date_profile_provider.dart, date_match_api.dart, date_match_provider.dart, candidate_card_screen.dart, dating_routes.dart.

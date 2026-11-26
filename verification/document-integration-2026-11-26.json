@@ -1,0 +1,149 @@
+{
+  "recordedAt": "2026-11-26T10:15:48+09:00",
+  "scope": "2026-11-23 문서 최신화 이력을 보존하며 원격 3개 커밋과 H-529 완료 현황을 통합한 문서·공개 HTML 검사. 새 제품 시험·기기 검수·운영 배포 증거는 아님.",
+  "localParent": "de5989128a26565359f7ad0001eb2370cb9a57c5",
+  "remoteParent": "2d909c63e1439415be1444e18c8b9b08f8687420",
+  "rootCommit": "da37cb9cc42f412138fc69862fd7904bb3ebcbb9",
+  "integration": {
+    "conflictedPaths": 22,
+    "resolution": "최신 로컬 문서 구조와 66개 작업 현황을 유지하고 원격 차단 출처·신고 중복·표시 횟수·상대 표시 정보의 누락 설명을 기능·도메인·정책 문서와 공개 HTML에 보완했다.",
+    "preservedEvidence": "11월 23일 전체 문서 대조 기록의 날짜·소스·파일 지문은 당시 근거로 보존했다. 이 기록은 수정된 산출물에 대한 후속 문서 검사만 증명한다.",
+    "remaining": "390×844 실제 이용 흐름 검수는 브라우저 연결을 확인할 수 없어 완료 처리하지 않았다. 현재 66개 항목은 조건부·후보·외부 확인을 포함하며 미완료 개발 건수와 다르다."
+  },
+  "checks": {
+    "nodeTests": {
+      "passed": 32,
+      "failed": 0
+    },
+    "sourceReferenceTables": 165,
+    "catalog": {
+      "features": 175,
+      "domains": 21,
+      "links": 371
+    },
+    "featureStatus": {
+      "pages": 7,
+      "links": 207
+    },
+    "releaseScope": {
+      "pages": 234,
+      "links": 4260
+    },
+    "trackedDerivedReferences": 9,
+    "mergeMarkers": 0
+  },
+  "artifacts": [
+    {
+      "path": "docs/assets/work-overview.snapshot.json",
+      "sha256": "03917e158f9542c9fa891452f174b93a6a9e0a066509f0c2bb9a8c65eb53e20e"
+    },
+    {
+      "path": "docs/domains/11-review.html",
+      "sha256": "742f0a8f2bd542fb912ee56235bb4b9b442d0e1860696400f7240ca28c308314"
+    },
+    {
+      "path": "docs/domains/13-profile.html",
+      "sha256": "d58cfb0ea20ef45507328ebf5b0f92fd239a2d646f851d2647641d5730942ee2"
+    },
+    {
+      "path": "docs/features/F02-01.html",
+      "sha256": "518fcad7056c755e178b2f9202c3ea5da93449711fb899878962d01fdff11f71"
+    },
+    {
+      "path": "docs/features/F05-01.html",
+      "sha256": "6e80317e4c507a9efdb795c288d001f2000863efd5ae30394576287a3cd984bd"
+    },
+    {
+      "path": "docs/features/F09-03.html",
+      "sha256": "e4a66e20c04b84bbc01b99109b6871866701120cf5bc2e88d5dfdcb368aa33ba"
+    },
+    {
+      "path": "docs/features/F09-04.html",
+      "sha256": "e791cc06e0867564772585db3deca7ccc753a0c49edaa760992892b039370925"
+    },
+    {
+      "path": "docs/features/F09-05.html",
+      "sha256": "ffadcecf6274bb91544c3bcb89448951293de5619253317b3a11044e7b285082"
+    },
+    {
+      "path": "docs/features/F09-07.html",
+      "sha256": "27bf53320407af9e72dd094ed6cb1fac49dbec5427e22e7bd3866822319e0466"
+    },
+    {
+      "path": "docs/features/F11-02.html",
+      "sha256": "7548aadc78b1c8099eb8b28863e5aaeea57c93d0c8b230d76e14545b52a00a64"
+    },
+    {
+      "path": "docs/features/F13-01.html",
+      "sha256": "65bfad4af4a29e121a313febb1e19f86f0a0334fb1c7b76e7c752a996f277f80"
+    },
+    {
+      "path": "docs/index.html",
+      "sha256": "8401c1de26ca22b7ef199f99ac10bce761059ffa9be1eb430df982e2f7123f2c"
+    },
+    {
+      "path": "docs/policies/privacy.html",
+      "sha256": "6d583d7fe5a0151ec7b16bf4f492aef777e247b464d2dccedeaacc1a19357e46"
+    },
+    {
+      "path": "docs/qa/completion-criteria.html",
+      "sha256": "9fcd01f7b8bf58ed3a1401b3c12b2b1fd44109fa98a90544620d61aa1a568000"
+    },
+    {
+      "path": "docs/qa/feature-status.html",
+      "sha256": "acd1f9ddd3a8b4d44bf260e0f99950a69f0dd134d1ed6e7d61b72f53416f55b4"
+    },
+    {
+      "path": "docs/qa/launch-status.html",
+      "sha256": "133201d16b8a01edd7bd24f8b89f424fad37a2ee8331c57e8db27922c5ea2ac3"
+    },
+    {
+      "path": "prd/00_prd_items/08_state_transitions.md",
+      "sha256": "0a8d72eeafa304ffd1dd91e991d716f188aab04657c11d1978f29b561f5c77f5"
+    },
+    {
+      "path": "prd/01_domain_prds/11_리뷰_and_신고_prd.md",
+      "sha256": "395210c878fe3671fb8ea44a2acab35bc82847d684f08634d63f6d2f9ea26613"
+    },
+    {
+      "path": "prd/01_domain_prds/13_프로필_and_설정_prd.md",
+      "sha256": "5449b60f51e42db6728eca64b13ef5115e88dbe5bd9ec3e9a43b828985311b0f"
+    },
+    {
+      "path": "prd/02_feature_prds/02_home_feed/F02-01_home-feed-main_prd.md",
+      "sha256": "ff35efbfa51b6fb120799d473558433859834b0b3aff7d88ce73753c08f2c06c"
+    },
+    {
+      "path": "prd/02_feature_prds/05_search/F05-01_keyword-search_prd.md",
+      "sha256": "7ed0030a5aaeb48f9d003293dcf0d19f976a6c71c47cdd902f50cad56b7e9a1d"
+    },
+    {
+      "path": "prd/02_feature_prds/09_private_date/F09-03_candidate_swipe_prd.md",
+      "sha256": "4d938897758a5cab2a0d62f753df6955c5859d3ec31597ca0099430f798850e3"
+    },
+    {
+      "path": "prd/02_feature_prds/09_private_date/F09-04_match_list_prd.md",
+      "sha256": "466593e325888e9894f66118b9d94e538f227548b9a3da81f5c43585a2a7a378"
+    },
+    {
+      "path": "prd/02_feature_prds/09_private_date/F09-05_chat_prd.md",
+      "sha256": "ded3939e4de8ac7becfc7770a18a3bfdaa2190bae53cdf47e034e42e14b1ee3d"
+    },
+    {
+      "path": "prd/02_feature_prds/09_private_date/F09-07_block_prd.md",
+      "sha256": "e55cb0f878364d2015f01398f2be023ed714fa282076da01c6dd09f04e18dfc0"
+    },
+    {
+      "path": "prd/02_feature_prds/11_review_report/F11-02_review-list_prd.md",
+      "sha256": "94a6ebc32f9651122bb4d8220dbe3ee9c3c816f0ff523af8a95ebbb84f3168a5"
+    },
+    {
+      "path": "prd/02_feature_prds/13_profile_settings/F13-01_profile-hub_prd.md",
+      "sha256": "60e20466d33ec5df389b884ad285b21d3d083538695a01ee84137f940e8af0f8"
+    },
+    {
+      "path": "prd/03_policy_prds/privacy_safety_policy_prd.md",
+      "sha256": "e36037e73e2cb1df9726a522d77d9dd42393dbd67e6d99caa2a9fd11ca253259"
+    }
+  ]
+}
