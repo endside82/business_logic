@@ -1,19 +1,19 @@
 # F04-07. 내 클럽 목록과 회원 활동 통계 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다. 2026-11-22 서버·앱 소스와 선택한 기존 시험 단언을 대조했다. 새 앱·이미지·실데이터 성능 시험 결과가 아니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다. 2026-11-22 서버·앱 소스와 선택한 기존 시험 단언을 대조했고, 2026-11-26 회원 통계의 신규·달별 증감·역할별 수를 서버 main `b66a954f8`·앱 main `da2a26394` 의 소스와 다시 대조했다. 새 앱·이미지·실데이터 성능 시험 결과가 아니다.
 
 ## 결론
 
 내 클럽은 현재 사용자의 회원 행과 연결된 클럽을 페이지로 읽는다. 기본 조회는 ACTIVE 클럽이며, 앱의 운영 중/가입한 구분은 소유자 번호를 기준으로 한다. ADMIN도 본인 소유가 아니면 가입한 클럽에 나타날 수 있다.
 
-회원 통계는 현재 유효한 운영진용이다. 서버는 전체 회원의 체크인 수로 순서를 정하고 페이지를 반환하지만, 현재 앱은 첫 20명만 읽어 그중 상위 5명을 표시한다. 월간 활동은 달력상 이번 달이 아니라 현재부터 한 달 전 이후의 체크인 여부이며 활동 멤버 비율은 이벤트 참석률과 다르다.
+회원 통계는 현재 유효한 운영진용이다. 서버는 전체 회원의 체크인 수로 순서를 정하고 페이지를 반환하지만, 현재 앱은 첫 20명만 읽어 그중 상위 5명을 표시한다. 월간 활동은 달력상 이번 달이 아니라 현재부터 한 달 전 이후의 체크인 여부이며 활동 멤버 비율은 이벤트 참석률과 다르다. 응답은 이번 달 신규·역할별 수·최근 12개월의 달별 가입·나감·순증감도 클럽 전체로 싣고, 앱은 이를 개요 카드·멤버 수 변화 도표·역할별 멤버 수로 보인다. 달별 셈은 사람 번호 없이 클럽·달별 수만 쌓으며 나간 수는 셈을 연 달부터다.
 
 ## 코드 위치
 
-서버: ClubController#getMyClubs·getMemberStats, ClubService#getMyClubs·applyMembershipContext, ClubQueryRepository#findMyClubs, ClubMemberStatsService, ClubMemberStatsEventAdapter·ClubMemberStatsCheckInAdapter/Port, EventRepository·EventCheckInRepository·EventCheckIn, ClubDonationRepository·ClubDonation, ClubActivityStatsVo·MemberActivityVo, ClubAbilityPolicy·ClubMemberPermissionChecker.
+서버: ClubController#getMyClubs·getMemberStats, ClubService#getMyClubs·applyMembershipContext, ClubQueryRepository#findMyClubs, ClubMemberStatsService, ClubMemberStatsEventAdapter·ClubMemberStatsCheckInAdapter/Port, EventRepository·EventCheckInRepository·EventCheckIn, ClubDonationRepository·ClubDonation, ClubActivityStatsVo·MemberActivityVo·ClubMemberMonthlyChangeVo·ClubMemberRoleCountsVo, ClubMemberMonthlyCountQueryRepository·ClubMemberEnroller·ClubMemberRemover·ClubMemberMonthlyCountBackfillService, ClubAbilityPolicy·ClubMemberPermissionChecker.
 
-앱: my_clubs_screen.dart·my_club_card.dart·my_clubs_provider.dart·club_api.dart·club_repository.dart, club_member_stats_screen.dart·club_stats_provider.dart·club_stats_api.dart·club_member_repository.dart·club_member_stats.dart, member_stats_overview.dart·role_distribution_chart.dart·member_top_list.dart. 입구는 app_menu.dart·gathering_tab_sections.dart·member_tools_routes.dart·club_management_screen.dart·club_branch_routes.dart다.
+앱: my_clubs_screen.dart·my_club_card.dart·my_clubs_provider.dart·club_api.dart·club_repository.dart, club_member_stats_screen.dart·club_stats_provider.dart·club_stats_api.dart·club_member_repository.dart·club_member_stats.dart·member_trend.dart, member_stats_overview.dart·member_trend_chart.dart·role_distribution_chart.dart·member_top_list.dart. 입구는 app_menu.dart·gathering_tab_sections.dart·member_tools_routes.dart·club_management_screen.dart·club_branch_routes.dart다.
 
 <!-- source-references:start -->
 서버 창구: `ClubController#getMyClubs`, `ClubController#getMemberStats`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
@@ -45,6 +45,9 @@ GET /api/v1/clubs/{id}/members/stats는 PagingParam을 받고 **ClubActivityStat
 | --- | --- |
 | totalMembers | 현재 클럽 회원 행 전체 수 |
 | monthlyActiveMembers | 현재 회원 중 최근 한 달 경계보다 뒤에 체크인이 하나라도 있는 사람 수 |
+| newMembersThisMonth | 달별 셈의 이번 달 가입 수. 이번 달에 들어왔다 나간 사람·다시 들어온 사람도 센다 |
+| roleCounts | 현재 회원 행의 owner·admin·member 수 |
+| monthlyChanges | 최근 12개월(이번 달 포함, 오래된 달부터)의 month(yyyy-MM)·joined·left·net(joined−left). 셈이 없는 달은 0 |
 | memberStats.content | 정렬 후 요청한 페이지의 회원 활동 행 |
 | userId·nickname·joinedAt | 현재 회원 식별·이름·가입 시각 |
 | attendedEvents | 해당 클럽 이벤트의 해당 사용자 체크인 행 수 |
@@ -57,17 +60,19 @@ GET /api/v1/clubs/{id}/members/stats는 PagingParam을 받고 **ClubActivityStat
 
 전체 회원을 체크인 수 내림차순, 동률이면 가입 시각 오름차순·회원 행 번호 오름차순으로 정렬한 뒤 페이지를 자른다. 월간 활동 수와 전체 회원 수는 요청한 페이지와 상관없이 클럽 전체를 기준으로 한다. 월간 경계는 LocalDateTime.now().minusMonths(1)이며 정확히 경계와 같은 체크인은 isAfter 조건에 들지 않는다.
 
+달별 가입·나감은 사람 번호 없이 클럽·그 달 1일·가입 수·나간 수만 쌓는 표에서 읽는다. 회원 행을 넣는 길(자유 가입·신청 승인·초대 수락·클럽 만들기)과 지우는 길(본인 탈퇴·계정 탈퇴·강퇴·제재 강퇴·관리자 강제 탈퇴·차단·클럽 폐쇄)이 같은 트랜잭션에서 센다. 역할 바꾸기·클럽장 넘기기는 세지 않는다. 지난 달 가입 수는 유지보수 기동의 채우기가 가입 종결 기록과 회원 가입일로 채우며 몇 번 돌아도 같다. 나간 수는 지난 기록이 없어 셈을 연 달부터 쌓인다. 역할별 수는 현재 회원 행에서 센다.
+
 페이지에 들어간 회원의 닉네임·기부액을 보완하고, 참석 이력이 없으면 참석 수0·최근 참석일 null이다. 기부액은 현재 조회/합계 코드에서 상태 필터나 refundAmount 차감을 적용하지 않는다. 따라서 취소·반환을 뺀 순기부액 또는 현재 기금 잔액으로 해석하지 않는다.
 
 ## 앱이 제공하는 통계
 
 현재 공급자는 page=0, size=20만 요청한다. 모델은 memberStats.content를 활동 List로 읽고 페이지 메타데이터를 보관하지 않는다. 화면에는 다음 페이지 버튼이나 setPage 동작이 없다. 서버의 페이지 계약과 앱의 전체 명단 탐색 기능을 구분한다.
 
-요약은 전체 멤버·활동 중인 멤버·활동 멤버 비율의 세 항목이다. 비율은 monthlyActiveMembers / totalMembers × 100을 반올림하고 전체가0이면0%다. 이벤트별 참석률, 등록 대비 체크인 비율, 신규 회원 수를 표시하는 지표가 아니다.
+개요 카드는 전체 멤버·활동 중인 멤버·이번 달 신규·활동 멤버 비율의 네 항목이다. 비율은 monthlyActiveMembers / totalMembers × 100을 반올림하고 전체가0이면0%다. 이벤트별 참석률이나 등록 대비 체크인 비율이 아니다. 이번 달 신규는 서버 값을 그대로 보이며, 그 칸이 없는 옛 서버 응답이면 0명으로 보이지 않고 카드를 그리지 않는다.
 
-RoleDistributionChart라는 파일 이름과 달리 실제 화면은 전체/월간 활동 수를 보여 주는 멤버 현황이다. 역할별 OWNER/ADMIN/MEMBER 파이 차트가 아니고 이를 위해 별도 회원 목록을 읽지도 않는다. 활동 TOP 5는 서버 순서의 첫5명을 사용하며 닉네임은 PersonLink, 참석 횟수를 함께 표시한다.
+멤버 수 변화는 가입·나감·멤버 변화(순증감) 세 선의 도표다. 1개월·3개월·6개월·1년 가운데 처음은 3개월이고, 서버가 준 12개월을 가까운 달부터 잘라 그리므로 기간을 바꿔도 다시 읽지 않는다. 도표 아래에 「나간 멤버 수는 이 기능을 연 달부터 셉니다.」 를 보인다. 달 목록이 비면 변화 데이터 없음 상태다.
 
-현재 화면은 증감 추세 차트·기간 선택·신규 회원 지표를 배치하지 않는다. 파일이 존재한다는 이유만으로 member_trend_chart.dart를 이 화면의 실행 기능으로 계산하지 않는다. 로딩·본문 오류 재시도·당겨 새로고침을 제공하고, 활동 목록이 비어 있으면 활동 데이터 없음 상태를 보여 준다.
+역할별 멤버 수는 클럽장·운영진·멤버 줄마다 전체에서 차지하는 비율 막대와 사람 수다. 원 도표가 아니며 roleCounts가 없는 옛 응답이면 구역을 그리지 않는다. 활동 TOP 5는 서버 순서의 첫5명을 사용하며 닉네임은 PersonLink, 참석 횟수를 함께 표시한다. 로딩·본문 오류 재시도·당겨 새로고침을 제공하고, 활동 목록이 비어 있으면 활동 데이터 없음 상태를 보여 준다.
 
 ## 조회 거절 뒤의 복구
 
@@ -80,7 +85,8 @@ RoleDistributionChart라는 파일 이름과 달리 실제 화면은 전체/월�
 | Risk | 기본 목록 범위와 구역 이름 | ACTIVE 기본·소유자 기준 운영 구역이므로 모든 상태/ADMIN 운영 클럽 목록과 다름 | 사용자 안내와 과거 소속 조회 수요 구분 |
 | Risk | 기부 지표의 순액 해석 | 상태/반환액을 빼지 않은 amount 합계 | 취소 기부의 지표 포함 정책 정렬. 현재 앱 TOP5에는 기부액을 표시하지 않음 |
 | Risk | 통계의 데이터 규모 | 결과는 페이지여도 서버가 현재 회원·해당 이벤트 체크인을 먼저 모두 읽고 정렬 | 실제 규모에서 조회량·응답 시간 확인 |
-| 제한 | 화면 범위와 갱신 | 첫20명 중TOP5·전체요약만 제공. 통계 공급자는 계정 범위를 구독하며 회원 변경 신호의 자동 재조회는 별도 연결돼 있지 않음 | 전체 활동 명단/실시간 갱신이 필요하면 별도 범위 결정 |
+| 제한 | 화면 범위와 갱신 | 첫20명 중TOP5와 클럽 전체의 요약·달별 증감·역할별 수를 제공. 통계 공급자는 계정 범위를 구독하며 회원 변경 신호의 자동 재조회는 별도 연결돼 있지 않음 | 전체 활동 명단/실시간 갱신이 필요하면 별도 범위 결정 |
+| 제한 | 나간 수의 시작 | 나간 수는 셈을 연 달부터만 쌓이고, 지난 달 가입 수는 남은 가입 기록으로만 채운다. 폐쇄한 클럽·탈퇴를 마친 계정의 지난 가입 기록은 이미 지워져 채우지 못함 | 운영 반영 때 표 만들기와 가입 수 채우기 한 번 |
 | 미검증 | 실제 앱·성능 | 소스와 기존 시험 단언만 대조 | 이미지·대량 데이터 실행 성공으로 간주하지 않음 |
 
 ## 수용 기준과 검증 근거
@@ -96,6 +102,7 @@ RoleDistributionChart라는 파일 이름과 달리 실제 화면은 전체/월�
 - **AC-09 정렬과 페이지:** 전체 참석순/가입시각/회원번호 정렬 뒤 페이지를 자르고 전체 지표는 페이지와 독립적이다.
 - **AC-10 최근 한 달:** 달력상 이번 달과 최근 한 달의 엄격한 시각 경계·최근 참석일 null을 구분한다.
 - **AC-11 지표 의미:** 활동 멤버 비율·기부 행 합계와 이벤트 참석률·순기부액을 혼동하지 않는다.
-- **AC-12 현재 화면:** 요약3개·멤버 현황·서버순서TOP5·PersonLink를 제공하고 없는 기간/추세/역할차트/페이지 동작을 완료 기능으로 적지 않는다.
+- **AC-12 현재 화면:** 개요 카드 넷·멤버 수 변화 도표와 기간 고르기·서버순서TOP5·PersonLink·역할별 비율 막대를 제공하고, 옛 응답에서는 신규 카드와 역할 구역을 그리지 않으며, 없는 페이지 동작을 완료 기능으로 적지 않는다.
+- **AC-13 달별 셈:** 회원 행을 넣고 지우는 모든 길이 같은 트랜잭션에서 사람 번호 없이 달별 가입·나감을 세고, 역할 바꾸기·넘기기는 세지 않으며, 이번 달 신규와 도표의 이번 달 가입이 같다.
 
-검증 근거: my_clubs_and_bans_paging_test.dart의 21개 목록·끝까지 읽은 뒤 구역 수·추가 실패 같은 페이지 재시도, ClubMemberStatsServiceTest의 체크인 기반 집계·전체 참석 순서로 페이지 분할·페이지와 무관한 활동 수 단언을 읽었다. 새 시험을 실행하지 않았다. 과거 E2E 표면 확인 원문은 로컬 시나리오 문서에 인용 보존하며 현재 계약이나 새 실행 통과로 합산하지 않는다.
+검증 근거: my_clubs_and_bans_paging_test.dart의 21개 목록·끝까지 읽은 뒤 구역 수·추가 실패 같은 페이지 재시도, ClubMemberStatsServiceTest의 체크인 기반 집계·전체 참석 순서로 페이지 분할·페이지와 무관한 활동 수 단언을 읽었다. 새 시험을 실행하지 않았다. 과거 E2E 표면 확인 원문은 로컬 시나리오 문서에 인용 보존하며 현재 계약이나 새 실행 통과로 합산하지 않는다. 2026-11-26 대조는 서버·앱 소스만 읽었다.
