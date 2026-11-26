@@ -1250,8 +1250,8 @@
     {
       "id": "H-557",
       "title": "앞선 패키지를 기다리는 라이브러리 판 올리기",
-      "description": "판 최신화의 남은 몫이다. 지난 판 올리기의 결과는 [결과](VERSION_UPDATE_2026-11-06/README.md) 에 있다. ① 앱을 `material_ui` 1.10.0·`cupertino_ui` 1.1.6 으로 옮기고 go_router 를 18.1.3 으로 올리는 일은 2026-11-08 밤 늦게 한 커밋으로 끝났다(앱 `5f45dda0f`, 골든 20 파일 통과, 화면 전환과 옛 가져오기 재유입을 지키는 시험). 남은 것은 다리 하나다. flutter_quill 이 옛 테마를 읽어 편집기·보기 네 곳만 `QuillMaterialBridge` 로 감쌌다(앱 전체를 감싸면 색을 주지 않은 아이콘 단추의 색이 바뀐다). 다리는 없어질 예정인 API 라 flutter_quill 이 새 패키지로 옮기면 걷는다. iOS 실기기의 뒤로 밀기와 편집기 커서 색은 눈으로 보지 않았다. ② html 0.15.6 은 flutter_html 이 맞출 때까지 앞선 패키지를 기다린다. ③ build_runner 2.16 은 riverpod_generator 가 맞출 때까지 앞선 패키지를 기다린다. ④ TypeScript 6.0 은 typescript-eslint 가 맞출 때까지 앞선 패키지를 기다린다. ⑤ JDK 27 은 LTS 가 아니라 다음 판이 나오면 6개월 안에 올린다. ⑤ 에 더함: JDK 27 실행 로그에 Netty 의 네이티브 접근 경고가 남는다. 지금 동작에는 영향이 없고, 막히는 판이 오면 `--enable-native-access` 를 더한다.",
-      "condition": "그 패키지가 맞추면(html·build_runner·TypeScript·flutter_quill 다리). JDK 는 다음 판이 나오면",
+      "description": "판 최신화의 남은 몫이다. 지난 판 올리기의 결과는 [결과](VERSION_UPDATE_2026-11-06/README.md) 에 있다. ① 앱을 `material_ui` 1.10.0·`cupertino_ui` 1.1.6 으로 옮기고 go_router 를 18.1.3 으로 올리는 일은 2026-11-08 밤 늦게 한 커밋으로 끝났다(앱 `5f45dda0f`, 골든 20 파일 통과, 화면 전환과 옛 가져오기 재유입을 지키는 시험). 남은 것은 다리 하나다. flutter_quill 이 옛 테마를 읽어 편집기·보기 네 곳만 `QuillMaterialBridge` 로 감쌌다(앱 전체를 감싸면 색을 주지 않은 아이콘 단추의 색이 바뀐다). 다리는 없어질 예정인 API 라 flutter_quill 이 새 패키지로 옮기면 걷는다. iOS 실기기의 뒤로 밀기와 편집기 커서 색은 눈으로 보지 않았다. ② html 0.15.6 은 flutter_html 이 맞출 때까지 앞선 패키지를 기다린다. ③ build_runner 상한은 2026-11-26 해소했다. riverpod_generator 4.0.10이 build 5를 지원해 build_runner 2.17.1·build 5.0.0·riverpod_annotation 4.0.8·Flutter Riverpod 3.5.0으로 올리고 존재 여부 조회를 새 API로 옮겼다. [코드 생성기 호환 검증](../../community_app/audit/app_quality/evidence/H557-BUILD-GENERATORS-20261126.json)을 따른다. 운영 앱 배포·실기 검수는 별도다. ④ TypeScript 6.0 은 typescript-eslint 가 맞출 때까지 앞선 패키지를 기다린다. ⑤ JDK 27 은 LTS 가 아니라 다음 판이 나오면 6개월 안에 올린다. ⑤ 에 더함: JDK 27 실행 로그에 Netty 의 네이티브 접근 경고가 남는다. 지금 동작에는 영향이 없고, 막히는 판이 오면 `--enable-native-access` 를 더한다.",
+      "condition": "그 패키지가 맞추면(html·TypeScript·flutter_quill 다리). build_runner 상한은 2026-11-26 해소. JDK 는 다음 판이 나오면",
       "scope": "now",
       "kind": "정비",
       "section": "7. 정비(제품 동작 아님)",
@@ -1848,7 +1848,7 @@
     },
     {
       "name": "앱",
-      "commit": "dadfbd073"
+      "commit": "da2a26394"
     },
     {
       "name": "관리자 웹",
@@ -1859,7 +1859,7 @@
       "commit": "231ecae"
     }
   ],
-  "sourceDigest": "4a1680faaf021861bad6492419e24b5817df2b3ddec65da6164d9ce421396b1d",
+  "sourceDigest": "0487074a10ed8592e4de82bef931d01ed73ad2347070ad46a3486145436fde76",
   "sourceDeclaredDate": "2026-11-15",
   "summary": {
     "lead": "현재 작업 정본의 추적 항목과 배포 기록을 구분합니다. 공개·관리자 API는 11월 15일, MCP 허용 설정과 소개 웹 분석은 11월 22일의 반영 기록입니다. 그 뒤 소스 변경과 남은 실제 이용 확인은 작업별 조건을 따릅니다.",
@@ -1871,7 +1871,7 @@
       "방문 분석: 11월 22일 소개 웹 GA4 연결·운영 반영과 지정 로컬 검증 세션의 실제 수신을 확인한 기록이 있습니다. 운영 일반 방문자의 수신 검증은 별도이며, H-590에는 원격 관측 수집처·최소 대시보드가 남습니다.",
       "관리자: 11월 22일 로컬 실제 서버 6개 여정과 모의 응답 2개 UI 흐름의 네이티브 브라우저 확인 기록이 있습니다. 그 결과를 운영 배포나 모든 관리자 기능의 통과로 확대하지 않습니다."
     ],
-    "checks": "2026-11-26 작업 정본 동기화입니다. 이미지 빌드의 미사용 관리자 주소 입력 제거와 배포 도구 시험 62건 통과를 반영했습니다. 제품·운영·브라우저·기기 확인과 배포 상태는 기존 실행 근거의 범위를 유지합니다.",
+    "checks": "2026-11-26 작업 정본 동기화입니다. 이미지 빌드의 미사용 관리자 주소 입력 제거(배포 도구 시험 62건)와 코드 생성기 호환 상한 해제(앱 전체 분석 0건·최종 회귀 5,800건)를 반영했습니다. 제품 흐름 전체·운영·브라우저·기기 확인과 배포 상태는 기존 실행 근거의 범위를 유지합니다.",
     "inventory": "현재 정본의 추적 항목 66개입니다. 조건부·제품 후보·외부 확인을 포함하므로 미완료 개발 수나 완료율이 아닙니다.",
     "categoryCounts": {
       "2": 9,
@@ -1957,22 +1957,22 @@
     "decisions": "후보 고정·운영 서버 확정 뒤 복구 규약·기기 연결의 사용자 보류와 작업별 착수 조건을 유지합니다. 내부 테스트·임시 결제·소스 대조를 정식 공개로 확대하지 않습니다."
   },
   "publication": {
-    "updatedAt": "2026-11-26T10:06:29+09:00",
+    "updatedAt": "2026-11-26T10:30:21+09:00",
     "sourceBranch": "local docs worktree reference",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "a16afd5e1b561fec900b3bd029c1ec78e20f7d12",
+    "sourceCommit": "da37cb9cc42f412138fc69862fd7904bb3ebcbb9",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "b9c444e0396699695ac5be7a9b7c15d19fcd9966845465f6f1895dc49a236d75",
-    "worklistSha256": "aae3550e60ef6a887f6a8244fa843cdd350be5b3ec2dc5551c78e0217ea508cb",
+    "sourceSha256": "9fa1ba99562e7c1153194e2170daffffe522aafae276fc24023fd0371fb2036a",
+    "worklistSha256": "96c8425b179254bd2ac7748f63e263437b7c9674736335ef828a9d0774a30fae",
     "evidenceSha256": {
-      "docs/plan/NEXT_WORK.md": "b9c444e0396699695ac5be7a9b7c15d19fcd9966845465f6f1895dc49a236d75",
-      "docs/plan/WORKLIST.md": "aae3550e60ef6a887f6a8244fa843cdd350be5b3ec2dc5551c78e0217ea508cb",
+      "docs/plan/NEXT_WORK.md": "9fa1ba99562e7c1153194e2170daffffe522aafae276fc24023fd0371fb2036a",
+      "docs/plan/WORKLIST.md": "96c8425b179254bd2ac7748f63e263437b7c9674736335ef828a9d0774a30fae",
       "docs/release-gate/evidence/API-RELEASE-20261115a.json": "3577220a651c1d65997d57067f6d668894ba1b489fac9ceb688b1099624e551d",
       "docs/release-gate/evidence/MCP-RELEASE-20261115m.json": "14b8676f51b639e4669c74bfffc5195952ed7aa30058e7dea3acc9f69a8aff00",
       "docs/release-gate/evidence/GA4-CONNECTION-20261122.json": "111659d4cdfe4eabf48a403251fdf4928f0553c003975b6a533e59c02572186f",
       "docs/release-gate/evidence/ADMIN-GAPS-20261122.json": "b305a117b85ec339f679435e298eb9aa71ed6f6db228483bc804abc05300ed12"
     },
-    "method": "2026-11-26 H-529 완료와 현재 작업 정본 동기화. 기존 배포·제품 검증 기록은 해당 실행 시점의 근거로 유지한다.",
+    "method": "2026-11-26 H-529 완료와 H-557 코드 생성기 호환 상한 해제 반영. 기존 배포·제품 검증 기록은 해당 실행 시점의 근거로 유지한다.",
     "regenerate": "python3 verification/refresh_work_overview.py",
     "check": "python3 verification/refresh_work_overview.py --check; node --test verification/work_overview.test.mjs"
   }
