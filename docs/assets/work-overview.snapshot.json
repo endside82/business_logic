@@ -296,7 +296,6 @@
       "stages": [],
       "ids": [
         "H-568",
-        "H-669",
         "H-621",
         "H-609",
         "H-179",
@@ -320,11 +319,7 @@
         "H-575",
         "H-557",
         "H-655",
-        "H-670",
-        "H-671",
-        "H-672",
         "H-673",
-        "H-674",
         "H-578",
         "H-579",
         "H-662",
@@ -733,27 +728,6 @@
       "source": "NEXT_WORK.md#3-고칠-결함",
       "evidence": "차수 14 발견 대장, 2026-11-08 현금 정기모임 여정 서버 자리와 앱 장면",
       "evidenceLinks": []
-    },
-    {
-      "id": "H-669",
-      "title": "클럽 기금 출금 양식의 최소 금액을 서버 미리 보기 값으로 판정하기",
-      "description": "앱의 기금 출금 양식(`withdrawal_form_provider.dart`)이 최소 금액을 고정 10,000 으로 판정하고 안내 글 「최소 출금 금액은 10,000원입니다」 도 고정이다. 2026-11-23 부터 서버의 기금 출금 미리 보기 응답(`GET /api/v1/clubs/{id}/fund/withdrawal-quote`)에 `minAmount` 가 오는데 쓰지 않아, 서버 값이 바뀌면 앱이 다른 기준으로 막거나 통과시킨다. 판정은 전부터 있었다. 미리 보기의 `minAmount` 로 판정하고 안내 글도 그 값으로 만든다.",
-      "condition": "기금 출금 양식을 다음에 고칠 때. 서버의 최소 금액을 바꾸기 전에",
-      "scope": "now",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "2026-11-26 묶음 검수(앱 검토의 결함 6), [디자인 체계 현황판](DESIGN_SYSTEM_2026-11-21/BOARD.md) D141",
-      "evidenceLinks": [
-        {
-          "label": "디자인 체계 현황판",
-          "href": "DESIGN_SYSTEM_2026-11-21/BOARD.md"
-        }
-      ]
     },
     {
       "id": "H-13",
@@ -1307,69 +1281,6 @@
       "evidenceLinks": []
     },
     {
-      "id": "H-670",
-      "title": "승차 정보 실 DB 시험의 문맥에 빠진 빈 넣기",
-      "description": "공개 API 실 DB 시험 `TransportPrivateDetailsDataJpaTest` 9건이 원격 main 에서도 실패한다. 슬라이스 문맥의 `UserDeactivationFinalizer` 가 2026-11-09(`07d848c0b`, 탈퇴 실시간 해지 메시지)부터 받는 `SessionRevocationPublisher` 빈이 시험의 `@Import`·`@MockitoBean` 에 없어 문맥이 뜨지 못한다. 제품 결함은 아니다. 그 빈을 시험 구성에 넣고 9건을 다시 돌린다.",
-      "condition": "다음 실 DB 관문 전에",
-      "scope": "now",
-      "kind": "정비",
-      "section": "7. 정비(제품 동작 아님)",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#7-정비제품-동작-아님",
-      "evidence": "2026-11-26 묶음 실 DB 관문(원격 main 과 묶음 두 자리에서 같은 9건), [디자인 체계 이어 하기](DESIGN_SYSTEM_2026-11-21/HANDOFF.md)",
-      "evidenceLinks": [
-        {
-          "label": "디자인 체계 이어 하기",
-          "href": "DESIGN_SYSTEM_2026-11-21/HANDOFF.md"
-        }
-      ]
-    },
-    {
-      "id": "H-671",
-      "title": "정기모임 관리자 미리 보기 토큰 커밋 시험이 남기는 분개 지우기",
-      "description": "`RegularMeetingAdminPreviewTokenCommitTest`(2026-11-15 `b87c15efd`)가 커밋한 환불 분개 7쌍(차변 지갑, 대변 미지급금, 「환불 - 호스트 수익 차감」, 합 -130,000)을 지우지 않는다(뒷정리에 `accounting_ledger` 가 없다). 같은 시험 DB 에서 뒤에 도는 `AccountingLedgerKernelInvariantDataJpaTest` 의 두 장면이 장부 전체의 `CREATOR_PAYABLE` 위치를 읽어 실패한다. 새 전용 DB 에서는 모두 통과한다. 제품 결함은 아니다. 그 시험의 뒷정리에 장부 행을 넣는다. 그 전까지 관문은 새 전용 시험 DB 로 돈다(2026-11-26 관문 DB 와 비교 DB 에는 그 행이 남아 있다).",
-      "condition": "다음 실 DB 관문 전에",
-      "scope": "now",
-      "kind": "정비",
-      "section": "7. 정비(제품 동작 아님)",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#7-정비제품-동작-아님",
-      "evidence": "2026-11-26 묶음 실 DB 관문(비교 DB 에서 그 시험만 돌린 뒤 같은 7쌍이 생기고 원장 커널 시험이 같은 두 건으로 실패), [디자인 체계 이어 하기](DESIGN_SYSTEM_2026-11-21/HANDOFF.md)",
-      "evidenceLinks": [
-        {
-          "label": "디자인 체계 이어 하기",
-          "href": "DESIGN_SYSTEM_2026-11-21/HANDOFF.md"
-        }
-      ]
-    },
-    {
-      "id": "H-672",
-      "title": "문서 검사의 기준선 실패(「현재 상태 연결 누락」) 풀기",
-      "description": "`node scripts/check-release-docs.mjs` 가 문서 main 기준선에서 실패한다. 검사는 현재 문서의 머리 줄이 「현재 상태」 나 「현재 할 일」 로 현재 상태 문서를 잇기를 바라는데, 업무 규칙 PRD 250여 개의 머리 줄은 「현재 작업 순서는 [앞으로 할 일]…」 꼴이고, `docs/plan/APP_NAVIGATION_2026-11-02/UI_UX_OPERATIONS_AUDIT_2026-11-15.md` 와 `docs/ui-ux/screens/13-event.md` 도 걸린다. 정식 실행은 첫 문제에서 멈추고, 같은 규칙으로 끝까지 모으면 496 가운데 253 이 이 꼴이다. 검사의 꼴과 문서 머리 줄 가운데 어느 쪽을 맞출지 정해 기계로 바꾼다. 그동안 작업자는 고친 파일만 같은 규칙으로 견줘 새 문제 0 을 본다.",
-      "condition": "문서 검사를 다음에 정식으로 돌리기 전에",
-      "scope": "now",
-      "kind": "정비",
-      "section": "7. 정비(제품 동작 아님)",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#7-정비제품-동작-아님",
-      "evidence": "2026-11-26 디자인 체계 D115 의 문서 검사, [디자인 체계 현황판](DESIGN_SYSTEM_2026-11-21/BOARD.md)",
-      "evidenceLinks": [
-        {
-          "label": "디자인 체계 현황판",
-          "href": "DESIGN_SYSTEM_2026-11-21/BOARD.md"
-        }
-      ]
-    },
-    {
       "id": "H-673",
       "title": "2026-11-26 디자인 체계·돈 정책 갈래의 다듬기 후보",
       "description": "문서·도구: 관리자 [정산 명세](../ui-ux/admin/36-admin-settlements.md)의 송금 처리·취소 뒤 입금 확인 화면에 이의로 잠긴 처리(D90)의 표시가 없다. 업무 규칙 기능 목록 세 곳의 F04-07 요약 문장이 달별 셈 전이다. 앱 화면 기록 폴더의 나머지 파일(`menu_entries.json` 따위)을 도구로 다시 뽑는다. 앱 부품: 고르기 창 둘의 사람 줄을 공통 부품으로, 상품 상세·제작자 프로필의 모래시계 카드가 불러오기와 빈 자리를 같이 그리는 것, 자동 충전 화면의 결제 수단 없음 빈 자리의 단추 글, 지갑의 손수 짠 입구 카드 셋(내 정산·출금 내역·멤버십)을 공통 카드 면으로(누름 기록 `untracked-tap` 기준선 3). 가드·시험: 누름 이름 기준선의 이미 줄어든 두 줄 내려 적기, 앱 말 검사에 옛 개설권 이름 신호, 토스트·대화상자 글을 읽는 시험 도우미를 하나로(공통 부품의 그리는 꼴을 바꾸자 간접 시험 33건이 한꺼번에 깨졌다), 출금 행을 남기는 커밋형 시험 넷의 뒷정리(지급 공급자 기동 검사 시험의 조건 갈래를 없애려면). 서버 글: 관리자 탈퇴 회원 보류 창구의 머리 주석과 시험 둘의 보류 표 설명이 새 원천(유예 만료 파기 때 생긴다)을 모른다. 서버 시드에 그리는 코드가 없는 알림 틀 둘(`PAYMENT_COMPLETED`·`REFUND_PG_COMPLETED`)이 남아 있다. 그 밖의 작은 것은 [디자인 체계 이어 하기](DESIGN_SYSTEM_2026-11-21/HANDOFF.md) 6번 섹션에 있다. 지갑 단위를 넓히는 일은 정할 것 128, 낱말 단위 줄바꿈을 넓히는 일은 129 다.",
@@ -1387,31 +1298,6 @@
         {
           "label": "디자인 체계 현황판",
           "href": "DESIGN_SYSTEM_2026-11-21/BOARD.md"
-        }
-      ]
-    },
-    {
-      "id": "H-674",
-      "title": "묶음을 올리는 대본이 맥 확장 속성(`._이름` 파일)을 서버 묶음에 싣지 않게 하기",
-      "description": "`deploy/production/aws/90_bootstrap/push-bundle.sh` 의 `tar -czf` 가 맥 확장 속성을 실어, 서버에 풀린 묶음마다 `._이름`(AppleDouble) 파일이 생긴다. 2026-11-26 운영 묶음의 `web/` 에는 진짜 파일 65개와 함께 89개가 있었고, 서버 tar 는 풀 때마다 `LIBARCHIVE.xattr.com.apple.provenance` 머리를 무시한다고 알린다. 그래서 허용 목록 비우기의 첫 실행이 묶음 대조에서 멈췄다(운영은 바뀌지 않았다). `COPYFILE_DISABLE=1`(또는 `--no-xattrs`)로 막는다. 같은 폴더의 `install-ops-timers.sh` 31~32줄은 이미 `COPYFILE_DISABLE=1` 을 쓰고 `push-bundle.sh` 만 빠졌다. `web/` 밖(`secrets/`·nginx 설정)에도 생기는지 보고, 서버에서 `web/` 를 재는 다른 대본도 같은 규칙(`! -name '._*'`)인지 본다(2026-11-26 비우기 대본은 고쳤고, 쓰지 않는 옛 준비물 `~/saisoop-ops/releases/20261122c/deploy-close.sh` 는 빼지 않는다).",
-      "condition": "다음 서버 배포 전에",
-      "scope": "now",
-      "kind": "정비",
-      "section": "7. 정비(제품 동작 아님)",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#7-정비제품-동작-아님",
-      "evidence": "[허용 목록 비우기 근거](../release-gate/evidence/MCP-RELEASE-20261126c.json)의 `first_run_stop`, [운영 서버 구성](../release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md) 9번 섹션",
-      "evidenceLinks": [
-        {
-          "label": "허용 목록 비우기 근거",
-          "href": "../release-gate/evidence/MCP-RELEASE-20261126c.json"
-        },
-        {
-          "label": "운영 서버 구성",
-          "href": "../release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md"
         }
       ]
     },
@@ -1795,7 +1681,7 @@
     {
       "id": "H-531",
       "title": "출시 후보에서 실서버 앱 시험과 손 검사 돌리기",
-      "description": "사용자 2026-10-31: 출시 후보 고정은 아직이라 그때 한다. 차수 7 이 바꾼 길을 출시 후보에서 실제로 돌린다. 차수 7: 앱 통합 시험 열네 개(실서버, 이번에는 컴파일·형만 확인: `regular_meeting_content_journey`·`seed_admin_console_surface`·`seed_event_authoring_surface`·`club_activity/governance_e2e`·`club_activity/warning_e2e`(셋은 앱 서버 값 갈래가 화면 문구를 바꾸며 찾는 글자를 고쳤다)·`seed_wallet_monetization_detail`·`seed_lifecycle_state_surface`·`release_core_journey`·`seed_event_application_mutation`·`seed_payment_refund`·`seed_club_mutation`·`seed_regular_meeting_matrix`·`auth_flow`·`seed_post_0615_changed_source`)을 돌린다. 차수 7: 관리자 웹 지원 화면 두 창 겹친 연결의 손 검사(실제 관리자 API 로 `/support?issueId=…` 를 두 창에 열어 같은 문의를 겹쳐 연결, 둘째 연결 409 와 사람이 읽는 까닭)를 한다. 차수 7: 운영 묶음으로 띄운 공개·관리자 API 의 기동 리허설 둘(`deploy/production/verify_rehearsal.py`, 풀 꼬리표가 다른 두 풀에서 복제본 기동 검사가 지나는지)을 돌린다. 차수 8의 공유 publication_blocked 열·운영자 숨김/해제 후 재발행·실제 완료 푸시 뒤 지갑 갱신도 같은 배포본에서 확인한다. 실서버·시드 준비는 앱의 `scripts/e2e/README.md` 와 `docs/testing/SCENARIO_TEST_RUNBOOK.md` 를 따르고, 전용 시험 DB·시드와 공개·관리자 API 또는 격리 리허설 묶음이 있어야 한다. 영수증 창구는 `Idempotency-Key` 가 필수라 실서버 장면이 그 창구를 직접 부르면 키를 싣는다. 차수 10 이 바꾼 길의 앱 통합·e2e 시험 여섯 파일(검수표 줄 다섯: `integration_test/seed_event_authoring_surface_test.dart`·`seed_event_application_mutation_test.dart`, `seed_regular_meeting_matrix_test.dart`, `seed_search_memory_surface_test.dart`, `bulk_screen_smoke_test.dart`, `seed_login_flow_test.dart` 의 앱 버전 검사)도 같은 출시 후보 전체 실행에서 한 번 돌린다(앱 시험은 맥 전체에서 하나씩). 차수 11 VD 의 기기 확인 넷과 관리자 대사 화면의 정산 합계도 같은 출시 후보에서 본다(VD 검수표 손 확인 M3~M7). 기기 확인 ①: 정산 이의 알림 64·65 를 누르면 이의 화면이 나온다. 기기 확인 ②: 모집 마감 뒤 정원 설정을 저장해도 마감이 유지된다. 기기 확인 ③: 플랜 모임 만들기에 반복 토글이 없다. 기기 확인 ④: 클럽 반복을 오늘 시작·종료일 지정으로 만들면 오늘 늦은 회차와 종료일 당일 회차가 생긴다. 브라우저 전체 흐름 시험 P75 전체 프로필(`community_app/scripts/e2e/run_p75_flutter_full_flow_recheck.sh --profile full`)도 같은 출시 후보 전체 실행에서 한 번 돌린다. 마지막 전체 실행(2026-05-14)은 50단계 중 22단계가 실패했고, 그 뒤에는 스모크의 실패 축 둘만 다시 돌린 기록뿐이라 22단계가 지금 어떤지 모른다. 먼저 볼 것은 사진첩 화면의 세로 넘침과 500(43단계), 내 정보 처리 상태 글(14·17단계), 알림의 깨진 글(36단계)이다. 기록은 git 에 없는 이 맥의 로컬 파일 `community_app/docs/testing/P75_FULL_RECHECK_HANDOFF_2026-05-14.md` 다. 공개·관리자 서버를 실제로 함께 띄워 관리자 비상 권한 변경과 스탬프 명령의 교착을 확인한다. 지금 시험은 SQL 잠금 차례만 흉내 낸다([스탬프 계획](stamp/CLUB_STAMP_PLAN_2026-09-05.md)). 환불 증빙 실제 열람(H-245 를 합침, 2026-11-08 밤 늦게 권고 재검토): 운영 S3 는 있고 시험용 S3 대역(`ScenarioStorageDouble`)으로 서명 주소 길은 증명됐다. 손 검사에서 참가자와 호스트가 각각 정기모임 환불 증빙을 실제 저장소에서 한 번 열어 기록한다(근거: [출시 후 보완 항목 — 남은 작업](../release-gate/plans/POST_LAUNCH_GAP_CLOSURE_PLAN.md)).",
+      "description": "사용자 2026-10-31: 출시 후보 고정은 아직이라 그때 한다. 차수 7 이 바꾼 길을 출시 후보에서 실제로 돌린다. 차수 7: 앱 통합 시험 열네 개(실서버, 이번에는 컴파일·형만 확인: `regular_meeting_content_journey`·`seed_admin_console_surface`·`seed_event_authoring_surface`·`club_activity/governance_e2e`·`club_activity/warning_e2e`(셋은 앱 서버 값 갈래가 화면 문구를 바꾸며 찾는 글자를 고쳤다)·`seed_wallet_monetization_detail`·`seed_lifecycle_state_surface`·`release_core_journey`·`seed_event_application_mutation`·`seed_payment_refund`·`seed_club_mutation`·`seed_regular_meeting_matrix`·`auth_flow`·`seed_post_0615_changed_source`)을 돌린다. 차수 7: 관리자 웹 지원 화면 두 창 겹친 연결의 손 검사(실제 관리자 API 로 `/support?issueId=…` 를 두 창에 열어 같은 문의를 겹쳐 연결, 둘째 연결 409 와 사람이 읽는 까닭)를 한다. 차수 7: 운영 묶음으로 띄운 공개·관리자 API 의 기동 리허설 둘(`deploy/production/verify_rehearsal.py`, 풀 꼬리표가 다른 두 풀에서 복제본 기동 검사가 지나는지)을 돌린다. 차수 8의 공유 publication_blocked 열·운영자 숨김/해제 후 재발행·실제 완료 푸시 뒤 지갑 갱신도 같은 배포본에서 확인한다. 실서버·시드 준비는 앱의 `scripts/e2e/README.md` 와 `docs/testing/SCENARIO_TEST_RUNBOOK.md` 를 따르고, 전용 시험 DB·시드와 공개·관리자 API 또는 격리 리허설 묶음이 있어야 한다. 영수증 창구는 `Idempotency-Key` 가 필수라 실서버 장면이 그 창구를 직접 부르면 키를 싣는다. 차수 10 이 바꾼 길의 앱 통합·e2e 시험 여섯 파일(검수표 줄 다섯: `integration_test/seed_event_authoring_surface_test.dart`·`seed_event_application_mutation_test.dart`, `seed_regular_meeting_matrix_test.dart`, `seed_search_memory_surface_test.dart`, `bulk_screen_smoke_test.dart`, `seed_login_flow_test.dart` 의 앱 버전 검사)도 같은 출시 후보 전체 실행에서 한 번 돌린다(앱 시험은 맥 전체에서 하나씩). 차수 11 VD 의 기기 확인 넷과 관리자 대사 화면의 정산 합계도 같은 출시 후보에서 본다(VD 검수표 손 확인 M3~M7). 기기 확인 ①: 정산 이의 알림 64·65 를 누르면 이의 화면이 나온다. 기기 확인 ②: 모집 마감 뒤 정원 설정을 저장해도 마감이 유지된다. 기기 확인 ③: 플랜 모임 만들기에 반복 토글이 없다. 기기 확인 ④: 클럽 반복을 오늘 시작·종료일 지정으로 만들면 오늘 늦은 회차와 종료일 당일 회차가 생긴다. 브라우저 전체 흐름 시험 P75 전체 프로필(`community_app/scripts/e2e/run_p75_flutter_full_flow_recheck.sh --profile full`)도 같은 출시 후보 전체 실행에서 한 번 돌린다. 마지막 전체 실행(2026-05-14)은 50단계 중 22단계가 실패했고, 그 뒤에는 스모크의 실패 축 둘만 다시 돌린 기록뿐이라 22단계가 지금 어떤지 모른다. 먼저 볼 것은 사진첩 화면의 세로 넘침과 500(43단계), 내 정보 처리 상태 글(14·17단계), 알림의 깨진 글(36단계)이다. 기록은 git 에 없는 이 맥의 로컬 파일 `community_app/docs/testing/P75_FULL_RECHECK_HANDOFF_2026-05-14.md` 다. 2026-11-27 E2E 최신화에서는 현재 로컬 앱·API의 전용 Android 돈·구독·충전 취소 8건과 플랜 8건, 총 16건을 검증했다. 충전 P/원 기대값·출금 미리 보기의 제출 차단·화면 복귀를 보완하고 실행기 검사 48건을 통과했다([이번 실행 근거](../../community_app/audit/app_quality/evidence/E2E-REFRESH-20261127.json), [현재 시나리오 현황](../../community_app/docs/testing/SCENARIO_TEST_STATUS_CURRENT.md#현재-결과)). 위 P75 전체 실행과 현금 정기모임·운영 실기 대기는 그대로다. 공개·관리자 서버를 실제로 함께 띄워 관리자 비상 권한 변경과 스탬프 명령의 교착을 확인한다. 지금 시험은 SQL 잠금 차례만 흉내 낸다([스탬프 계획](stamp/CLUB_STAMP_PLAN_2026-09-05.md)). 환불 증빙 실제 열람(H-245 를 합침, 2026-11-08 밤 늦게 권고 재검토): 운영 S3 는 있고 시험용 S3 대역(`ScenarioStorageDouble`)으로 서명 주소 길은 증명됐다. 손 검사에서 참가자와 호스트가 각각 정기모임 환불 증빙을 실제 저장소에서 한 번 열어 기록한다(근거: [출시 후 보완 항목 — 남은 작업](../release-gate/plans/POST_LAUNCH_GAP_CLOSURE_PLAN.md)).",
       "condition": "출시 후보 묶음과 실서버 시험 환경이 준비된 뒤. 통과 기록",
       "scope": "launch",
       "kind": "실제 환경 확인",
@@ -1976,26 +1862,26 @@
   "versions": [
     {
       "name": "공개 API",
-      "commit": "451cc7dec"
+      "commit": "2681e8faa"
     },
     {
       "name": "관리자 API",
-      "commit": "451cc7dec"
+      "commit": "2681e8faa"
     },
     {
       "name": "앱",
-      "commit": "ff54f42dc"
+      "commit": "9c6437d7f"
     },
     {
       "name": "관리자 웹",
-      "commit": "160b9ca"
+      "commit": "77546e1"
     },
     {
       "name": "실시간",
       "commit": "231ecae"
     }
   ],
-  "sourceDigest": "c33f4fb20ff8977ead2a5f81de84e3216a67de9f5da2c0c1f496875c92619b11",
+  "sourceDigest": "cee12dbabc1342430aa59756a4c63abee9f8468873f28b93b63598c633f57a64",
   "sourceDeclaredDate": "2026-11-15",
   "summary": {
     "lead": "현재 작업 정본의 추적 항목과 배포 기록을 구분합니다. 공개·관리자 API·관리자 웹·MCP 서버는 11월 26일 정기 배포 prd-20261126a의 반영 기록이고, 허용 AI 클라이언트 목록은 같은 날 밤 개인정보 검토가 끝날 때까지 다시 비운 기록이고, 소개 웹 분석은 11월 22일의 반영 기록입니다. 그 뒤 소스 변경과 남은 실제 이용 확인은 작업별 조건을 따릅니다. 같은 날 감시 스택에 발송 실패 복구 메일 중지를 반영했습니다. 서버가 먼저 나갔으므로 다음은 앱 새 판입니다.",
@@ -2008,14 +1894,14 @@
       "관리자: 11월 22일 로컬 실제 서버 6개 여정과 모의 응답 2개 UI 흐름의 네이티브 브라우저 확인 기록이 있습니다. 그 결과를 운영 배포나 모든 관리자 기능의 통과로 확대하지 않습니다."
     ],
     "checks": "2026-11-26 작업 정본 동기화입니다. 정기 서버 배포 prd-20261126a의 운영 반영(배포 전 읽기 점검의 판단 항목 0, 운영 DB 대본 끝 대조 통과, 서버 안 확인 두 번, MCP 바깥 확인 27개·공개 API 확인 18개)과 같은 날 밤 허용 AI 클라이언트 목록 비우기(서버 안 확인, MCP 바깥 확인 15개·거절 확인 4개·공개 API 확인 18개, 경보 11개 정상)를 기록했습니다. Android 앱 새 판·관리자 화면·AI 클라이언트 로그인 여정·기기 확인은 기존 실행 근거의 범위를 유지합니다.",
-    "inventory": "현재 정본의 추적 항목 72개입니다. 조건부·제품 후보·외부 확인을 포함하므로 미완료 개발 수나 완료율이 아닙니다.",
+    "inventory": "현재 정본의 추적 항목 67개입니다. 조건부·제품 후보·외부 확인을 포함하므로 미완료 개발 수나 완료율이 아닙니다.",
     "categoryCounts": {
       "2": 9,
-      "3": 4,
+      "3": 3,
       "4": 2,
       "5": 19,
       "6": 3,
-      "7": 8,
+      "7": 4,
       "8": 7,
       "9": 20
     },
@@ -2093,16 +1979,16 @@
     "decisions": "후보 고정·운영 서버 확정 뒤 복구 규약·기기 연결의 사용자 보류와 작업별 착수 조건을 유지합니다. 내부 테스트·임시 결제·소스 대조를 정식 공개로 확대하지 않습니다."
   },
   "publication": {
-    "updatedAt": "2026-11-26T19:25:18+09:00",
+    "updatedAt": "2026-11-27T11:29:47+09:00",
     "sourceBranch": "local docs worktree reference",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "df074ca9f4bde35f6c20e7e61cbd43fd6913ff8e",
+    "sourceCommit": "2dcdc25588ce2f4ec8b9f0fc10a843555cd6b688",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "4fb01f76caa24dbe80b6a7a3b59a5ab9ba3fe6f76edc9d5567dfe8bf2a33557c",
-    "worklistSha256": "cf77d473564e1ec2df26bcffca46028a41cc39ab9d8d1e0eed0d578773e68661",
+    "sourceSha256": "a7cabeff772f293400a8ef3acd431c89c02d1d240d3125d39d150856f7b2c345",
+    "worklistSha256": "12312300909229d678ce33e952f5eb60069886468da6da155585599dc9258665",
     "evidenceSha256": {
-      "docs/plan/NEXT_WORK.md": "4fb01f76caa24dbe80b6a7a3b59a5ab9ba3fe6f76edc9d5567dfe8bf2a33557c",
-      "docs/plan/WORKLIST.md": "cf77d473564e1ec2df26bcffca46028a41cc39ab9d8d1e0eed0d578773e68661",
+      "docs/plan/NEXT_WORK.md": "a7cabeff772f293400a8ef3acd431c89c02d1d240d3125d39d150856f7b2c345",
+      "docs/plan/WORKLIST.md": "12312300909229d678ce33e952f5eb60069886468da6da155585599dc9258665",
       "docs/release-gate/evidence/API-RELEASE-20261126a.json": "5ca0a96ee0fcae9cb94b0bb4a425664a009d7d8ad1a4e12b4f171f131ce87032",
       "docs/release-gate/evidence/MCP-RELEASE-20261115m.json": "14b8676f51b639e4669c74bfffc5195952ed7aa30058e7dea3acc9f69a8aff00",
       "docs/release-gate/evidence/GA4-CONNECTION-20261122.json": "111659d4cdfe4eabf48a403251fdf4928f0553c003975b6a533e59c02572186f",
@@ -2110,7 +1996,7 @@
       "docs/release-gate/evidence/MONITOR-RECOVERY-EMAIL-20261126.json": "804d622d896bfc60f617d19d44781876e5577f6e5b62137f7bf7da4833a90b97",
       "docs/release-gate/evidence/MCP-RELEASE-20261126c.json": "8776db6ffb57cc3b3e5478619c5daf42c230ca489613d48e402cd658d1607bdb"
     },
-    "method": "2026-11-26 정기 서버 배포 prd-20261126a의 운영 반영 기록, 같은 날 밤 허용 AI 클라이언트 목록 비우기와 배포 뒤 남은 일을 반영한다. 기존 제품 검증 기록은 해당 실행 시점의 근거로 유지한다. 같은 날 H-529 완료, H-557 코드 생성기 호환 상한 해제, 디자인 체계 남은 줄·돈 정책 둘의 마감, 결정 127-1, 묶음 올리기 대본의 맥 확장 속성 문제(H-674)를 반영했다.",
+    "method": "2026-11-26 정기 서버 배포 prd-20261126a의 운영 반영 기록, 같은 날 밤 허용 AI 클라이언트 목록 비우기와 배포 뒤 남은 일을 반영한다. 기존 제품 검증 기록은 해당 실행 시점의 근거로 유지한다. 같은 날 H-529 완료, H-557 코드 생성기 호환 상한 해제, 디자인 체계 남은 줄·돈 정책 둘의 마감, 결정 127-1, 묶음 올리기 대본의 맥 확장 속성 문제(H-674)를 반영했다. 2026-11-27 에는 기금 출금 양식의 최소 금액 판정, 원래부터 실패하던 실 DB 시험 둘, 문서 검사의 기준선 실패, 묶음 올리기 대본(H-669~H-672·H-674)을 고쳐 닫았다.",
     "regenerate": "python3 verification/refresh_work_overview.py",
     "check": "python3 verification/refresh_work_overview.py --check; node --test verification/work_overview.test.mjs"
   }
